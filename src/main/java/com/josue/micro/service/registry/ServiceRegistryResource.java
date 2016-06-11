@@ -84,10 +84,10 @@ public class ServiceRegistryResource implements Serializable {
         }
 
         String uuid = UUID.randomUUID().toString();
-        service.setUuid(uuid.substring(uuid.lastIndexOf("-") + 1, uuid.length()));
+        service.setId(uuid.substring(uuid.lastIndexOf("-") + 1, uuid.length()));
         service.setLastCheck(System.currentTimeMillis());
 
-        cache.put(service.getUuid(), service);
+        cache.put(service.getId(), service);
 
         logger.info(":: ADDING " + service.toString() + " ::");
 
@@ -123,7 +123,7 @@ public class ServiceRegistryResource implements Serializable {
         cache.forEach((s, service) -> {
             if (System.currentTimeMillis() - service.getLastCheck() > ttl) {
                 logger.info(":: REMOVING " + service.toString() + "... R.I.P. ::");
-                cache.remove(service.getUuid());
+                cache.remove(service.getId());
             } else {
                 String type = service.getName();
                 if (!computed.containsKey(type)) {

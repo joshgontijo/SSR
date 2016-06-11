@@ -7,7 +7,7 @@ import java.io.Serializable;
  */
 public class Service implements Serializable {
 
-    private String uuid;
+    private String id;
     private String url;
     private String name;
     private long lastCheck;
@@ -20,12 +20,12 @@ public class Service implements Serializable {
         this.lastCheck = lastCheck;
     }
 
-    public String getUuid() {
-        return uuid;
+    public String getId() {
+        return id;
     }
 
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getUrl() {
@@ -52,7 +52,7 @@ public class Service implements Serializable {
         Service service = (Service) o;
 
         if (lastCheck != service.lastCheck) return false;
-        if (uuid != null ? !uuid.equals(service.uuid) : service.uuid != null) return false;
+        if (id != null ? !id.equals(service.id) : service.id != null) return false;
         if (url != null ? !url.equals(service.url) : service.url != null) return false;
         return this.name != null ? this.name.equals(service.name) : service.name == null;
 
@@ -60,7 +60,7 @@ public class Service implements Serializable {
 
     @Override
     public int hashCode() {
-        int result = uuid != null ? uuid.hashCode() : 0;
+        int result = id != null ? id.hashCode() : 0;
         result = 31 * result + (url != null ? url.hashCode() : 0);
         result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (int) (lastCheck ^ (lastCheck >>> 32));
@@ -69,7 +69,7 @@ public class Service implements Serializable {
 
     @Override
     public String toString() {
-        return "uuid='" + uuid + '\'' +
+        return "id='" + id + '\'' +
                 ", url='" + url + '\'' +
                 ", name='" + name + '\'' +
                 ", lastCheck=" + lastCheck;
