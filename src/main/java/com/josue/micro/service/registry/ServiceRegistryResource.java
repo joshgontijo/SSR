@@ -8,6 +8,7 @@ import com.hazelcast.map.EntryProcessor;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -15,6 +16,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.Serializable;
@@ -42,6 +44,9 @@ public class ServiceRegistryResource implements Serializable {
 
     @Inject
     private IMap<String, Service> cache;
+
+    @Context
+    private HttpServletRequest request;
 
     @PostConstruct
     public void init() {
@@ -77,15 +82,13 @@ public class ServiceRegistryResource implements Serializable {
                     .entity(simpleJsonMessage("'name' not provided"))
                     .build();
         }
-        if (service.getUrl() == null) {
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity(simpleJsonMessage("'url' not provided"))
-                    .build();
-        }
 
         String uuid = UUID.randomUUID().toString();
         service.setId(uuid.substring(uuid.lastIndexOf("-") + 1, uuid.length()));
         service.setLastCheck(System.currentTimeMillis());
+        if(service.getUrl() == null || service.getUrl().isEmpty()){
+            service.setUrl(request.getRemoteAddr());
+        }
 
         cache.put(service.getId(), service);
 
