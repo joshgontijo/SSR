@@ -22,7 +22,7 @@ public class CacheProducer {
     private static final String CACHE_NAME = "services-cache";
 
     private HazelcastInstance hazelcast;
-    private IMap<String, Service> cache;
+    private IMap<String, ServiceConfig> cache;
 
 
     @PostConstruct
@@ -39,7 +39,7 @@ public class CacheProducer {
     }
 
     @Produces
-    public IMap<String, Service> producesCache() {
+    public IMap<String, ServiceConfig> producesCache() {
         return cache;
     }
 

@@ -5,20 +5,13 @@ import java.io.Serializable;
 /**
  * Created by Josue on 09/06/2016.
  */
-public class Service implements Serializable {
+public class ServiceConfig implements Serializable {
 
     private String id;
     private String url;
+    private String port;
     private String name;
     private long lastCheck;
-
-    public long getLastCheck() {
-        return lastCheck;
-    }
-
-    public void setLastCheck(long lastCheck) {
-        this.lastCheck = lastCheck;
-    }
 
     public String getId() {
         return id;
@@ -36,6 +29,14 @@ public class Service implements Serializable {
         this.url = url;
     }
 
+    public String getPort() {
+        return port;
+    }
+
+    public void setPort(String port) {
+        this.port = port;
+    }
+
     public String getName() {
         return name;
     }
@@ -44,17 +45,26 @@ public class Service implements Serializable {
         this.name = name;
     }
 
+    public long getLastCheck() {
+        return lastCheck;
+    }
+
+    public void setLastCheck(long lastCheck) {
+        this.lastCheck = lastCheck;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Service)) return false;
+        if (!(o instanceof ServiceConfig)) return false;
 
-        Service service = (Service) o;
+        ServiceConfig that = (ServiceConfig) o;
 
-        if (lastCheck != service.lastCheck) return false;
-        if (id != null ? !id.equals(service.id) : service.id != null) return false;
-        if (url != null ? !url.equals(service.url) : service.url != null) return false;
-        return this.name != null ? this.name.equals(service.name) : service.name == null;
+        if (lastCheck != that.lastCheck) return false;
+        if (id != null ? !id.equals(that.id) : that.id != null) return false;
+        if (url != null ? !url.equals(that.url) : that.url != null) return false;
+        if (port != null ? !port.equals(that.port) : that.port != null) return false;
+        return name != null ? name.equals(that.name) : that.name == null;
 
     }
 
@@ -62,6 +72,7 @@ public class Service implements Serializable {
     public int hashCode() {
         int result = id != null ? id.hashCode() : 0;
         result = 31 * result + (url != null ? url.hashCode() : 0);
+        result = 31 * result + (port != null ? port.hashCode() : 0);
         result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (int) (lastCheck ^ (lastCheck >>> 32));
         return result;
@@ -71,7 +82,9 @@ public class Service implements Serializable {
     public String toString() {
         return "id='" + id + '\'' +
                 ", url='" + url + '\'' +
+                ", port='" + port + '\'' +
                 ", name='" + name + '\'' +
                 ", lastCheck=" + lastCheck;
     }
 }
+

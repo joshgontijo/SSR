@@ -34,16 +34,16 @@ import java.util.logging.Logger;
 @ApplicationScoped
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-public class ServiceRegistryResource implements Serializable {
+public class ServiceResource implements Serializable {
 
-    private static final Logger logger = Logger.getLogger(ServiceRegistryResource.class.getName());
+    private static final Logger logger = Logger.getLogger(ServiceResource.class.getName());
 
     private static final String HEARTBEAT_ENV_KEY = "service.ttl";
     private static final int DEFAULT_SERVICE_TTL = 20000;
     private int ttl = DEFAULT_SERVICE_TTL;
 
     @Inject
-    private IMap<String, Service> cache;
+    private IMap<String, ServiceConfig> cache;
 
     @Context
     private HttpServletRequest request;
@@ -67,34 +67,42 @@ public class ServiceRegistryResource implements Serializable {
     @GET
     @Path("{service}")
     public Response getService(@PathParam("service") String service) {
-        Map<String, Collection<Service>> mapped = mapped();
+        Map<String, Collection<ServiceConfig>> mapped = mapped();
         return Response.ok(mapped.get(service)).build();
     }
 
     @POST
-    public Response addService(Service service) {
-        if (service == null) {
+    public Response addService(ServiceConfig serviceConfig) {
+        if (serviceConfig == null) {
             return Response.status(Response.Status.BAD_REQUEST)
                     .entity(simpleJsonMessage("Service not provided")).build();
         }
-        if (service.getName() == null) {
+        if (serviceConfig.getName() == null) {
             return Response.status(Response.Status.BAD_REQUEST)
                     .entity(simpleJsonMessage("'name' not provided"))
                     .build();
         }
 
         String uuid = UUID.randomUUID().toString();
-        service.setId(uuid.substring(uuid.lastIndexOf("-") + 1, uuid.length()));
-        service.setLastCheck(System.currentTimeMillis());
-        if(service.getUrl() == null || service.getUrl().isEmpty()){
-            service.setUrl(request.getRemoteAddr());
+        serviceConfig.setId(uuid.substring(uuid.lastIndexOf("-") + 1, uuid.length()));
+        serviceConfig.setLastCheck(System.currentTimeMillis());
+        if(serviceConfig.getUrl() == null || serviceConfig.getUrl().isEmpty()){
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity(simpleJsonMessage("'url' not provided"))
+                    .build();
         }
 
-        cache.put(service.getId(), service);
+        if(serviceConfig.getPort() == null || serviceConfig.getPort().isEmpty()){
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity(simpleJsonMessage("'port' not provided"))
+                    .build();
+        }
 
-        logger.info(":: ADDING " + service.toString() + " ::");
+        cache.put(serviceConfig.getId(), serviceConfig);
 
-        return Response.ok(service).build();
+        logger.info(":: ADDING " + serviceConfig.toString() + " ::");
+
+        return Response.ok(serviceConfig).build();
     }
 
     @PUT
@@ -103,10 +111,10 @@ public class ServiceRegistryResource implements Serializable {
         if (!cache.containsKey(id)) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
-        cache.submitToKey(id, new EntryProcessor<String, Service>() {
+        cache.submitToKey(id, new EntryProcessor<String, ServiceConfig>() {
             @Override
-            public Object process(Map.Entry<String, Service> entry) {
-                Service valueMap = entry.getValue();
+            public Object process(Map.Entry<String, ServiceConfig> entry) {
+                ServiceConfig valueMap = entry.getValue();
                 valueMap.setLastCheck(System.currentTimeMillis());
                 entry.setValue(valueMap);
                 return null;
@@ -120,8 +128,8 @@ public class ServiceRegistryResource implements Serializable {
         return Response.ok(mapped()).build();
     }
 
-    private Map<String, Collection<Service>> mapped() {
-        Map<String, Collection<Service>> computed = new HashMap<>();
+    private Map<String, Collection<ServiceConfig>> mapped() {
+        Map<String, Collection<ServiceConfig>> computed = new HashMap<>();
 
         cache.forEach((s, service) -> {
             if (System.currentTimeMillis() - service.getLastCheck() > ttl) {
