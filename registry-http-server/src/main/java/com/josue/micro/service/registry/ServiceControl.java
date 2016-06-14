@@ -86,8 +86,8 @@ public class ServiceControl {
             @Override
             public Object process(Map.Entry<String, ServiceConfig> entry) {
                 ServiceConfig valueMap = entry.getValue();
-                long upTime = (valueMap.getLastCheck() + System.currentTimeMillis()) / 100;
-                valueMap.setUpTime(upTime);
+                long lastCheckDifference = (System.currentTimeMillis() - valueMap.getLastCheck()) / 1000;
+                valueMap.setUpTime(valueMap.getUpTime() + lastCheckDifference);
                 valueMap.setLastCheck(System.currentTimeMillis());
                 entry.setValue(valueMap);
                 return null;

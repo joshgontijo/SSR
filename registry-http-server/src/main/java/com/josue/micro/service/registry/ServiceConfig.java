@@ -13,7 +13,7 @@ public class ServiceConfig implements Serializable {
     private String name;
     private Integer leaseTime;
     private long lastCheck;
-    private Long upTime;
+    private Long upTime = 0L;
 
     public String getId() {
         return id;
