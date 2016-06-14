@@ -1,4 +1,4 @@
-package com.josue.micro.service.registry;
+package com.josue.micro.service.registry.rest;
 
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
@@ -8,4 +8,5 @@ import javax.ws.rs.core.Application;
  */
 @ApplicationPath("")
 public class JaxrsApp extends Application {
+
 }

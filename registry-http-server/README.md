@@ -2,7 +2,7 @@
 Distributed key-value storage for service lookup
 
 ### Environment parameters
-- *service.ttl*: Time to live, default is 20000
+- *service.default.leasetTime*: Time to live (in seconds), default is 20
 
 ### Root path
     /service-registry
@@ -17,7 +17,8 @@ Distributed key-value storage for service lookup
     POST /services
     {
       "name": "account",
-      "url": "127.0.0.1"
+      "url": "127.0.0.1",
+      "port": 8081
     }
 
 #### Heartbeat

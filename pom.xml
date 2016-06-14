@@ -10,7 +10,7 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>registry-server</module>
+        <module>registry-http-server</module>
         <module>registry-client</module>
     </modules>
 

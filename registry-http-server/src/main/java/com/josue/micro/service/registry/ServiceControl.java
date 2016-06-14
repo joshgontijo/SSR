@@ -1,23 +1,13 @@
 package com.josue.micro.service.registry;
 
-
 import com.hazelcast.core.IMap;
 import com.hazelcast.map.EntryBackupProcessor;
 import com.hazelcast.map.EntryProcessor;
+import com.josue.micro.service.registry.rest.ServiceResource;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -26,13 +16,10 @@ import java.util.UUID;
 import java.util.logging.Logger;
 
 /**
- * Created by Josue on 09/06/2016.
+ * Created by Josue on 15/06/2016.
  */
-@Path("services")
 @ApplicationScoped
-@Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.APPLICATION_JSON)
-public class ServiceResource implements Serializable {
+public class ServiceControl {
 
     private static final Logger logger = Logger.getLogger(ServiceResource.class.getName());
 
@@ -42,6 +29,7 @@ public class ServiceResource implements Serializable {
 
     @Inject
     private IMap<String, ServiceConfig> cache;
+
 
     @PostConstruct
     public void init() {
@@ -54,40 +42,24 @@ public class ServiceResource implements Serializable {
         }
     }
 
-    @GET
-    public Response getServices() {
-        return Response.ok(mapped()).build();
+    public Map<String, Collection<ServiceConfig>> getServices() {
+        return mapped();
     }
 
-    @GET
-    @Path("{service}")
-    public Response getService(@PathParam("service") String service) {
-        Map<String, Collection<ServiceConfig>> mapped = mapped();
-        return Response.ok(mapped.get(service)).build();
-    }
-
-    @POST
-    public Response addService(ServiceConfig serviceConfig) {
+    public ServiceConfig register(ServiceConfig serviceConfig) throws ServiceException {
         if (serviceConfig == null) {
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity(simpleJsonMessage("Service not provided")).build();
+            throw new ServiceException(400, "Service provided");
         }
         if (serviceConfig.getName() == null) {
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity(simpleJsonMessage("'name' not provided"))
-                    .build();
+            throw new ServiceException(400, "'name' must be provided");
         }
 
-        if(serviceConfig.getUrl() == null || serviceConfig.getUrl().isEmpty()){
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity(simpleJsonMessage("'url' not provided"))
-                    .build();
+        if (serviceConfig.getUrl() == null || serviceConfig.getUrl().isEmpty()) {
+            throw new ServiceException(400, "'url' must be provided");
         }
 
-        if(serviceConfig.getPort() == null || serviceConfig.getPort().isEmpty()){
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity(simpleJsonMessage("'port' not provided"))
-                    .build();
+        if (serviceConfig.getPort() == null || serviceConfig.getPort().isEmpty()) {
+            throw new ServiceException(400, "'port' must be provided");
         }
 
         String uuid = UUID.randomUUID().toString();
@@ -99,19 +71,23 @@ public class ServiceResource implements Serializable {
 
         logger.info(":: ADDING " + serviceConfig.toString() + " ::");
 
-        return Response.ok(serviceConfig).build();
+        return serviceConfig;
     }
 
-    @PUT
-    @Path("{id}")
-    public Response heartbeat(@PathParam("id") String id) {
+    public Collection<ServiceConfig> getServiceForType(String service) {
+        return mapped().get(service);
+    }
+
+    public ServiceConfig heartbeat(String id) throws ServiceException {
         if (!cache.containsKey(id)) {
-            return Response.status(Response.Status.NOT_FOUND).build();
+            throw new ServiceException(404, "Service not found with id '" + id + "'");
         }
         cache.submitToKey(id, new EntryProcessor<String, ServiceConfig>() {
             @Override
             public Object process(Map.Entry<String, ServiceConfig> entry) {
                 ServiceConfig valueMap = entry.getValue();
+                long upTime = (valueMap.getLastCheck() + System.currentTimeMillis()) / 100;
+                valueMap.setUpTime(upTime);
                 valueMap.setLastCheck(System.currentTimeMillis());
                 entry.setValue(valueMap);
                 return null;
@@ -122,7 +98,8 @@ public class ServiceResource implements Serializable {
                 return null;
             }
         });
-        return Response.ok(mapped()).build();
+
+        return cache.get(id);
     }
 
     private Map<String, Collection<ServiceConfig>> mapped() {
@@ -143,7 +120,4 @@ public class ServiceResource implements Serializable {
         return computed;
     }
 
-    private String simpleJsonMessage(String message) {
-        return "{\"message\": \"" + message + "\"}";
-    }
 }
