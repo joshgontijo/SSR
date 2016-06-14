@@ -11,6 +11,7 @@ public class ServiceConfig implements Serializable {
     private String url;
     private String port;
     private String name;
+    private Integer leaseTime;
     private long lastCheck;
 
     public String getId() {
@@ -45,6 +46,14 @@ public class ServiceConfig implements Serializable {
         this.name = name;
     }
 
+    public Integer getLeaseTime() {
+        return leaseTime;
+    }
+
+    public void setLeaseTime(Integer leaseTime) {
+        this.leaseTime = leaseTime;
+    }
+
     public long getLastCheck() {
         return lastCheck;
     }
@@ -64,7 +73,8 @@ public class ServiceConfig implements Serializable {
         if (id != null ? !id.equals(that.id) : that.id != null) return false;
         if (url != null ? !url.equals(that.url) : that.url != null) return false;
         if (port != null ? !port.equals(that.port) : that.port != null) return false;
-        return name != null ? name.equals(that.name) : that.name == null;
+        if (name != null ? !name.equals(that.name) : that.name != null) return false;
+        return leaseTime != null ? leaseTime.equals(that.leaseTime) : that.leaseTime == null;
 
     }
 
@@ -74,6 +84,7 @@ public class ServiceConfig implements Serializable {
         result = 31 * result + (url != null ? url.hashCode() : 0);
         result = 31 * result + (port != null ? port.hashCode() : 0);
         result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + (leaseTime != null ? leaseTime.hashCode() : 0);
         result = 31 * result + (int) (lastCheck ^ (lastCheck >>> 32));
         return result;
     }
@@ -84,7 +95,9 @@ public class ServiceConfig implements Serializable {
                 ", url='" + url + '\'' +
                 ", port='" + port + '\'' +
                 ", name='" + name + '\'' +
+                ", leaseTime='" + leaseTime + '\'' +
                 ", lastCheck=" + lastCheck;
+
     }
 }
 

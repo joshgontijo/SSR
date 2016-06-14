@@ -38,9 +38,9 @@ public class ServiceResource implements Serializable {
 
     private static final Logger logger = Logger.getLogger(ServiceResource.class.getName());
 
-    private static final String HEARTBEAT_ENV_KEY = "service.ttl";
-    private static final int DEFAULT_SERVICE_TTL = 20000;
-    private int ttl = DEFAULT_SERVICE_TTL;
+    private static final String HEARTBEAT_ENV_KEY = "service.default.leasetTime";
+    private static final int DEFAULT_SERVICE_LEASE_TIME = 20;
+    private int leaseTime = DEFAULT_SERVICE_LEASE_TIME;
 
     @Inject
     private IMap<String, ServiceConfig> cache;
@@ -53,9 +53,9 @@ public class ServiceResource implements Serializable {
         String property = System.getProperty(HEARTBEAT_ENV_KEY);
         if (property != null && !property.matches("\\d+")) {
             logger.info(":: SETTING HEARTBEAT PERIOD TO " + property + "ms ::");
-            ttl = Integer.valueOf(property);
+            leaseTime = Integer.valueOf(property);
         } else {
-            logger.info(":: HEARTBEAT NOT PROVIDED, USING DEFAULT " + DEFAULT_SERVICE_TTL + "ms ::");
+            logger.info(":: LEASE TIME NOT PROVIDED, USING DEFAULT " + DEFAULT_SERVICE_LEASE_TIME + "s ::");
         }
     }
 
@@ -83,9 +83,6 @@ public class ServiceResource implements Serializable {
                     .build();
         }
 
-        String uuid = UUID.randomUUID().toString();
-        serviceConfig.setId(uuid.substring(uuid.lastIndexOf("-") + 1, uuid.length()));
-        serviceConfig.setLastCheck(System.currentTimeMillis());
         if(serviceConfig.getUrl() == null || serviceConfig.getUrl().isEmpty()){
             return Response.status(Response.Status.BAD_REQUEST)
                     .entity(simpleJsonMessage("'url' not provided"))
@@ -97,6 +94,11 @@ public class ServiceResource implements Serializable {
                     .entity(simpleJsonMessage("'port' not provided"))
                     .build();
         }
+
+        String uuid = UUID.randomUUID().toString();
+        serviceConfig.setId(uuid.substring(uuid.lastIndexOf("-") + 1, uuid.length()));
+        serviceConfig.setLastCheck(System.currentTimeMillis());
+        serviceConfig.setLeaseTime(leaseTime);
 
         cache.put(serviceConfig.getId(), serviceConfig);
 
@@ -132,7 +134,7 @@ public class ServiceResource implements Serializable {
         Map<String, Collection<ServiceConfig>> computed = new HashMap<>();
 
         cache.forEach((s, service) -> {
-            if (System.currentTimeMillis() - service.getLastCheck() > ttl) {
+            if (System.currentTimeMillis() - service.getLastCheck() > leaseTime) {
                 logger.info(":: REMOVING " + service.toString() + "... R.I.P. ::");
                 cache.remove(service.getId());
             } else {
