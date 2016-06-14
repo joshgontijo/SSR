@@ -2,7 +2,7 @@
 Distributed key-value storage for service lookup
 
 ### Environment parameters
-- *service.default.leasetTime*: Time to live (in seconds), default is 20
+- *service.default.leaseTime*: Time to live (in seconds), default is 20
 
 ### Root path
     /service-registry

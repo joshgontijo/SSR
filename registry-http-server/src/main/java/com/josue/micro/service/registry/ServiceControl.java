@@ -23,7 +23,7 @@ public class ServiceControl {
 
     private static final Logger logger = Logger.getLogger(ServiceResource.class.getName());
 
-    private static final String HEARTBEAT_ENV_KEY = "service.default.leasetTime";
+    private static final String HEARTBEAT_ENV_KEY = "service.default.leaseTime";
     private static final int DEFAULT_SERVICE_LEASE_TIME = 20;
     private int leaseTime = DEFAULT_SERVICE_LEASE_TIME;
 
