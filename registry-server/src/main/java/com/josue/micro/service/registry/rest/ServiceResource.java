@@ -38,7 +38,7 @@ public class ServiceResource implements Serializable {
     @GET
     @Path("{service}")
     public Response getService(@PathParam("service") String service) throws Exception {
-        return Response.ok(control.getServiceForType(service)).build();
+        return Response.ok(control.getServicesForName(service)).build();
     }
 
     @POST
