@@ -13,5 +13,13 @@
     <artifactId>registry-client</artifactId>
     <version>1.0</version>
 
+    <dependencies>
+        <dependency>
+            <groupId>org.glassfish.jersey.core</groupId>
+            <artifactId>jersey-client</artifactId>
+            <version>2.22.2</version>
+        </dependency>
+    </dependencies>
+
 
 </project>
