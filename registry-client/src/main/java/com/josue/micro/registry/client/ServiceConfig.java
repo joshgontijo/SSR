@@ -8,9 +8,8 @@ import java.io.Serializable;
 public class ServiceConfig implements Serializable {
 
     private String id;
-    private String url;
-    private String port;
     private String name;
+    private String address;
     private Integer leaseTime;
     private long lastCheck;
     private Long upTime = 0L;
@@ -23,20 +22,12 @@ public class ServiceConfig implements Serializable {
         this.id = id;
     }
 
-    public String getUrl() {
-        return url;
+    public String getAddress() {
+        return address;
     }
 
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
-    public String getPort() {
-        return port;
-    }
-
-    public void setPort(String port) {
-        this.port = port;
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public String getName() {

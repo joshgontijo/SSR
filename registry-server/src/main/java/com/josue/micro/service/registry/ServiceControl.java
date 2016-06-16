@@ -48,18 +48,14 @@ public class ServiceControl {
 
     public ServiceConfig register(ServiceConfig serviceConfig) throws ServiceException {
         if (serviceConfig == null) {
-            throw new ServiceException(400, "Service provided");
+            throw new ServiceException(400, "Service must be provided");
         }
         if (serviceConfig.getName() == null) {
             throw new ServiceException(400, "'name' must be provided");
         }
 
-        if (serviceConfig.getUrl() == null || serviceConfig.getUrl().isEmpty()) {
-            throw new ServiceException(400, "'url' must be provided");
-        }
-
-        if (serviceConfig.getPort() == null || serviceConfig.getPort().isEmpty()) {
-            throw new ServiceException(400, "'port' must be provided");
+        if (serviceConfig.getAddress() == null || serviceConfig.getAddress().isEmpty()) {
+            throw new ServiceException(400, "'address' must be provided");
         }
 
         String uuid = UUID.randomUUID().toString();
