@@ -78,6 +78,10 @@ public class ServiceControl {
         return mapped().get(serviceName);
     }
 
+    public void deregister(String id) {
+        cache.remove(id);
+    }
+
     public ServiceConfig heartbeat(String id) throws ServiceException {
         if (!cache.containsKey(id)) {
             throw new ServiceException(404, "Service not found with id '" + id + "'");
