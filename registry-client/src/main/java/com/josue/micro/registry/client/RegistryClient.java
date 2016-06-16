@@ -20,6 +20,7 @@ public class RegistryClient {
 
     private final WebTarget serviceRoot;
 
+    //TODO add threadexecutor as parameter, so can periodically poll for new services and send heartbeat
     public RegistryClient(String registryUrl) {
         serviceRoot = ClientBuilder.newClient()
                 .target(registryUrl)
