@@ -1,6 +1,7 @@
 package com.josue.micro.service.registry;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * Created by Josue on 09/06/2016.
@@ -11,8 +12,8 @@ public class ServiceConfig implements Serializable {
     private String name;
     private String address;
     private Integer leaseTime;
-    private long lastCheck;
-    private Long upTime = 0L;
+    private Date lastCheck;
+    private Date since;
 
     public String getId() {
         return id;
@@ -46,21 +47,20 @@ public class ServiceConfig implements Serializable {
         this.leaseTime = leaseTime;
     }
 
-    public long getLastCheck() {
+    public Date getLastCheck() {
         return lastCheck;
     }
 
-    public void setLastCheck(long lastCheck) {
+    public void setLastCheck(Date lastCheck) {
         this.lastCheck = lastCheck;
     }
 
-    public Long getUpTime() {
-        return upTime;
+    public Date getSince() {
+        return since;
     }
 
-    public void setUpTime(Long upTime) {
-        this.upTime = upTime;
+    public void setSince(Date since) {
+        this.since = since;
     }
-
 }
 

@@ -10,6 +10,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -23,9 +24,9 @@ public class ServiceControl {
 
     private static final Logger logger = Logger.getLogger(ServiceResource.class.getName());
 
-    private static final String HEARTBEAT_ENV_KEY = "service.default.leaseTime";
+    private static final String HEARTBEAT_ENV_KEY = "service.default.lease";
     private static final int DEFAULT_SERVICE_LEASE_TIME = 60;
-    private int leaseTime = DEFAULT_SERVICE_LEASE_TIME;
+    private int defaultLeaseTime = DEFAULT_SERVICE_LEASE_TIME;
 
     @Inject
     private IMap<String, ServiceConfig> cache;
@@ -36,7 +37,7 @@ public class ServiceControl {
         String property = System.getProperty(HEARTBEAT_ENV_KEY);
         if (property != null && !property.matches("\\d+")) {
             logger.info(":: SETTING HEARTBEAT PERIOD TO " + property + "ms ::");
-            leaseTime = Integer.valueOf(property);
+            defaultLeaseTime = Integer.valueOf(property);
         } else {
             logger.info(":: LEASE TIME NOT PROVIDED, USING DEFAULT " + DEFAULT_SERVICE_LEASE_TIME + "s ::");
         }
@@ -57,11 +58,16 @@ public class ServiceControl {
         if (serviceConfig.getAddress() == null || serviceConfig.getAddress().isEmpty()) {
             throw new ServiceException(400, "'address' must be provided");
         }
+        if (serviceConfig.getLeaseTime() == null || serviceConfig.getLeaseTime() <= 0) {
+            serviceConfig.setLeaseTime(defaultLeaseTime);
+        }
 
         String uuid = UUID.randomUUID().toString();
+        Date now = new Date();
+
         serviceConfig.setId(uuid.substring(uuid.lastIndexOf("-") + 1, uuid.length()));
-        serviceConfig.setLastCheck(System.currentTimeMillis());
-        serviceConfig.setLeaseTime(leaseTime);
+        serviceConfig.setLastCheck(now);
+        serviceConfig.setSince(now);
 
         cache.put(serviceConfig.getId(), serviceConfig);
 
@@ -86,9 +92,7 @@ public class ServiceControl {
             @Override
             public Object process(Map.Entry<String, ServiceConfig> entry) {
                 ServiceConfig valueMap = entry.getValue();
-                long lastCheckDifference = (System.currentTimeMillis() - valueMap.getLastCheck()) / 1000;
-                valueMap.setUpTime(valueMap.getUpTime() + lastCheckDifference);
-                valueMap.setLastCheck(System.currentTimeMillis());
+                valueMap.setLastCheck(new Date());
                 entry.setValue(valueMap);
                 return null;
             }
@@ -106,20 +110,17 @@ public class ServiceControl {
         Map<String, Collection<ServiceConfig>> computed = new HashMap<>();
 
         cache.forEach((s, service) -> {
-            long diff = (System.currentTimeMillis() - service.getLastCheck()) / 1000;
-            if (diff > leaseTime) {
+            long diff = (System.currentTimeMillis() - service.getLastCheck().getTime()) / 1000;
+            if (diff > defaultLeaseTime) {
                 logger.info(":: REMOVING " + service.toString() + "... R.I.P. ::");
                 cache.remove(service.getId());
             } else {
-                String type = service.getName();
-                if (!computed.containsKey(type)) {
-                    computed.put(type, new ArrayList<>());
+                String serviceName = service.getName();
+                if (!computed.containsKey(serviceName)) {
+                    computed.put(serviceName, new ArrayList<>());
                 }
 
-                long lastCheckDifference = diff;
-                service.setUpTime(service.getUpTime() + lastCheckDifference);
-
-                computed.get(type).add(service);
+                computed.get(serviceName).add(service);
             }
         });
         return computed;
