@@ -6,9 +6,10 @@ import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
 import com.josue.micro.service.registry.ServiceConfig;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.Initialized;
+import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Produces;
 import java.util.logging.Logger;
 
@@ -25,9 +26,7 @@ public class CacheProducer {
     private HazelcastInstance hazelcast;
     private IMap<String, ServiceConfig> cache;
 
-
-    @PostConstruct
-    public void init() {
+    public void init(@Observes @Initialized(ApplicationScoped.class) Object args) {
         hazelcast = Hazelcast.newHazelcastInstance();
         logger.info(":: INITIALISING CACHE ::");
         cache = hazelcast.getMap(CACHE_NAME);
