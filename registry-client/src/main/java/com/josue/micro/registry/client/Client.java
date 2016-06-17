@@ -12,6 +12,9 @@ public abstract class Client {
     private static final String SERVICE_PAT = "services/{id}";
     private static final String REGISTRY_URL_KEY = "registry.url";
 
+    protected static final int MAX_CONNECT_TRY = 10;
+
+
     protected final WebTarget serviceRoot;
 
     protected final String registryUrl;

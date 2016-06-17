@@ -106,7 +106,8 @@ public class ServiceControl {
         Map<String, Collection<ServiceConfig>> computed = new HashMap<>();
 
         cache.forEach((s, service) -> {
-            if ((System.currentTimeMillis() - service.getLastCheck()) / 1000 > leaseTime) {
+            long diff = (System.currentTimeMillis() - service.getLastCheck()) / 1000;
+            if (diff > leaseTime) {
                 logger.info(":: REMOVING " + service.toString() + "... R.I.P. ::");
                 cache.remove(service.getId());
             } else {
@@ -115,7 +116,7 @@ public class ServiceControl {
                     computed.put(type, new ArrayList<>());
                 }
 
-                long lastCheckDifference = (System.currentTimeMillis() - service.getLastCheck()) / 1000;
+                long lastCheckDifference = diff;
                 service.setUpTime(service.getUpTime() + lastCheckDifference);
 
                 computed.get(type).add(service);
