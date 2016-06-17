@@ -23,6 +23,7 @@ public class ServiceProviderClient extends Client {
         }
     }
 
+    //TODO implement retry in case provider is down
     public ServiceConfig register(String serviceName) throws RegistryException {
         logger.info(":: Registering service ::");
 

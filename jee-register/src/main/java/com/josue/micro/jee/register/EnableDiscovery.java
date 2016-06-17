@@ -1,7 +1,8 @@
 package com.josue.micro.jee.register;
 
+import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.Stereotype;
 import javax.enterprise.util.Nonbinding;
-import javax.interceptor.InterceptorBinding;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
@@ -12,7 +13,8 @@ import java.lang.annotation.Target;
  * Created by Josue on 16/06/2016.
  */
 @Inherited
-@InterceptorBinding
+@Stereotype
+@ApplicationScoped
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface EnableDiscovery {
