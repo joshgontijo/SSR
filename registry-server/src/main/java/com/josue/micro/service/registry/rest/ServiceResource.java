@@ -39,7 +39,7 @@ public class ServiceResource implements Serializable {
     public Response getServices(@QueryParam("name") String serviceName) {
         Map<String, Collection<ServiceConfig>> services = control.getServices();
         if (serviceName == null || serviceName.isEmpty()) {
-            return Response.ok(services.get(serviceName)).build();
+            return Response.ok(services).build();
         }
         Optional<Map.Entry<String, Collection<ServiceConfig>>> found =
                 services.entrySet()
@@ -54,7 +54,7 @@ public class ServiceResource implements Serializable {
     }
 
     @POST
-    public Response addService(ServiceConfig serviceConfig) throws Exception {
+    public Response register(ServiceConfig serviceConfig) throws Exception {
         return Response.status(Response.Status.CREATED).entity(control.register(serviceConfig)).build();
     }
 

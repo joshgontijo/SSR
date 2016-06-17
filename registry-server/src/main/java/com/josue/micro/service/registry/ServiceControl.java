@@ -116,7 +116,7 @@ public class ServiceControl {
                 }
 
                 long lastCheckDifference = (System.currentTimeMillis() - service.getLastCheck()) / 1000;
-                service.setLastCheck(service.getLastCheck() + lastCheckDifference);
+                service.setUpTime(service.getUpTime() + lastCheckDifference);
 
                 computed.get(type).add(service);
             }
