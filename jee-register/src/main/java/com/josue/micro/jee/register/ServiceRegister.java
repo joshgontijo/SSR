@@ -1,6 +1,7 @@
 package com.josue.micro.jee.register;
 
-import com.josue.micro.registry.client.ServiceProviderClient;
+import com.josue.micro.registry.client.ServiceClient;
+import com.josue.micro.registry.client.ws.ServiceClientEndpoint;
 
 import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
@@ -21,17 +22,14 @@ public class ServiceRegister {
 
     private static String service;
 
-    private ServiceProviderClient client;
+    private ServiceClientEndpoint client;
 
     @Resource
     private ManagedScheduledExecutorService mses;
 
     public void init(@Observes @Initialized(ApplicationScoped.class) Object arg) {
         if (service != null && !service.isEmpty()) {
-            logger.log(Level.INFO, ":: Loading environment properties ::");
-
-            client = new ServiceProviderClient(mses);
-            client.register(service);
+            ServiceClient.register(service);
         } else {
             logger.log(Level.INFO, ":: No services found ::");
         }
@@ -40,7 +38,7 @@ public class ServiceRegister {
     @PreDestroy
     public void destroy() {
         if (client != null) {
-            client.deregister();
+            ServiceClient.deregister();
         }
     }
 

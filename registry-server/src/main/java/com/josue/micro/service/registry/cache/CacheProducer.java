@@ -11,6 +11,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.Initialized;
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Produces;
+import javax.websocket.Session;
 import java.util.logging.Logger;
 
 /**
@@ -24,7 +25,7 @@ public class CacheProducer {
     private static final String CACHE_NAME = "services-cache";
 
     private HazelcastInstance hazelcast;
-    private IMap<String, ServiceConfig> cache;
+    private IMap<Session, ServiceConfig> cache;
 
     public void init(@Observes @Initialized(ApplicationScoped.class) Object args) {
         hazelcast = Hazelcast.newHazelcastInstance();
@@ -39,7 +40,7 @@ public class CacheProducer {
     }
 
     @Produces
-    public IMap<String, ServiceConfig> producesCache() {
+    public IMap<Session, ServiceConfig> producesCache() {
         return cache;
     }
 

@@ -1,6 +1,7 @@
 package com.josue.micro.registry.client;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * Created by Josue on 09/06/2016.
@@ -10,9 +11,7 @@ public class ServiceConfig implements Serializable {
     private String id;
     private String name;
     private String address;
-    private Integer leaseTime;
-    private long lastCheck;
-    private Long upTime = 0L;
+    private Date since;
 
     public String getId() {
         return id;
@@ -20,14 +19,6 @@ public class ServiceConfig implements Serializable {
 
     public void setId(String id) {
         this.id = id;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
     }
 
     public String getName() {
@@ -38,28 +29,49 @@ public class ServiceConfig implements Serializable {
         this.name = name;
     }
 
-    public Integer getLeaseTime() {
-        return leaseTime;
+    public String getAddress() {
+        return address;
     }
 
-    public void setLeaseTime(Integer leaseTime) {
-        this.leaseTime = leaseTime;
+    public void setAddress(String address) {
+        this.address = address;
     }
 
-    public long getLastCheck() {
-        return lastCheck;
+    public Date getSince() {
+        return since;
     }
 
-    public void setLastCheck(long lastCheck) {
-        this.lastCheck = lastCheck;
+    public void setSince(Date since) {
+        this.since = since;
     }
 
-    public Long getUpTime() {
-        return upTime;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ServiceConfig)) return false;
+
+        ServiceConfig that = (ServiceConfig) o;
+
+        if (id != null ? !id.equals(that.id) : that.id != null) return false;
+        if (name != null ? !name.equals(that.name) : that.name != null) return false;
+        if (address != null ? !address.equals(that.address) : that.address != null) return false;
+        return since != null ? since.equals(that.since) : that.since == null;
+
     }
 
-    public void setUpTime(Long upTime) {
-        this.upTime = upTime;
+    @Override
+    public int hashCode() {
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + (address != null ? address.hashCode() : 0);
+        result = 31 * result + (since != null ? since.hashCode() : 0);
+        return result;
+    }
+
+
+    @Override
+    public String toString() {
+        return "name='" + name;
     }
 
 }

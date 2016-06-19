@@ -11,8 +11,6 @@ public class ServiceConfig implements Serializable {
     private String id;
     private String name;
     private String address;
-    private Integer leaseTime;
-    private Date lastCheck;
     private Date since;
 
     public String getId() {
@@ -23,14 +21,6 @@ public class ServiceConfig implements Serializable {
         this.id = id;
     }
 
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
     public String getName() {
         return name;
     }
@@ -39,20 +29,12 @@ public class ServiceConfig implements Serializable {
         this.name = name;
     }
 
-    public Integer getLeaseTime() {
-        return leaseTime;
+    public String getAddress() {
+        return address;
     }
 
-    public void setLeaseTime(Integer leaseTime) {
-        this.leaseTime = leaseTime;
-    }
-
-    public Date getLastCheck() {
-        return lastCheck;
-    }
-
-    public void setLastCheck(Date lastCheck) {
-        this.lastCheck = lastCheck;
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public Date getSince() {
@@ -61,6 +43,35 @@ public class ServiceConfig implements Serializable {
 
     public void setSince(Date since) {
         this.since = since;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ServiceConfig)) return false;
+
+        ServiceConfig that = (ServiceConfig) o;
+
+        if (id != null ? !id.equals(that.id) : that.id != null) return false;
+        if (name != null ? !name.equals(that.name) : that.name != null) return false;
+        if (address != null ? !address.equals(that.address) : that.address != null) return false;
+        return since != null ? since.equals(that.since) : that.since == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + (address != null ? address.hashCode() : 0);
+        result = 31 * result + (since != null ? since.hashCode() : 0);
+        return result;
+    }
+
+
+    @Override
+    public String toString() {
+        return "name='" + name;
     }
 }
 

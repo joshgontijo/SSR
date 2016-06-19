@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.josue.micro</groupId>
-    <artifactId>servicve-registry</artifactId>
+    <artifactId>service-registry</artifactId>
     <version>1.0</version>
     <packaging>pom</packaging>
 
