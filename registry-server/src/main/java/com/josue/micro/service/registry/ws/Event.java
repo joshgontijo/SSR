@@ -6,12 +6,20 @@ import com.josue.micro.service.registry.ServiceConfig;
  * Created by Josue on 18/06/2016.
  */
 public class Event {
-    enum Type{
-        CONNECT, DISCONNECT, ERROR
+    enum Type {
+        CONNECTED, DISCONNECTED
     }
 
     private Type type;
     private ServiceConfig service;
+
+    public Event() {
+    }
+
+    public Event(Type type, ServiceConfig service) {
+        this.type = type;
+        this.service = service;
+    }
 
     public Type getType() {
         return type;

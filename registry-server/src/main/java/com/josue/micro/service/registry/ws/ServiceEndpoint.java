@@ -1,5 +1,6 @@
 package com.josue.micro.service.registry.ws;
 
+import com.josue.micro.service.registry.ServiceConfig;
 import com.josue.micro.service.registry.ServiceControl;
 import com.josue.micro.service.registry.ServiceException;
 
@@ -11,6 +12,7 @@ import javax.websocket.OnMessage;
 import javax.websocket.OnOpen;
 import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
+import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -33,27 +35,39 @@ public class ServiceEndpoint {
     }
 
     @OnMessage
-    public void onMessage(Event message, Session session) throws ServiceException {
-        control.register(session, message.getService());
+    public void onMessage(Event event, Session session) throws ServiceException {
+        ServiceConfig registered = control.register(session, event.getService());
+        //send to all other services except current session
+        serviceJoinedEvent(session, new Event(Event.Type.CONNECTED, registered));
+
+        //send all already connected services to current session
+        control.getServices().stream()
+                .forEach(connected -> session.getAsyncRemote().sendObject(new Event(Event.Type.CONNECTED, connected)));
+
+        logger.log(Level.INFO, ":: New service registered, session {0}, details  {1} ::", new Object[]{session.getId(), String.valueOf(event)});
+        logger.log(Level.INFO, ":: Connected services {0} ::", control.getSessions().size());
     }
 
     @OnClose
     public void onClose(Session session, CloseReason closeReason) {
-        control.deregister(session);
+        ServiceConfig removed = control.deregister(session);
+        serviceJoinedEvent(session, new Event(Event.Type.DISCONNECTED, removed));
         logger.log(Level.INFO, ":: Session {0} closed because of {1} ::", new Object[]{session.getId(), closeReason});
     }
 
     @OnError
     public void onError(Session session, Throwable t) {
-        logger.log(Level.INFO, ":: Error {0} closed because of {1} ::", new Object[]{session.getId(), t.getMessage()});
-
-        Event event = new Event();
-        event.setType(Event.Type.ERROR);
-
-        try {
-            session.getBasicRemote().sendObject(event);
-        } catch (Exception e) {
-            logger.log(Level.SEVERE, "Error sending ERROR event", e);
+        if (t instanceof IOException) {
+            logger.log(Level.WARNING, "Session {0} interrupted, service may have been shutdown, see below", session.getId());
+            logger.log(Level.WARNING, "Session was closed because: ", t);
+        } else {
+            logger.log(Level.SEVERE, "Error receiving event", t);
         }
+    }
+
+    private void serviceJoinedEvent(Session session, Event event) {
+        control.getSessions().stream()
+                .filter(s -> s.isOpen() && !s.equals(session))
+                .forEach(s -> s.getAsyncRemote().sendObject(event));
     }
 }

@@ -7,7 +7,7 @@ import com.josue.micro.registry.client.ServiceConfig;
  */
 public class Event {
     enum Type {
-        CONNECT, DISCONNECT, ERROR
+        CONNECTED, DISCONNECTED,
     }
 
     private Type type;

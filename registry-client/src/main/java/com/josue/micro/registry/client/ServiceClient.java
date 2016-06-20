@@ -1,13 +1,17 @@
 package com.josue.micro.registry.client;
 
+import com.josue.micro.registry.client.ws.EventEncoder;
 import com.josue.micro.registry.client.ws.ServiceClientEndpoint;
 
+import javax.websocket.ClientEndpointConfig;
+import javax.websocket.CloseReason;
 import javax.websocket.ContainerProvider;
 import javax.websocket.Endpoint;
 import javax.websocket.Session;
 import javax.websocket.WebSocketContainer;
 import java.io.IOException;
 import java.net.URI;
+import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -46,7 +50,11 @@ public class ServiceClient {
             WebSocketContainer container = ContainerProvider.getWebSocketContainer();
 
             logger.log(Level.INFO, ":: CONNECTING TO {0} ::", registryUrl);
-            session = container.connectToServer(clientEndpoint, new URI(registryUrl));
+            session = container.connectToServer(clientEndpoint, ClientEndpointConfig.Builder.create()
+                            .encoders(Arrays.asList(EventEncoder.class))
+                            .decoders(Arrays.asList(EventEncoder.class))
+                            .build(),
+                    new URI(registryUrl));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -54,7 +62,9 @@ public class ServiceClient {
 
     public synchronized static void deregister() {
         try {
-            session.close();
+            if (session.isOpen()) {
+                session.close(new CloseReason(CloseReason.CloseCodes.NORMAL_CLOSURE, "Service disconnected"));
+            }
         } catch (IOException e) {
             logger.log(Level.SEVERE, ":: Could not close session ::", e);
         }
@@ -77,5 +87,9 @@ public class ServiceClient {
             throw new IllegalStateException(":: Could not find environment property '" + SERVICE_URL + "' ::");
         }
         return serviceUrl;
+    }
+
+    public static ServiceStore getServiceStore() {
+        return serviceStore;
     }
 }

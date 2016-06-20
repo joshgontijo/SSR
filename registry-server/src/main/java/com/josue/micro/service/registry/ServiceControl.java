@@ -1,15 +1,12 @@
 package com.josue.micro.service.registry;
 
-import com.hazelcast.core.IMap;
-
 import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
 import javax.websocket.Session;
-import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -21,16 +18,23 @@ public class ServiceControl {
 
     private static final Logger logger = Logger.getLogger(ServiceControl.class.getName());
 
-    @Inject
-    private IMap<Session, ServiceConfig> cache;
+    private static final Map<Session, ServiceConfig> store = new ConcurrentHashMap<>();
 
 
     public Map<String, List<ServiceConfig>> getServices(String filter) {
-        Map<String, List<ServiceConfig>> collect = cache.values().stream()
+        Map<String, List<ServiceConfig>> collect = store.values().stream()
                 .filter(cfg -> filter == null || cfg.getName().equals(filter))
                 .collect(Collectors.groupingBy(ServiceConfig::getName));
 
         return collect;
+    }
+
+    public Set<Session> getSessions() {
+        return store.keySet();
+    }
+
+    public List<ServiceConfig> getServices() {
+        return store.values().stream().collect(Collectors.toList());
     }
 
     public ServiceConfig register(Session session, ServiceConfig serviceConfig) throws ServiceException {
@@ -48,35 +52,15 @@ public class ServiceControl {
         serviceConfig.setId(session.getId());
         serviceConfig.setSince(new Date());
 
-        cache.put(session, serviceConfig);
+        store.put(session, serviceConfig);
 
         logger.info(":: ADDED " + serviceConfig.toString() + " ::");
 
         return serviceConfig;
     }
 
-    public Collection<ServiceConfig> getServicesForName(String serviceName) {
-        return mapped().get(serviceName);
-    }
-
-    public void deregister(Session session) {
-        cache.remove(session);
-    }
-
-
-    private Map<String, Collection<ServiceConfig>> mapped() {
-        Map<String, Collection<ServiceConfig>> computed = new HashMap<>();
-//        cache.entrySet().stream().map(service -> service.getValue().getName()).collect(Collectors.groupingBy(ServiceConfig::getName));
-//
-//        cache.forEach((s, service) -> {
-//            String serviceName = service.getName();
-//            if (!computed.containsKey(serviceName)) {
-//                computed.put(serviceName, new ArrayList<>());
-//            }
-//
-//            computed.get(serviceName).add(service);
-//        });
-        return computed;
+    public ServiceConfig deregister(Session session) {
+        return store.remove(session);
     }
 
 }
