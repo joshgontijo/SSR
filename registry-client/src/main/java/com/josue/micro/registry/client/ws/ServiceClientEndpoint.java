@@ -1,8 +1,12 @@
 package com.josue.micro.registry.client.ws;
 
 import com.josue.micro.registry.client.ServiceConfig;
+import com.josue.micro.registry.client.ServiceRegister;
 import com.josue.micro.registry.client.ServiceStore;
 
+import javax.inject.Inject;
+import javax.websocket.ClientEndpoint;
+import javax.websocket.CloseReason;
 import javax.websocket.Endpoint;
 import javax.websocket.EndpointConfig;
 import javax.websocket.MessageHandler;
@@ -13,17 +17,19 @@ import java.util.logging.Logger;
 /**
  * Created by Josue on 16/06/2016.
  */
+@ClientEndpoint(encoders = EventEncoder.class, decoders = EventEncoder.class)
 public class ServiceClientEndpoint extends Endpoint {
 
     private static final Logger logger = Logger.getLogger(ServiceClientEndpoint.class.getName());
 
-    private final ServiceStore store;
-    private final ServiceConfig serviceConfig;
+    @Inject
+    private ServiceStore store;
 
-    public ServiceClientEndpoint(ServiceStore store, ServiceConfig serviceConfig) {
-        this.store = store;
-        this.serviceConfig = serviceConfig;
-    }
+    @Inject
+    private ServiceConfig serviceConfig;
+
+    @Inject
+    private ServiceRegister register;
 
     @Override
     public void onOpen(Session session, EndpointConfig endpoint) {
@@ -46,6 +52,13 @@ public class ServiceClientEndpoint extends Endpoint {
 
         logger.log(Level.INFO, ":: Sending connection event ::");
         session.getAsyncRemote().sendObject(new Event(Event.Type.CONNECTED, serviceConfig));
+    }
+
+    //using @OnClose annotation will trigger client events, which causes undesired call to register() on shutdown
+    @Override
+    public void onClose(Session session, CloseReason closeReason) {
+        logger.log(Level.SEVERE, ":: Server closed the connection, reason: {0} ::", closeReason);
+        register.register();
     }
 
     @Override

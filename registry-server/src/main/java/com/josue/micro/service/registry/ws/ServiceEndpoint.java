@@ -31,7 +31,7 @@ public class ServiceEndpoint {
 
     @OnOpen
     public void onOpen(Session session) {
-        logger.log(Level.INFO, ":: Session open, sessionId {0}::", session.getId());
+        logger.log(Level.INFO, ":: Session open, id {0} ::", session.getId());
     }
 
     @OnMessage

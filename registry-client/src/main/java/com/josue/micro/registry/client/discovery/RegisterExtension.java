@@ -1,6 +1,11 @@
-package com.josue.micro.jee.register;
+package com.josue.micro.registry.client.discovery;
+
+import com.josue.micro.registry.client.ServiceRegister;
 
 import javax.enterprise.event.Observes;
+import javax.enterprise.inject.spi.AfterDeploymentValidation;
+import javax.enterprise.inject.spi.Bean;
+import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.Extension;
 import javax.enterprise.inject.spi.ProcessAnnotatedType;
 import javax.enterprise.inject.spi.WithAnnotations;
@@ -31,6 +36,11 @@ public class RegisterExtension implements Extension {
                 className, serviceName
         });
 
-        ServiceRegister.addService(serviceName);
+        ServiceNameHolder.setServiceName(serviceName);
+    }
+
+    public void load(@Observes AfterDeploymentValidation event, BeanManager beanManager) {
+        Bean<?> registerBean = beanManager.getBeans(ServiceRegister.class).iterator().next();
+        beanManager.getReference(registerBean, registerBean.getBeanClass(), beanManager.createCreationalContext(registerBean)).toString();
     }
 }

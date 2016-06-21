@@ -1,4 +1,4 @@
-package com.josue.micro.jee.register;
+package com.josue.micro.registry.client.discovery;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Stereotype;

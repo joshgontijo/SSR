@@ -1,11 +1,13 @@
 package com.josue.micro.registry.client;
 
+import javax.enterprise.inject.Alternative;
 import java.io.Serializable;
 import java.util.Date;
 
 /**
  * Created by Josue on 09/06/2016.
  */
+@Alternative
 public class ServiceConfig implements Serializable {
 
     private String id;
