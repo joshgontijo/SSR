@@ -12,7 +12,6 @@
     <modules>
         <module>registry-server</module>
         <module>registry-client</module>
-        <module>jee-register</module>
     </modules>
 
 </project>
