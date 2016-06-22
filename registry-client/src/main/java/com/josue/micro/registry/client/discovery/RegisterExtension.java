@@ -20,6 +20,8 @@ public class RegisterExtension implements Extension {
 
     private static final Logger logger = Logger.getLogger(RegisterExtension.class.getName());
 
+    private static final String SERVICE_URL = "service.url";
+
     <T> void processAnnotatedType(@Observes @WithAnnotations(EnableDiscovery.class) ProcessAnnotatedType<T> type) {
 
         String className = type.getAnnotatedType().getJavaClass().getName();
@@ -32,15 +34,22 @@ public class RegisterExtension implements Extension {
         String rootPath = jaxrsApp.value();
 
         String serviceName = type.getAnnotatedType().getAnnotation(EnableDiscovery.class).serviceName();
-        logger.log(Level.INFO, " :: Found registry aware service: {0} with name {1} ::", new Object[]{
-                className, serviceName
-        });
+        logger.log(Level.INFO, " :: Found registry aware service: {0} with name {1} ::", new Object[]{className, serviceName});
 
-        ServiceNameHolder.setServiceName(serviceName);
+        ServiceConfigHolder.initServiceConfig(serviceName, getServiceUrl());
     }
 
     public void load(@Observes AfterDeploymentValidation event, BeanManager beanManager) {
         Bean<?> registerBean = beanManager.getBeans(ServiceRegister.class).iterator().next();
         beanManager.getReference(registerBean, registerBean.getBeanClass(), beanManager.createCreationalContext(registerBean)).toString();
+    }
+
+    private String getServiceUrl() {
+        logger.log(Level.INFO, ":: Loading service URL ::");
+        String serviceUrl = System.getProperty(SERVICE_URL);
+        if (serviceUrl == null || serviceUrl.isEmpty()) {
+            throw new IllegalStateException(":: Could not find environment property '" + SERVICE_URL + "' ::");
+        }
+        return serviceUrl;
     }
 }

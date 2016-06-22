@@ -15,6 +15,18 @@ public class ServiceConfig implements Serializable {
     private String address;
     private Date since;
 
+    public ServiceConfig() {
+    }
+
+    public ServiceConfig(ServiceConfig config) {
+        this.id = config.id;
+        this.name = config.name;
+        this.address = config.address;
+        if (config.getSince() != null) {
+            this.since = new Date(config.since.getTime());
+        }
+    }
+
     public String getId() {
         return id;
     }

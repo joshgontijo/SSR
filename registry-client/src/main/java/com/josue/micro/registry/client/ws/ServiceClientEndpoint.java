@@ -1,10 +1,9 @@
 package com.josue.micro.registry.client.ws;
 
-import com.josue.micro.registry.client.ServiceConfig;
 import com.josue.micro.registry.client.ServiceRegister;
 import com.josue.micro.registry.client.ServiceStore;
+import com.josue.micro.registry.client.discovery.ServiceConfigHolder;
 
-import javax.inject.Inject;
 import javax.websocket.ClientEndpoint;
 import javax.websocket.CloseReason;
 import javax.websocket.OnClose;
@@ -19,23 +18,33 @@ import java.util.logging.Logger;
  * Created by Josue on 16/06/2016.
  */
 @ClientEndpoint(encoders = EventEncoder.class, decoders = EventEncoder.class)
-public class ServiceClientEndpoint {
+public class ServiceClientEndpoint  {
 
     private static final Logger logger = Logger.getLogger(ServiceClientEndpoint.class.getName());
-
-    @Inject
     private ServiceStore store;
-
-    @Inject
-    private ServiceConfig serviceConfig;
-
-    @Inject
     private ServiceRegister register;
+
+    public ServiceClientEndpoint(ServiceStore store, ServiceRegister register) {
+        this.store = store;
+        this.register = register;
+    }
+
+//    @Inject
+//    private ServiceStore store;
+//
+//    @Inject
+//    private ServiceRegister register;
+//
+//    @PostConstruct
+//    public void init(){
+//        logger.info("----------------------------");
+//    }
+
 
     @OnOpen
     public void onOpen(Session session) {
         logger.log(Level.INFO, ":: Sending connection event ::");
-        session.getAsyncRemote().sendObject(new Event(Event.Type.CONNECTED, serviceConfig));
+        session.getAsyncRemote().sendObject(new Event(Event.Type.CONNECTED, ServiceConfigHolder.getServiceConfig()));
     }
 
     @OnMessage
@@ -55,8 +64,13 @@ public class ServiceClientEndpoint {
 
     @OnClose
     public void onClose(Session session, CloseReason closeReason) {
-        logger.log(Level.SEVERE, ":: Connection closed, reason: {0} ::", closeReason);
-        register.register();
+        if (!ServiceRegister.shutdownSignal) {
+            logger.log(Level.SEVERE, ":: Connection closed, reason: {0} ::", closeReason);
+            register.register();
+        } else {
+            logger.log(Level.INFO, ":: Client initiated shutdown proccess, not reconnecting ::", closeReason);
+        }
+
     }
 
     @OnError
@@ -85,7 +99,7 @@ public class ServiceClientEndpoint {
 //        });
 //
 //        logger.log(Level.INFO, ":: Sending connection event ::");
-//        session.getAsyncRemote().sendObject(new Event(Event.Type.CONNECTED, serviceConfig));
+//        session.getAsyncRemote().sendObject(new Event(Event.Type.CONNECTED, ServiceConfigHolder.getServiceConfig()));
 //    }
 //
 //    @Override

@@ -54,8 +54,6 @@ public class ServiceControl {
 
         store.put(session, serviceConfig);
 
-        logger.info(":: ADDED " + serviceConfig.toString() + " ::");
-
         return serviceConfig;
     }
 

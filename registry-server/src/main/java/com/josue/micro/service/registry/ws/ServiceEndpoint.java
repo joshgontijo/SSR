@@ -36,22 +36,23 @@ public class ServiceEndpoint {
 
     @OnMessage
     public void onMessage(Event event, Session session) throws ServiceException {
+        logger.log(Level.INFO, ":: Event received {0} ::", event);
         ServiceConfig registered = control.register(session, event.getService());
         //send to all other services except current session
-        serviceJoinedEvent(session, new Event(Event.Type.CONNECTED, registered));
+        sendEvent(session, new Event(Event.Type.CONNECTED, registered));
 
         //send all already connected services to current session
         control.getServices().stream()
                 .forEach(connected -> session.getAsyncRemote().sendObject(new Event(Event.Type.CONNECTED, connected)));
 
-        logger.log(Level.INFO, ":: New service registered, session {0}, details  {1} ::", new Object[]{session.getId(), String.valueOf(event)});
+        logger.log(Level.INFO, ":: New service registered, session {0}, service {1} ::", new Object[]{session.getId(), String.valueOf(event.getService())});
         logger.log(Level.INFO, ":: Connected services {0} ::", control.getSessions().size());
     }
 
     @OnClose
     public void onClose(Session session, CloseReason closeReason) {
         ServiceConfig removed = control.deregister(session);
-        serviceJoinedEvent(session, new Event(Event.Type.DISCONNECTED, removed));
+        sendEvent(session, new Event(Event.Type.DISCONNECTED, removed));
         logger.log(Level.INFO, ":: Session {0} closed because of {1} ::", new Object[]{session.getId(), closeReason});
     }
 
@@ -65,9 +66,9 @@ public class ServiceEndpoint {
         }
     }
 
-    private void serviceJoinedEvent(Session session, Event event) {
+    private void sendEvent(Session currentSession, Event event) {
         control.getSessions().stream()
-                .filter(s -> s.isOpen() && !s.equals(session))
+                .filter(s -> s.isOpen() && !s.equals(currentSession))
                 .forEach(s -> s.getAsyncRemote().sendObject(event));
     }
 }

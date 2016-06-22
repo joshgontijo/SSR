@@ -36,4 +36,10 @@ public class Event {
     public void setService(ServiceConfig service) {
         this.service = service;
     }
+
+
+    @Override
+    public String toString() {
+        return "type=" + type + ", service=" + service;
+    }
 }
