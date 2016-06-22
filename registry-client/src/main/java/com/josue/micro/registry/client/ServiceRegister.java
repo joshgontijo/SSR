@@ -40,6 +40,8 @@ public class ServiceRegister implements Runnable {
     private Session session;
     private ServiceConfig serviceConfig;
 
+    private static boolean shutdownSignal = false;
+
     @Resource
     private ManagedScheduledExecutorService mses;
 
@@ -68,14 +70,23 @@ public class ServiceRegister implements Runnable {
 
     public void register() {
         deregister();
-        retryCounter.set(0);
 
         synchronized (LOCK) {
-            mses.schedule(this, 5, TimeUnit.SECONDS);
+            if (!shutdownSignal) {//there's no shutdown signal
+                retryCounter.set(0);
+                mses.schedule(this, 5, TimeUnit.SECONDS);
+            }
         }
     }
 
     @PreDestroy
+    public void shutdown() {
+        synchronized (LOCK) {
+            shutdownSignal = true;
+        }
+        deregister();
+    }
+
     public void deregister() {
         synchronized (LOCK) {
             try {
