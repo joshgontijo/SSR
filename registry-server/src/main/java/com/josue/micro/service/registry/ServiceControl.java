@@ -2,6 +2,7 @@ package com.josue.micro.service.registry;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.websocket.Session;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -33,8 +34,8 @@ public class ServiceControl {
         return store.keySet();
     }
 
-    public List<ServiceConfig> getServices() {
-        return store.values().stream().collect(Collectors.toList());
+    public Collection<ServiceConfig> getServices() {
+        return store.values();
     }
 
     public ServiceConfig register(Session session, ServiceConfig serviceConfig) throws ServiceException {
