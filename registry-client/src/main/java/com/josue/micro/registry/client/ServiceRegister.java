@@ -29,7 +29,7 @@ public class ServiceRegister implements Runnable {
     private static final Logger logger = Logger.getLogger(ServiceRegister.class.getName());
 
     private static final String REGISTRY_PATH = "registry";
-    private static final String REGISTRY_URL_KEY = "registry.url";
+    private static final String REGISTRY_URL_KEY = "registryUrl";
 
     private static final Object LOCK = new Object();
     private static final AtomicInteger retryCounter = new AtomicInteger();
@@ -92,6 +92,11 @@ public class ServiceRegister implements Runnable {
     private String getRegistryUrl() {
         logger.log(Level.INFO, ":: Loading registry URL ::");
         String registryUrl = System.getProperty(REGISTRY_URL_KEY);
+
+        if (registryUrl == null || registryUrl.isEmpty()) {
+            registryUrl = System.getenv(REGISTRY_URL_KEY);
+        }
+
         if (registryUrl == null || registryUrl.isEmpty()) {
             throw new IllegalStateException(":: Could not find environment property '" + REGISTRY_URL_KEY + "' ::");
         }

@@ -13,7 +13,6 @@ import javax.websocket.OnOpen;
 import javax.websocket.Session;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 /**
  * Created by Josue on 16/06/2016.
  */
