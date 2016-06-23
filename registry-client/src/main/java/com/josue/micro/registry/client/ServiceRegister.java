@@ -90,16 +90,7 @@ public class ServiceRegister implements Runnable {
     }
 
     private String getRegistryUrl() {
-        logger.log(Level.INFO, ":: Loading registry URL ::");
-        String registryUrl = System.getProperty(REGISTRY_URL_KEY);
-
-        if (registryUrl == null || registryUrl.isEmpty()) {
-            registryUrl = System.getenv(REGISTRY_URL_KEY);
-        }
-
-        if (registryUrl == null || registryUrl.isEmpty()) {
-            throw new IllegalStateException(":: Could not find environment property '" + REGISTRY_URL_KEY + "' ::");
-        }
+        String registryUrl = PropertyLoader.getInstance().getRegistryUrl();
         String urlSeparator = registryUrl.endsWith("/") ? "" : "/";
         return registryUrl + urlSeparator + REGISTRY_PATH;
     }

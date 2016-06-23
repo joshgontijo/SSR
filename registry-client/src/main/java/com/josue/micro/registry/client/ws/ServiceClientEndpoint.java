@@ -20,6 +20,7 @@ import java.util.logging.Logger;
 public class ServiceClientEndpoint  {
 
     private static final Logger logger = Logger.getLogger(ServiceClientEndpoint.class.getName());
+
     private ServiceStore store;
     private ServiceRegister register;
 
@@ -27,18 +28,6 @@ public class ServiceClientEndpoint  {
         this.store = store;
         this.register = register;
     }
-
-//    @Inject
-//    private ServiceStore store;
-//
-//    @Inject
-//    private ServiceRegister register;
-//
-//    @PostConstruct
-//    public void init(){
-//        logger.info("----------------------------");
-//    }
-
 
     @OnOpen
     public void onOpen(Session session) {
