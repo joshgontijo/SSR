@@ -38,19 +38,7 @@ public class PropertyLoader {
         }
 
         serviceUrl = getProperty(SERVICE_URL);
-
-        if (serviceUrl == null) {
-            logger.log(Level.SEVERE, ":: Value for {0} not found on {1} file or environment variable ::",
-                    new Object[]{SERVICE_URL, PROPERTIES_FILE_NAME});
-        }
-
         registryUrl = getProperty(REGISTRY_URL);
-
-        if (registryUrl == null) {
-            logger.log(Level.SEVERE, ":: Value for {0} not found on {1} file or environment variable ::",
-                    new Object[]{REGISTRY_URL, PROPERTIES_FILE_NAME});
-        }
-
     }
 
     public static synchronized PropertyLoader getInstance() {
@@ -60,10 +48,15 @@ public class PropertyLoader {
         return INSTANCE;
     }
 
-    private String getProperty(String key){
+    private String getProperty(String key) {
         String fromEnv = fileProperties.getProperty(key);
         String fromFile = fromSystemProperties(key);
-        return !isBlank(fromEnv) ? fromEnv : fromFile;
+        String property = !isBlank(fromEnv) ? fromEnv : fromFile;
+        if (property == null) {
+            logger.log(Level.SEVERE, ":: Value for {0} not found on {1} file or environment variable ::",
+                    new Object[]{key, PROPERTIES_FILE_NAME});
+        }
+        return property;
     }
 
     private String fromSystemProperties(String key) {
