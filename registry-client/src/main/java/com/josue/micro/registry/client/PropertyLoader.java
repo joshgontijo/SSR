@@ -37,18 +37,14 @@ public class PropertyLoader {
             }
         }
 
-        String fromFile = fileProperties.getProperty(SERVICE_URL);
-        String fromEnv = fromSystemProperties(SERVICE_URL);
-        serviceUrl = !isBlank(fromFile) || !isBlank(fromEnv) ? fromFile : fromEnv;
+        serviceUrl = getProperty(SERVICE_URL);
 
         if (serviceUrl == null) {
             logger.log(Level.SEVERE, ":: Value for {0} not found on {1} file or environment variable ::",
                     new Object[]{SERVICE_URL, PROPERTIES_FILE_NAME});
         }
 
-        fromFile = fileProperties.getProperty(REGISTRY_URL);
-        fromEnv = fromSystemProperties(REGISTRY_URL);
-        registryUrl = !isBlank(fromFile) || !isBlank(fromEnv) ? fromFile : fromEnv;
+        registryUrl = getProperty(REGISTRY_URL);
 
         if (registryUrl == null) {
             logger.log(Level.SEVERE, ":: Value for {0} not found on {1} file or environment variable ::",
@@ -64,6 +60,11 @@ public class PropertyLoader {
         return INSTANCE;
     }
 
+    private String getProperty(String key){
+        String fromEnv = fileProperties.getProperty(key);
+        String fromFile = fromSystemProperties(key);
+        return !isBlank(fromEnv) ? fromEnv : fromFile;
+    }
 
     private String fromSystemProperties(String key) {
         logger.log(Level.INFO, ":: Loading registry URL ::");
