@@ -14,8 +14,8 @@ public class PropertyLoader {
     private Properties fileProperties = new Properties();
 
     private static final String PROPERTIES_FILE_NAME = "registry.properties";
-    private static final String SERVICE_URL = "service.url";
-    private static final String REGISTRY_URL = "registry.url";
+    private static final String SERVICE_URL = "serviceUrl";
+    private static final String REGISTRY_URL = "registryUrl";
 
     private String registryUrl;
     private String serviceUrl;
