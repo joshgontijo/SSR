@@ -4,6 +4,7 @@ Server can also run on web servers (Tomcat) with CDI, JAXRS and JSR-356 Websocke
 (not tested though, just use an application server !
 
 ## Configuration
+
 ### Maven dependency
 - Download the source and build by yourself =).
 - Add as maven dependency
@@ -33,34 +34,32 @@ Setting the following environment variables are necessary, otherwise the applica
 - `serviceUrl`: The full address of you application
 - `registryUrl`: The full address of the registry server
 
-#### Applc
+#### System property
 
+    -DserviceUrl=http://192.168.0.7:8080 -DregistryUrl=http://192.168.0.9:8888/myApp
+
+#### Properties file (`registry.properties`)
+
+    serviceUrl=http://192.168.0.7:8080
+    registryUrl=http://192.168.0.9:8888/myApp
+
+#### With docker
+
+    docker run -it -d -p 1234:8080  -e serviceUrl=http://192.168.0.7:1234 -e registryUrl=http://192.168.0.9:8888/myApp myApp
+
+### Expected behaviour
+- If `serviceUrl` and `registryUrl` are not provided the app won't start
+- If registry is not running, connection retry will happen every 10s for 999 times (to be configurable)
+
+## Acessing services
+To access the service URL simply use:
+
+    @Inject
+    ServiceStore serviceStore;
     
-
-    docker run -it -d -p 8080:8080 -e serviceUrl=http://192.168.0.7:8081/account -e registryUrl=http://192.168.0.7:8080 account
-
-
-## How it works
-Simply a websocket endpoint backed by a concurrent map (no distributed cache yet).
-Also contains a simple REST endpoint to provide connected nodes:
-
-    http://localhost:8080/api/services
+    //default
+    ServiceConfig any = serviceStore.get("serviceName");
+    ServiceConfig random = serviceStore.get("serviceName", Strategy.random());
+    ServiceConfig roundRobin = serviceStore.get("serviceName", Strategy.roundRobin());
     
-    {
-    	"balance" :
-    	 : {
-    		"address" : "http://192.168.0.7:8082/balance/rest"
-    		"name" : "balance"
-    		"id" : "a"
-    		"since" : "20160623053313+0000"
-    	}
-    
-    	"account" :
-    	 : {
-    		"address" : "http://192.168.0.9:8081/account/rest"
-    		"name" : "account"
-    		"id" : "9"
-    		"since" : "20160623053246+0000"
-    	}
-    }
-    
+The `Strategy` class provides a way of customising how the services are accessed. To implement your own simply extends this class.
