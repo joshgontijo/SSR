@@ -34,7 +34,7 @@ public class RegisterExtension implements Extension {
 
         String rootPath = jaxrsApp.value();
 
-        String serviceName = type.getAnnotatedType().getAnnotation(EnableDiscovery.class).serviceName();
+        String serviceName = type.getAnnotatedType().getAnnotation(EnableDiscovery.class).name();
         logger.log(Level.INFO, " :: Found registry aware service: {0} with name {1} on path {2} ::",
                 new Object[]{className, serviceName, rootPath});
 

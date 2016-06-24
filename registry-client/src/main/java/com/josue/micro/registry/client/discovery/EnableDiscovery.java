@@ -20,5 +20,5 @@ import java.lang.annotation.Target;
 public @interface EnableDiscovery {
 
     @Nonbinding
-    String serviceName();
+    String name();
 }
