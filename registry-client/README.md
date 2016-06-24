@@ -1,7 +1,7 @@
 ## Pre requisites
 Must run on any Java EE 7 application server, and JDK 7.
 Server can also run on web servers (Tomcat) with CDI, JAXRS and JSR-356 Websockets client
-(not tested though, just use an application server !
+not tested though (just use an application server !)
 
 ## Configuration
 
