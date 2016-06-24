@@ -15,15 +15,18 @@ public class ServiceStore {
     private static final Map<String, List<ServiceConfig>> store = new ConcurrentHashMap<>();
 
     public ServiceConfig getAny(String serviceName) {
+        return getAny(serviceName, Strategy.RANDOM);
+    }
+
+    public ServiceConfig getAny(String serviceName, Strategy strategy) {
         if (!store.containsKey(serviceName)) {
             return null;
         }
-        return store.get(serviceName).get(0);
-    }
-
-    //TODO implement get strategy(round robin) etc
-    public ServiceConfig getAny(String serviceName, String strategy) {
-        throw new RuntimeException(":: Not implemented yet ::");
+        List<ServiceConfig> configs = store.get(serviceName);
+        if (configs == null || configs.isEmpty()) {
+            return null;
+        }
+        return strategy.apply(configs);
     }
 
     public void addService(String key, ServiceConfig value) {
@@ -36,4 +39,5 @@ public class ServiceStore {
     public void removeService(String id) {
         store.values().forEach(c -> c.removeIf(cfg -> cfg.getId().equals(id)));
     }
+
 }
