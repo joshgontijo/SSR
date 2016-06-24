@@ -14,11 +14,11 @@ public class ServiceStore {
 
     private static final Map<String, List<ServiceConfig>> store = new ConcurrentHashMap<>();
 
-    public ServiceConfig getAny(String serviceName) {
-        return getAny(serviceName, Strategy.random());
+    public ServiceConfig get(String serviceName) {
+        return get(serviceName, Strategy.any());
     }
 
-    public ServiceConfig getAny(String serviceName, Strategy strategy) {
+    public ServiceConfig get(String serviceName, Strategy strategy) {
         if (!store.containsKey(serviceName)) {
             return null;
         }

@@ -10,6 +10,15 @@ import java.util.concurrent.atomic.AtomicInteger;
 public abstract class Strategy {
     abstract ServiceConfig apply(List<ServiceConfig> configs);
 
+    public static Strategy any() {
+        return new Strategy() {
+            @Override
+            ServiceConfig apply(List<ServiceConfig> configs) {
+                return configs.get(0);
+            }
+        };
+    }
+
     public static Strategy random() {
         return new Strategy() {
             @Override
