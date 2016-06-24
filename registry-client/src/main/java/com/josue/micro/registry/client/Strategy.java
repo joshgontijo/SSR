@@ -7,28 +7,33 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * @author Josue Gontijo.
  */
-public interface Strategy {
-    ServiceConfig apply(List<ServiceConfig> configs);
+public abstract class Strategy {
+    abstract ServiceConfig apply(List<ServiceConfig> configs);
 
-    Strategy RANDOM = new Strategy() {
-        @Override
-        public ServiceConfig apply(List<ServiceConfig> configs) {
-            int idx = ThreadLocalRandom.current().nextInt(0, configs.size() - 1);
-            return configs.get(idx);
-        }
-    };
+    public static Strategy random() {
+        return new Strategy() {
+            @Override
+            ServiceConfig apply(List<ServiceConfig> configs) {
+                int idx = ThreadLocalRandom.current().nextInt(0, configs.size() - 1);
+                return configs.get(idx);
+            }
+        };
+    }
 
     AtomicInteger counter = new AtomicInteger();
-    Strategy ROUND_ROBIN = new Strategy() {
-        @Override
-        public ServiceConfig apply(List<ServiceConfig> configs) {
-            int current = counter.getAndIncrement();
-            if (current >= configs.size()) {
-                current = 0;
-                counter.set(0);
+
+    public static Strategy roundRobin() {
+        return new Strategy() {
+            @Override
+            ServiceConfig apply(List<ServiceConfig> configs) {
+                int current = counter.getAndIncrement();
+                if (current >= configs.size()) {
+                    current = 0;
+                    counter.set(0);
+                }
+                return configs.get(current);
             }
-            return configs.get(current);
-        }
-    };
+        };
+    }
 
 }

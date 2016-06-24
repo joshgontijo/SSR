@@ -15,7 +15,7 @@ public class ServiceStore {
     private static final Map<String, List<ServiceConfig>> store = new ConcurrentHashMap<>();
 
     public ServiceConfig getAny(String serviceName) {
-        return getAny(serviceName, Strategy.RANDOM);
+        return getAny(serviceName, Strategy.random());
     }
 
     public ServiceConfig getAny(String serviceName, Strategy strategy) {
