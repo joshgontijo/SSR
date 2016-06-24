@@ -36,16 +36,18 @@ Setting the following environment variables are necessary, otherwise the applica
 
 #### System property
 
-    -DserviceUrl=http://192.168.0.7:8080 -DregistryUrl=http://192.168.0.9:8888/myApp
+    -DserviceUrl=http://192.168.0.7:1234/myApp -DregistryUrl=http://192.168.0.9:8080
 
 #### Properties file (`registry.properties`)
 
-    serviceUrl=http://192.168.0.7:8080
-    registryUrl=http://192.168.0.9:8888/myApp
+    registryUrl=http://192.168.0.7:8080
+    serviceUrl=http://192.168.0.9:8888/myApp
 
 #### With docker
 
-    docker run -it -d -p 1234:8080  -e serviceUrl=http://192.168.0.7:1234 -e registryUrl=http://192.168.0.9:8888/myApp myApp
+    docker run -it -d -p 1234:8080  -e registryUrl=http://192.168.0.7:8080 -e serviceUrl=http://192.168.0.9:1234/myApp myApp
+
+Note that if deployed manually, check the application root context, which is `/registry`
 
 ### Expected behaviour
 - If `serviceUrl` and `registryUrl` are not provided the app won't start
