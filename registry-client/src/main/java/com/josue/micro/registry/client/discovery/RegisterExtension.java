@@ -21,9 +21,9 @@ public class RegisterExtension implements Extension {
 
     private static final Logger logger = Logger.getLogger(RegisterExtension.class.getName());
 
-    private static final String SERVICE_URL = "service.host";
-
     <T> void processAnnotatedType(@Observes @WithAnnotations(EnableDiscovery.class) ProcessAnnotatedType<T> type) {
+
+        logger.info(":: BOOTSTRAPING SERVICE REGISTRY DISCOVERY ::");
 
         String className = type.getAnnotatedType().getJavaClass().getName();
         ApplicationPath jaxrsApp = type.getAnnotatedType().getJavaClass().getAnnotation(ApplicationPath.class);
