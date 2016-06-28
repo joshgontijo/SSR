@@ -1,6 +1,5 @@
 package com.josue.micro.registry.client.discovery;
 
-import com.josue.micro.registry.client.PropertyLoader;
 import com.josue.micro.registry.client.ServiceRegister;
 
 import javax.enterprise.event.Observes;
@@ -38,7 +37,7 @@ public class RegisterExtension implements Extension {
         logger.log(Level.INFO, " :: Found registry aware service: {0} with name {1} on path {2} ::",
                 new Object[]{className, serviceName, rootPath});
 
-        ServiceConfigHolder.initServiceConfig(serviceName, PropertyLoader.getInstance().getServiceUrl(), rootPath);
+        Configuration.initServiceConfig(serviceName, rootPath);
     }
 
     public void load(@Observes AfterDeploymentValidation event, BeanManager beanManager) {

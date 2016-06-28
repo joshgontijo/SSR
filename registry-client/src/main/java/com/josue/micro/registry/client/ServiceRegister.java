@@ -1,6 +1,6 @@
 package com.josue.micro.registry.client;
 
-import com.josue.micro.registry.client.discovery.ServiceConfigHolder;
+import com.josue.micro.registry.client.discovery.Configuration;
 import com.josue.micro.registry.client.ws.ServiceClientEndpoint;
 
 import javax.annotation.PostConstruct;
@@ -29,7 +29,6 @@ public class ServiceRegister implements Runnable {
     private static final Logger logger = Logger.getLogger(ServiceRegister.class.getName());
 
     private static final String REGISTRY_PATH = "registry";
-    private static final String REGISTRY_URL_KEY = "registryUrl";
 
     private static final Object LOCK = new Object();
     private static final AtomicInteger retryCounter = new AtomicInteger();
@@ -49,7 +48,7 @@ public class ServiceRegister implements Runnable {
     public void init() {
         synchronized (LOCK) {
             logger.log(Level.INFO, ":: Initialising service register ::");
-            if (ServiceConfigHolder.isInitialised()) {
+            if (Configuration.isInitialised()) {
                 register();
             } else {
                 logger.log(Level.INFO, ":: No services found ::");
@@ -90,7 +89,7 @@ public class ServiceRegister implements Runnable {
     }
 
     private String getRegistryUrl() {
-        String registryUrl = PropertyLoader.getInstance().getRegistryUrl();
+        String registryUrl = Configuration.getRegistryUrl();
         String urlSeparator = registryUrl.endsWith("/") ? "" : "/";
         return registryUrl + urlSeparator + REGISTRY_PATH;
     }

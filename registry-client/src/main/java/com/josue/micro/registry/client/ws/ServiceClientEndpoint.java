@@ -2,7 +2,7 @@ package com.josue.micro.registry.client.ws;
 
 import com.josue.micro.registry.client.ServiceRegister;
 import com.josue.micro.registry.client.ServiceStore;
-import com.josue.micro.registry.client.discovery.ServiceConfigHolder;
+import com.josue.micro.registry.client.discovery.Configuration;
 
 import javax.websocket.ClientEndpoint;
 import javax.websocket.CloseReason;
@@ -32,7 +32,7 @@ public class ServiceClientEndpoint  {
     @OnOpen
     public void onOpen(Session session) {
         logger.log(Level.INFO, ":: Sending connection event ::");
-        session.getAsyncRemote().sendObject(new Event(Event.Type.CONNECTED, ServiceConfigHolder.getServiceConfig()));
+        session.getAsyncRemote().sendObject(new Event(Event.Type.CONNECTED, Configuration.getServiceConfig()));
     }
 
     @OnMessage
@@ -66,38 +66,4 @@ public class ServiceClientEndpoint  {
         logger.log(Level.SEVERE, "Error handling event", thr);
     }
 
-
-//    @Override
-//    public void onOpen(Session session, EndpointConfig endpoint) {
-//        session.addMessageHandler(new MessageHandler.Whole<Event>() {
-//            @Override
-//            public void onMessage(Event event) {
-//                logger.log(Level.INFO, ":: New Event: {0} ::", event);
-//                switch (event.getType()) {
-//                    case CONNECTED:
-//                        store.addService(event.getService().getName(), event.getService());
-//                        break;
-//                    case DISCONNECTED:
-//                        store.removeService(event.getService().getId());
-//                        break;
-//                    default:
-//                        logger.log(Level.WARNING, ":: Event {0} not implemented ::", event.getType());
-//                }
-//            }
-//        });
-//
-//        logger.log(Level.INFO, ":: Sending connection event ::");
-//        session.getAsyncRemote().sendObject(new Event(Event.Type.CONNECTED, ServiceConfigHolder.getServiceConfig()));
-//    }
-//
-//    @Override
-//    public void onClose(Session session, CloseReason closeReason) {
-//        logger.log(Level.SEVERE, ":: Server closed the connection, reason: {0} ::", closeReason);
-//        register.register();
-//    }
-//
-//    @Override
-//    public void onError(Session session, Throwable thr) {
-//        logger.log(Level.SEVERE, "Error handling event", thr);
-//    }
 }

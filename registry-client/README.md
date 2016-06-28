@@ -24,33 +24,33 @@ not tested though (just use an application server !)
 
 ### JAXRS application
 
-    @EnableDiscovery(name = "balance")
+    @EnableDiscovery(name = "myApp")
     @ApplicationPath("rest")
     public class JaxrsApp extends Application {
     }
 
 ### Setting environment variables
 Setting the following environment variables are necessary, otherwise the application won't start.
-- `serviceUrl`: The full address of you application
-- `registryUrl`: The full address of the registry server
+- `APP_NAME.url`: The full address of you application, where `APP_NAME` is the name registered on `@EnableDiscovery(name = "myApp")`
+- `registry.url`: The full address of the registry server
 
 #### System property
 
-    -DserviceUrl=http://192.168.0.7:1234/myApp -DregistryUrl=http://192.168.0.9:8080
+    -DmyApp.url=http://192.168.0.7:1234/myApp -DregistryUrl=http://192.168.0.9:8080
 
 #### Properties file (`registry.properties`)
 
-    registryUrl=http://192.168.0.7:8080
-    serviceUrl=http://192.168.0.9:8888/myApp
+    registry.url=http://192.168.0.7:8080
+    myApp.url=http://192.168.0.9:8888/myApp
 
 #### With docker
 
-    docker run -it -d -p 1234:8080  -e registryUrl=http://192.168.0.7:8080 -e serviceUrl=http://192.168.0.9:1234/myApp myApp
+    docker run -it -d -p 1234:8080  -e registry.url=http://192.168.0.7:8080 -e myApp.url=http://192.168.0.9:1234/myApp myApp
 
 Note that if deployed manually, check the application root context, which is `/registry`
 
 ### Expected behaviour
-- If `serviceUrl` and `registryUrl` are not provided the app won't start
+- If `APP_NAME.url` and `registry.url` are not provided the app won't start
 - If registry is not running, connection retry will happen every 10s for 999 times (to be configurable)
 
 ## Acessing services
