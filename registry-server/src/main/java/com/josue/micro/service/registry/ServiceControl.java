@@ -60,7 +60,10 @@ public class ServiceControl {
     }
 
     public ServiceConfig deregister(Session session) {
-        return store.remove(session);
+        ServiceConfig removed = store.remove(session);
+        logger.info(":: Service deregistered " + removed + " ::");
+        return removed;
+
     }
 
 }
