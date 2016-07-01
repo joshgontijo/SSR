@@ -21,7 +21,6 @@ public class ServiceControl {
 
     private static final Map<Session, ServiceConfig> store = new ConcurrentHashMap<>();
 
-
     public Map<String, List<ServiceConfig>> getServices(String filter) {
         Map<String, List<ServiceConfig>> collect = store.values().stream()
                 .filter(cfg -> filter == null || cfg.getName().equals(filter))
@@ -54,6 +53,8 @@ public class ServiceControl {
         serviceConfig.setSince(new Date());
 
         store.put(session, serviceConfig);
+
+        logger.info(":: Service registered " + serviceConfig + " ::");
 
         return serviceConfig;
     }

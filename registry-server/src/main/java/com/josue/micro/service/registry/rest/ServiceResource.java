@@ -1,6 +1,7 @@
 package com.josue.micro.service.registry.rest;
 
 
+import com.josue.micro.service.registry.ServiceConfig;
 import com.josue.micro.service.registry.ServiceControl;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -13,6 +14,9 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Created by Josue on 09/06/2016.
@@ -28,7 +32,11 @@ public class ServiceResource implements Serializable {
 
     @GET
     public Response getServices(@QueryParam("name") String serviceName) {
-        return Response.ok(control.getServices(serviceName)).build();
+        Map<String, List<ServiceConfig>> services = control.getServices(serviceName);
+        List<ServiceConfigResponse> response = services.entrySet().stream()
+                .map(e -> new ServiceConfigResponse(e.getKey(), e.getValue()))
+                .collect(Collectors.toList());
+        return Response.ok(response).build();
     }
 
 }

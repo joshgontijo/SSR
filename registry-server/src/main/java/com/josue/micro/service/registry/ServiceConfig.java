@@ -71,7 +71,8 @@ public class ServiceConfig implements Serializable {
 
     @Override
     public String toString() {
-        return "name='" + name;
+        return "name='" + name + '\'' +
+                ", address='" + address + "\'";
     }
 }
 
