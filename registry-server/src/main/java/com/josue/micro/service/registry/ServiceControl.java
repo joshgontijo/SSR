@@ -48,9 +48,12 @@ public class ServiceControl {
         if (serviceConfig.getAddress() == null || serviceConfig.getAddress().isEmpty()) {
             throw new ServiceException(400, "'address' must be provided");
         }
+        if(serviceConfig.getSince() == null){
+            serviceConfig.setSince(new Date());
+        }
 
         serviceConfig.setId(session.getId());
-        serviceConfig.setSince(new Date());
+
 
         store.put(session, serviceConfig);
 

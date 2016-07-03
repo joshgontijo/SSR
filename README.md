@@ -10,7 +10,7 @@ trying to build their own things. Consul, etcd and other are much better options
 
 ## How it works ?
 It's based on websockets server and client that connect to each other 
-in order to stabilish the who's connected.
+in order to stabilish who's connected.
 
 ## More details
 Check inside each project for more details
