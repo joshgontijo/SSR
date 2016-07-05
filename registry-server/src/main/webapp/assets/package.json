@@ -1,0 +1,27 @@
+{
+  "name": "test123",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "browserify -t [ babelify --presets [ react ] ] src/index.js -o build/app.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "babel-preset-react": "^6.11.1",
+    "babelify": "^7.3.0",
+    "jquery": "^3.0.0",
+    "react": "^15.2.0",
+    "react-dom": "^15.2.0"
+  },
+  "devDependencies": {
+    "babel-preset-es2015": "^6.9.0",
+    "babelify": "^7.3.0",
+    "grunt": "^1.0.1",
+    "grunt-browserify": "^5.0.0",
+    "grunt-contrib-jshint": "^1.0.0",
+    "grunt-contrib-watch": "^1.0.0"
+  }
+}

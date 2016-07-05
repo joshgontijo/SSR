@@ -11,14 +11,9 @@
     <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
     <meta http-equiv="content-language" content="en"/>
     <meta name="robots" content="noindex,nofollow"/>
-    <link rel="stylesheet" media="screen,projection" type="text/css" href="css/main.css"/>
-    <link rel="stylesheet" media="screen,projection" type="text/css" href="css/style.css"/>
+    <link rel="stylesheet" media="screen,projection" type="text/css" href="assets/css/main.css"/>
+    <link rel="stylesheet" media="screen,projection" type="text/css" href="assets/css/style.css"/>
     <!-- WRITE YOUR CSS CODE HERE -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.1.0/react.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.1.0/react-dom.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.6.16/browser.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/remarkable/1.6.2/remarkable.min.js"></script>
 
     <title>Service registry</title>
 
@@ -26,6 +21,6 @@
 </head>
 <body>
     <div id="mainComponent"></div>
-    <script type="text/babel" src="app/app.jsx"></script>
+    <script src="assets/build/app.js"></script>
 </body>
 </html>
