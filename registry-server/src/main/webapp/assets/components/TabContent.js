@@ -2,6 +2,7 @@ var React = require('react');
 
 module.exports = React.createClass({
     render: function () {
+        console.log('>>>' + JSON.stringify(this.props.instances));
         return (
             <table className="nostyle">
                 <tbody>

@@ -1,4 +1,4 @@
-package com.josue.micro.service.registry.rest;
+package com.josue.micro.service.registry;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonInclude;

@@ -1,6 +1,6 @@
 package com.josue.micro.service.registry.ws;
 
-import com.josue.micro.service.registry.ServiceConfig;
+import com.josue.micro.service.registry.service.ServiceConfig;
 
 /**
  * Created by Josue on 18/06/2016.

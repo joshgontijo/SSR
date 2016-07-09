@@ -1,4 +1,4 @@
-package com.josue.micro.service.registry.rest;
+package com.josue.micro.service.registry;
 
 
 public class ExceptionBean {

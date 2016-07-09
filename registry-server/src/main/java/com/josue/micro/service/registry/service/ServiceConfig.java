@@ -1,7 +1,9 @@
-package com.josue.micro.service.registry;
+package com.josue.micro.service.registry.service;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by Josue on 09/06/2016.
@@ -12,6 +14,7 @@ public class ServiceConfig implements Serializable {
     private String name;
     private String address;
     private Date since;
+    private Set<ServiceConfig> dependencies = new HashSet<>();
 
     public String getId() {
         return id;
@@ -45,6 +48,20 @@ public class ServiceConfig implements Serializable {
         this.since = since;
     }
 
+    public Set<ServiceConfig> getDependencies() {
+        return dependencies;
+    }
+
+    public void setDependencies(Set<ServiceConfig> dependencies) {
+        this.dependencies = dependencies;
+    }
+
+    @Override
+    public String toString() {
+        return "name='" + name + '\'' +
+                ", address='" + address + "\'";
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -55,7 +72,8 @@ public class ServiceConfig implements Serializable {
         if (id != null ? !id.equals(that.id) : that.id != null) return false;
         if (name != null ? !name.equals(that.name) : that.name != null) return false;
         if (address != null ? !address.equals(that.address) : that.address != null) return false;
-        return since != null ? since.equals(that.since) : that.since == null;
+        if (since != null ? !since.equals(that.since) : that.since != null) return false;
+        return dependencies != null ? dependencies.equals(that.dependencies) : that.dependencies == null;
 
     }
 
@@ -65,14 +83,8 @@ public class ServiceConfig implements Serializable {
         result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (address != null ? address.hashCode() : 0);
         result = 31 * result + (since != null ? since.hashCode() : 0);
+        result = 31 * result + (dependencies != null ? dependencies.hashCode() : 0);
         return result;
-    }
-
-
-    @Override
-    public String toString() {
-        return "name='" + name + '\'' +
-                ", address='" + address + "\'";
     }
 }
 

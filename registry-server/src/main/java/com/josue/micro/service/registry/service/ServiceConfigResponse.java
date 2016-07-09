@@ -1,6 +1,4 @@
-package com.josue.micro.service.registry.rest;
-
-import com.josue.micro.service.registry.ServiceConfig;
+package com.josue.micro.service.registry.service;
 
 import java.util.List;
 

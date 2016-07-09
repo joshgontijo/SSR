@@ -1,7 +1,7 @@
 package com.josue.micro.service.registry.ws;
 
-import com.josue.micro.service.registry.ServiceConfig;
-import com.josue.micro.service.registry.ServiceControl;
+import com.josue.micro.service.registry.service.ServiceConfig;
+import com.josue.micro.service.registry.service.ServiceControl;
 import com.josue.micro.service.registry.ServiceException;
 
 import javax.inject.Inject;

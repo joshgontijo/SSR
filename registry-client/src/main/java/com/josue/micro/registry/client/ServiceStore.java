@@ -15,7 +15,7 @@ public class ServiceStore {
     private static final Map<String, List<ServiceConfig>> store = new ConcurrentHashMap<>();
 
     public ServiceConfig get(String serviceName) {
-        return get(serviceName, Strategy.any());
+        return get(serviceName, Strategy.first());
     }
 
     public ServiceConfig get(String serviceName, Strategy strategy) {

@@ -1,8 +1,7 @@
-package com.josue.micro.service.registry.rest;
+package com.josue.micro.service.registry.service;
 
 
-import com.josue.micro.service.registry.ServiceConfig;
-import com.josue.micro.service.registry.ServiceControl;
+import com.josue.micro.service.registry.link.LinkControl;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -29,6 +28,9 @@ public class ServiceResource implements Serializable {
 
     @Inject
     private ServiceControl control;
+
+    @Inject
+    private LinkControl linkControl;
 
     @GET
     public Response getServices(@QueryParam("name") String serviceName) {

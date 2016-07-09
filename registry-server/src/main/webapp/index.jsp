@@ -21,6 +21,7 @@
 </head>
 <body>
     <div id="mainComponent"></div>
+    <div id="diagram"></div>
     <script src="assets/build/app.js"></script>
 </body>
 </html>
