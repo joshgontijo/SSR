@@ -14,7 +14,8 @@ public class ServiceConfig implements Serializable {
     private String name;
     private String address;
     private Date since;
-    private Set<ServiceConfig> dependencies = new HashSet<>();
+    private boolean available = true;
+    private Set<String> links = new HashSet<>();
 
     public String getId() {
         return id;
@@ -48,12 +49,20 @@ public class ServiceConfig implements Serializable {
         this.since = since;
     }
 
-    public Set<ServiceConfig> getDependencies() {
-        return dependencies;
+    public boolean isAvailable() {
+        return available;
     }
 
-    public void setDependencies(Set<ServiceConfig> dependencies) {
-        this.dependencies = dependencies;
+    public void setAvailable(boolean available) {
+        this.available = available;
+    }
+
+    public Set<String> getLinks() {
+        return links;
+    }
+
+    public void setLinks(Set<String> links) {
+        this.links = links;
     }
 
     @Override
@@ -69,21 +78,15 @@ public class ServiceConfig implements Serializable {
 
         ServiceConfig that = (ServiceConfig) o;
 
-        if (id != null ? !id.equals(that.id) : that.id != null) return false;
         if (name != null ? !name.equals(that.name) : that.name != null) return false;
-        if (address != null ? !address.equals(that.address) : that.address != null) return false;
-        if (since != null ? !since.equals(that.since) : that.since != null) return false;
-        return dependencies != null ? dependencies.equals(that.dependencies) : that.dependencies == null;
+        return address != null ? address.equals(that.address) : that.address == null;
 
     }
 
     @Override
     public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (name != null ? name.hashCode() : 0);
+        int result = name != null ? name.hashCode() : 0;
         result = 31 * result + (address != null ? address.hashCode() : 0);
-        result = 31 * result + (since != null ? since.hashCode() : 0);
-        result = 31 * result + (dependencies != null ? dependencies.hashCode() : 0);
         return result;
     }
 }
