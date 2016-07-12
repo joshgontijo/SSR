@@ -6,6 +6,7 @@ var instances = require('./instances.json');
 
 cydagre(cytoscape, dagre);
 
+
 module.exports = React.createClass({
     getInitialState: function () {
         return {
@@ -13,6 +14,22 @@ module.exports = React.createClass({
         };
     },
     componentDidMount: function () {
+        var nodes = [];
+        var edges = [];
+        $.getJSON(root + "/api/services", function (data) {
+
+            data.forEach(function(e){
+               nodes.push({data: {id: e.name}});
+                e.links.forEach(function(link){
+                    edges.push({data: {source: e.name, target: link}})
+                })
+            });
+
+            this.setState({
+                services: data,
+            });
+        }.bind(this));
+
         var that = this;
         var cy = cytoscape({
             container: document.getElementById('cy'),

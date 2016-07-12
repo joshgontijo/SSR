@@ -3,6 +3,8 @@ var ReactDOM = require('react-dom');
 var TabPanel = require('./TabPanel');
 var InstancesDiagram = require('./InstancesDiagram');
 
+
+
 ReactDOM.render(
     <TabPanel />,
     document.getElementById('mainComponent')

@@ -6,7 +6,7 @@ import com.josue.micro.registry.client.ServiceConfig;
  * Created by Josue on 18/06/2016.
  */
 public class Event {
-    enum Type {
+    public enum Type {
         CONNECTED, DISCONNECTED, SERVICE_USAGE
     }
 

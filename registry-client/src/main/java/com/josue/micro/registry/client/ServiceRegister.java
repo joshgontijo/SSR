@@ -109,6 +109,7 @@ public class ServiceRegister implements Runnable, ServiceEventListener {
                 endpoint.addListener(this);
 
                 session = container.connectToServer(endpoint, new URI(registryUrl));
+                store.setSession(session);
 
                 logger.log(Level.INFO, ":: Connected ! ::", session.getId());
 

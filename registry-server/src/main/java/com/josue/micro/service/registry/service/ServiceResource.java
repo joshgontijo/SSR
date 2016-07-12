@@ -13,9 +13,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.Serializable;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.Set;
 
 /**
  * Created by Josue on 09/06/2016.
@@ -31,11 +29,8 @@ public class ServiceResource implements Serializable {
 
     @GET
     public Response getServices(@QueryParam("name") String serviceName) throws Exception {
-        Map<String, List<ServiceConfig>> services = control.getServices(serviceName);
-        List<ServiceConfigResponse> response = services.entrySet().stream()
-                .map(e -> new ServiceConfigResponse(e.getKey(), e.getValue()))
-                .collect(Collectors.toList());
-        return Response.ok(response).build();
+        Set<ServiceConfig> services = control.getServices(serviceName);
+        return Response.ok(services).build();
     }
 
     @PUT

@@ -1,7 +1,6 @@
 package com.josue.micro.registry.client;
 
 import java.io.Serializable;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -10,77 +9,24 @@ import java.util.Set;
  */
 public class ServiceConfig implements Serializable {
 
-    private String id;
-    private String name;
-    private String address;
-    private Date since;
-    private boolean available = true;
-    private Set<String> links = new HashSet<>();
+    private final String name;
+    private final Set<String> links = new HashSet<>();
+    private final Set<ServiceInstance> instances = new HashSet<>();
 
-    public ServiceConfig() {
-    }
-
-    public ServiceConfig(ServiceConfig config) {
-        this.id = config.id;
-        this.name = config.name;
-        this.address = config.address;
-        if (config.getSince() != null) {
-            this.since = new Date(config.since.getTime());
-        }
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
+    public ServiceConfig(String name) {
+        this.name = name;
     }
 
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public Date getSince() {
-        return since;
-    }
-
-    public void setSince(Date since) {
-        this.since = since;
-    }
-
-    public boolean isAvailable() {
-        return available;
-    }
-
-    public void setAvailable(boolean available) {
-        this.available = available;
-    }
-
     public Set<String> getLinks() {
         return links;
     }
 
-    public void setLinks(Set<String> links) {
-        this.links = links;
-    }
-
-    @Override
-    public String toString() {
-        return "name='" + name + '\'' +
-                ", address='" + address + "\'";
+    public Set<ServiceInstance> getInstances() {
+        return instances;
     }
 
     @Override
@@ -90,16 +36,13 @@ public class ServiceConfig implements Serializable {
 
         ServiceConfig that = (ServiceConfig) o;
 
-        if (name != null ? !name.equals(that.name) : that.name != null) return false;
-        return address != null ? address.equals(that.address) : that.address == null;
+        return name != null ? name.equals(that.name) : that.name == null;
 
     }
 
     @Override
     public int hashCode() {
-        int result = name != null ? name.hashCode() : 0;
-        result = 31 * result + (address != null ? address.hashCode() : 0);
-        return result;
+        return name != null ? name.hashCode() : 0;
     }
 }
 

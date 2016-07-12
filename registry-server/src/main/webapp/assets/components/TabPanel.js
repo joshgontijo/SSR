@@ -3,21 +3,23 @@ var $ = require("jquery");
 
 var Tab = require('./Tab');
 var TabContent = require('./TabContent');
-var services = require('./services.json');
+//var services = require('./services.json');
+
+var AppEvent = require('./AppEvent');
 
 module.exports = React.createClass({
-    //componentDidMount: function () {
-    //    $.getJSON(root + "/api/services", function (data) {
-    //        this.setState({
-    //            services: data,
-    //            currentTab: data[0]
-    //        });
-    //    }.bind(this));
-    //},
+    componentDidMount: function () {
+        $.getJSON(root + "/api/services", function (data) {
+            this.setState({
+                services: data,
+                currentTab: data[0]
+            });
+        }.bind(this));
+    },
     getInitialState: function () {
         return {
-            services: services,
-            currentService: services[0]
+            services: [],
+            currentService: null
         };
     },
     tabsClickHandler: function (tab) {

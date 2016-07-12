@@ -1,6 +1,9 @@
 package com.josue.micro.registry.client;
 
+import com.josue.micro.registry.client.ws.Event;
+
 import javax.enterprise.context.ApplicationScoped;
+import javax.websocket.Session;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Map;
@@ -14,9 +17,10 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ServiceStore {
 
     private static final Map<String, Set<ServiceConfig>> store = new ConcurrentHashMap<>();
+    private Session session;
 
     public ServiceConfig get(String serviceName) {
-        return get(serviceName, Strategy.first());
+        return get(serviceName, Strategy.roundRobin());
     }
 
     public ServiceConfig get(String serviceName, Strategy strategy) {
@@ -27,7 +31,13 @@ public class ServiceStore {
         if (configs == null || configs.isEmpty()) {
             return null;
         }
-        return strategy.apply(new ArrayList<>(configs));
+
+        ServiceConfig apply = strategy.apply(new ArrayList<>(configs));
+
+        if (session != null && session.isOpen()) {
+            session.getAsyncRemote().sendObject(new Event(Event.Type.SERVICE_USAGE, apply));
+        }
+        return apply;
     }
 
     public void addService(ServiceConfig service) {
@@ -45,6 +55,10 @@ public class ServiceStore {
     protected void updateService(ServiceConfig config) {
         //overwrite old one, since we only use name + address as hascode
         store.get(config.getName()).add(config);
+    }
+
+    protected void setSession(Session session) {
+        this.session = session;
     }
 
 }
