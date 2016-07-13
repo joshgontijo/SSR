@@ -11,7 +11,5 @@ public interface ServiceEventListener {
 
     void onDisconnect(Event event);
 
-    void onThisDisconnects();
-
     void onServiceUsage(Event event);
 }

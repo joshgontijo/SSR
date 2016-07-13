@@ -1,7 +1,6 @@
 package com.josue.micro.registry.client;
 
 import com.josue.micro.registry.client.discovery.Configuration;
-import com.josue.micro.registry.client.ws.Event;
 import com.josue.micro.registry.client.ws.ServiceClientEndpoint;
 
 import javax.annotation.PostConstruct;
@@ -25,7 +24,7 @@ import java.util.logging.Logger;
  * Created by Josue on 16/06/2016.
  */
 @ApplicationScoped
-public class ServiceRegister implements Runnable, ServiceEventListener {
+public class ServiceRegister implements Runnable {
 
     private static final Logger logger = Logger.getLogger(ServiceRegister.class.getName());
 
@@ -71,6 +70,7 @@ public class ServiceRegister implements Runnable, ServiceEventListener {
     @PreDestroy
     public void shutdown() {
         synchronized (LOCK) {
+            logger.info(":: Shutting down ::");
             shutdownSignal = true;
         }
         deregister();
@@ -105,8 +105,8 @@ public class ServiceRegister implements Runnable, ServiceEventListener {
 
                 logger.log(Level.INFO, ":: Trying to connect to {0}, attempt {1} of {2} ::", new Object[]{registryUrl, retryCounter.incrementAndGet(), MAX_RETRY});
 
-                ServiceClientEndpoint endpoint = new ServiceClientEndpoint();
-                endpoint.addListener(this);
+                ServiceClientEndpoint endpoint = new ServiceClientEndpoint(this);
+                endpoint.addListener(store);
 
                 session = container.connectToServer(endpoint, new URI(registryUrl));
                 store.setSession(session);
@@ -123,25 +123,5 @@ public class ServiceRegister implements Runnable, ServiceEventListener {
                 }
             }
         }
-    }
-
-    @Override
-    public void onConnect(Event event) {
-        store.addService(event.getService());
-    }
-
-    @Override
-    public void onDisconnect(Event event) {
-        store.removeService(event.getService().getId());
-    }
-
-    @Override
-    public void onThisDisconnects() {
-        this.register();
-    }
-
-    @Override
-    public void onServiceUsage(Event event) {
-        store.updateService(event.getService());
     }
 }

@@ -15,14 +15,6 @@ public class ServiceInstance {
     public ServiceInstance() {
     }
 
-    public ServiceInstance(ServiceInstance config) {
-        this.id = config.id;
-        this.address = config.address;
-        if (config.getSince() != null) {
-            this.since = new Date(config.since.getTime());
-        }
-    }
-
     public String getId() {
         return id;
     }
@@ -69,5 +61,13 @@ public class ServiceInstance {
     @Override
     public int hashCode() {
         return address != null ? address.hashCode() : 0;
+    }
+
+    @Override
+    public String toString() {
+        return "id='" + id + '\'' +
+                ", address='" + address + '\'' +
+                ", since=" + since +
+                ", available=" + available;
     }
 }

@@ -1,6 +1,7 @@
 package com.josue.micro.registry.client.discovery;
 
 import com.josue.micro.registry.client.ServiceConfig;
+import com.josue.micro.registry.client.ServiceInstance;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -61,10 +62,13 @@ public class Configuration {
 
         String serviceAddress = serviceUrl + FORWARD_SLASH + appRoot;
 
-        config = new ServiceConfig();
-        config.setName(name);
-        config.setAddress(serviceAddress);
-        config.setSince(new Date());
+
+        ServiceInstance instance = new ServiceInstance();
+        instance.setSince(new Date());
+        instance.setAddress(serviceAddress);
+
+        config = new ServiceConfig(name);
+        config.getInstances().add(instance);
 
     }
 

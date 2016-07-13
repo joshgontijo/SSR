@@ -9,9 +9,12 @@ import java.util.Set;
  */
 public class ServiceConfig implements Serializable {
 
-    private final String name;
+    private String name;
     private final Set<String> links = new HashSet<>();
     private final Set<ServiceInstance> instances = new HashSet<>();
+
+    public ServiceConfig() {
+    }
 
     public ServiceConfig(String name) {
         this.name = name;

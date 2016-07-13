@@ -4,7 +4,8 @@ import com.josue.micro.service.registry.ServiceException;
 
 import javax.enterprise.context.ApplicationScoped;
 import java.util.Date;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
@@ -21,81 +22,90 @@ public class ServiceControl {
     static final Set<ServiceConfig> store = ConcurrentHashMap.newKeySet();
 //    private static final Map<String, ServiceConfig> store = new ConcurrentHashMap<>();
 
-    //returns all the services, including the disabled ones
+    //returns a copy of all the services, including the disabled ones
     public Set<ServiceConfig> getServices(String filter) {
         Set<ServiceConfig> collect = store.stream()
                 .filter(cfg -> filter == null || cfg.getName().equals(filter))
                 .collect(Collectors.toSet());
 
-        return collect;
+        return new HashSet<>(collect);
     }
 
     public Set<ServiceConfig> getServices() {
-        return store;
+        return getServices(null);
     }
 
-    public ServiceInstance register(String id, ServiceConfig serviceConfig) throws ServiceException {
+    public ServiceConfig register(String id, ServiceConfig serviceConfig) throws ServiceException {
         if (serviceConfig == null) {
             throw new ServiceException(400, "Service must be provided");
         }
-        if(serviceConfig.getInstances() == null || serviceConfig.getInstances().isEmpty()){
+        if (serviceConfig.getName() == null || serviceConfig.getName().isEmpty()) {
+            throw new ServiceException(400, "Service name not provided");
+        }
+        if (serviceConfig.getInstances() == null || serviceConfig.getInstances().isEmpty()) {
             throw new ServiceException(400, "Instances not provided");
         }
 
-        if (serviceConfig.getAddress() == null || serviceConfig.getAddress().isEmpty()) {
-            throw new ServiceException(400, "'address' must be provided");
-        }
-        if (serviceConfig.getSince() == null) {
-            serviceConfig.setSince(new Date());
-        }
-
         deleteUnavailableNodes(serviceConfig.getName());
+        for (ServiceInstance si : serviceConfig.getInstances()) {
+            if (si.getAddress() == null || si.getAddress().isEmpty()) {
+                throw new ServiceException(400, "'address' must be provided");
+            }
+            if (si.getSince() == null) {
+                si.setSince(new Date());
+            }
 
-        serviceConfig.setId(id);
-        serviceConfig.setAvailable(true);
-        Set<ServiceConfig> collect = store.stream().filter(s -> s.getName().equals(serviceConfig.getName())).collect(Collectors.toSet());
-        if(!collect.isEmpty()){
-          collect.iterator().next().getInstances().add(serviceConfig);
-        }
-        else{
-            ServiceConfig config = new ServiceConfig(serviceConfig.getName());
-            config.getInstances().add(serviceConfig);
-            store.add(config);
+            si.setId(id);
+            si.setAvailable(true);
+
+            Set<ServiceConfig> collect = store.stream().filter(s -> s.getName().equals(serviceConfig.getName())).collect(Collectors.toSet());
+            if (!collect.isEmpty()) {
+                collect.iterator().next().getInstances().add(si);
+            } else {
+                ServiceConfig config = new ServiceConfig(serviceConfig.getName());
+                config.getInstances().add(si);
+                store.add(config);
+            }
         }
 
         return serviceConfig;
     }
 
-    public ServiceInstance deregister(String id) throws ServiceException {
-        ServiceInstance instance = store.stream()
-                .flatMap(s -> s.getInstances().stream())
-                .filter(s -> s.getId().equals(id))
-                .findFirst().get();
+    public ServiceConfig deregister(String id) throws ServiceException {
+        Optional<ServiceConfig> serviceConfigOpt = store.stream()
+                .filter(s -> s.getInstances().stream()
+                        .filter(i -> i.getId().equals(id))
+                        .findFirst()
+                        .isPresent())
+                .findFirst();
 
-        if(instance == null){
+
+        if (!serviceConfigOpt.isPresent()) {
             throw new ServiceException(400, "Service not foundSource for session '" + id + "'");
         }
 
-        instance.setAvailable(false);
-        return instance;
+        ServiceConfig serviceConfig = serviceConfigOpt.get();
+        serviceConfig.getInstances().forEach(i -> {if(i.getId().equals(id)) i.setAvailable(false);});
+
+        return serviceConfig;
 
     }
 
-    public ServiceConfig addLink(String id, ServiceInstance target) throws ServiceException {
-        ServiceConfig foundSource = store.stream()
+    public ServiceConfig addLink(String id, ServiceConfig target) throws ServiceException {
+        Optional<ServiceConfig> foundSourceOpt = store.stream()
                 .filter(s -> s.getInstances().stream().map(ServiceInstance::getId).filter(id::equals).findFirst().isPresent())
-                .findFirst()
-                .get();
+                .findFirst();
 
-        if(foundSource == null){
+        if (!foundSourceOpt.isPresent()) {
             throw new ServiceException(400, "Service not foundSource for session '" + id + "'");
         }
 
-        List<ServiceConfig> foundTargets = store.stream()
-                .filter(c -> c.getName().equals(target.getName()))
-                .collect(Collectors.toList());
+        ServiceConfig foundSource = foundSourceOpt.get();
 
-        if (foundTargets.isEmpty()) {
+        Optional<ServiceConfig> foundTarget = store.stream()
+                .filter(target::equals).findFirst();
+
+        if (!foundTarget.isPresent()) {
             throw new ServiceException(400, ":: Target service not foundSource: '" + target.getName() + "' ::");
         }
 
@@ -104,7 +114,10 @@ public class ServiceControl {
     }
 
     public void deleteUnavailableNodes(String serviceName) {
-        store.forEach(s -> s.getInstances().removeIf(e -> e.getName().equals(serviceName) && !e.isAvailable()));
+        store.stream()
+                .filter(s -> s.getName().equals(serviceName))
+                .collect(Collectors.toSet())
+                .forEach(s -> s.getInstances().removeIf(e -> !e.isAvailable()));
         store.removeIf(s -> s.getInstances().isEmpty());
     }
 

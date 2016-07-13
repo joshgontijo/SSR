@@ -15,14 +15,6 @@ public class ServiceInstance {
     public ServiceInstance() {
     }
 
-    public ServiceInstance(ServiceInstance config) {
-        this.id = config.id;
-        this.address = config.address;
-        if (config.getSince() != null) {
-            this.since = new Date(config.since.getTime());
-        }
-    }
-
     public String getId() {
         return id;
     }

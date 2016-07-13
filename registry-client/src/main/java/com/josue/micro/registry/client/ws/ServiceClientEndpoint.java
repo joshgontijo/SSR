@@ -27,14 +27,16 @@ public class ServiceClientEndpoint {
 
     private static final List<ServiceEventListener> listeners = Collections.synchronizedList(new ArrayList<>());
 
+    private final ServiceRegister register;
 
-    public ServiceClientEndpoint() {
+    public ServiceClientEndpoint(ServiceRegister register) {
+        this.register = register;
     }
 
     @OnOpen
     public void onOpen(Session session) {
         logger.log(Level.INFO, ":: Sending connection event ::");
-        session.getAsyncRemote().sendObject(new Event(Event.Type.CONNECTED, Configuration.getServiceConfig()));
+        session.getAsyncRemote().sendObject(new Event(EventType.CONNECTED, Configuration.getServiceConfig()));
     }
 
     @OnMessage
@@ -66,10 +68,7 @@ public class ServiceClientEndpoint {
     public void onClose(Session session, CloseReason closeReason) {
         if (!ServiceRegister.shutdownSignal) {
             logger.log(Level.SEVERE, ":: Connection closed, reason: {0} ::", closeReason);
-
-            for (ServiceEventListener listener : listeners) {
-                listener.onThisDisconnects();
-            }
+            register.register();
         } else {
             logger.log(Level.INFO, ":: Client initiated shutdown proccess, not reconnecting ::", closeReason);
         }

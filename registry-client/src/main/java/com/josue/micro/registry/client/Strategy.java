@@ -8,12 +8,12 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author Josue Gontijo.
  */
 public abstract class Strategy {
-    abstract ServiceConfig apply(List<ServiceConfig> configs);
+    abstract ServiceInstance apply(List<ServiceInstance> configs);
 
     public static Strategy first() {
         return new Strategy() {
             @Override
-            ServiceConfig apply(List<ServiceConfig> configs) {
+            ServiceInstance apply(List<ServiceInstance> configs) {
                 return configs.get(0);
             }
         };
@@ -22,7 +22,7 @@ public abstract class Strategy {
     public static Strategy random() {
         return new Strategy() {
             @Override
-            ServiceConfig apply(List<ServiceConfig> configs) {
+            ServiceInstance apply(List<ServiceInstance> configs) {
                 int idx = ThreadLocalRandom.current().nextInt(0, configs.size() - 1);
                 return configs.get(idx);
             }
@@ -34,7 +34,7 @@ public abstract class Strategy {
     public static Strategy roundRobin() {
         return new Strategy() {
             @Override
-            ServiceConfig apply(List<ServiceConfig> configs) {
+            ServiceInstance apply(List<ServiceInstance> configs) {
                 int current = counter.getAndIncrement();
                 if (current >= configs.size()) {
                     current = 0;

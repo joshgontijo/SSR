@@ -1,39 +1,35 @@
 package com.josue.micro.service.registry.ws;
 
-import com.josue.micro.service.registry.service.ServiceInstance;
+import com.josue.micro.service.registry.service.ServiceConfig;
 
 /**
  * Created by Josue on 18/06/2016.
  */
 public class Event {
-    enum Type {
-        CONNECTED, DISCONNECTED, SERVICE_USAGE
-    }
-
-    private Type type;
-    private ServiceInstance service;
+    private EventType type;
+    private ServiceConfig service;
 
     public Event() {
     }
 
-    public Event(Type type, ServiceInstance instance) {
+    public Event(EventType type, ServiceConfig serviceConfig) {
         this.type = type;
-        this.service = instance;
+        this.service = serviceConfig;
     }
 
-    public Type getType() {
+    public EventType getType() {
         return type;
     }
 
-    public void setType(Type type) {
+    public void setType(EventType type) {
         this.type = type;
     }
 
-    public ServiceInstance getService() {
+    public ServiceConfig getService() {
         return service;
     }
 
-    public void setService(ServiceInstance service) {
+    public void setService(ServiceConfig service) {
         this.service = service;
     }
 

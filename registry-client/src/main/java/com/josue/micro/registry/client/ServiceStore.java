@@ -1,64 +1,78 @@
 package com.josue.micro.registry.client;
 
 import com.josue.micro.registry.client.ws.Event;
+import com.josue.micro.registry.client.ws.EventType;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.websocket.Session;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by Josue on 19/06/2016.
  */
 @ApplicationScoped
-public class ServiceStore {
+public class ServiceStore implements ServiceEventListener {
 
-    private static final Map<String, Set<ServiceConfig>> store = new ConcurrentHashMap<>();
+    private static final Map<String, ServiceConfig> store = new ConcurrentHashMap<>();
     private Session session;
 
-    public ServiceConfig get(String serviceName) {
+    public ServiceInstance get(String serviceName) {
         return get(serviceName, Strategy.roundRobin());
     }
 
-    public ServiceConfig get(String serviceName, Strategy strategy) {
+    public ServiceInstance get(String serviceName, Strategy strategy) {
         if (!store.containsKey(serviceName)) {
             return null;
         }
-        Set<ServiceConfig> configs = store.get(serviceName);
-        if (configs == null || configs.isEmpty()) {
+        ServiceConfig config = store.get(serviceName);
+        if (config == null) {
             return null;
         }
 
-        ServiceConfig apply = strategy.apply(new ArrayList<>(configs));
+        ServiceInstance apply = strategy.apply(new ArrayList<>(config.getInstances()));
 
         if (session != null && session.isOpen()) {
-            session.getAsyncRemote().sendObject(new Event(Event.Type.SERVICE_USAGE, apply));
+            session.getAsyncRemote().sendObject(new Event(EventType.SERVICE_USAGE, config));
         }
         return apply;
     }
 
     public void addService(ServiceConfig service) {
-        String name = service.getName();
-        if (!store.containsKey(name)) {
-            store.put(name, new HashSet<>());
+        store.put(service.getName(), service);
+    }
+
+    public void removeService(ServiceConfig service) {
+        service.getInstances().removeIf(s -> !s.isAvailable());
+        if (service.getInstances().isEmpty()) {
+            store.remove(service.getName());
+        } else {
+            store.put(service.getName(), service);
         }
-        store.get(name).add(service);
     }
 
-    public void removeService(String id) {
-        store.values().forEach(c -> c.removeIf(cfg -> cfg.getId().equals(id)));
-    }
-
-    protected void updateService(ServiceConfig config) {
+    protected void updateService(ServiceConfig service) {
         //overwrite old one, since we only use name + address as hascode
-        store.get(config.getName()).add(config);
+        store.put(service.getName(), service);
     }
 
     protected void setSession(Session session) {
         this.session = session;
     }
 
+    @Override
+    public void onConnect(Event event) {
+        addService(event.getService());
+    }
+
+    @Override
+    public void onDisconnect(Event event) {
+        removeService(event.getService());
+    }
+
+    @Override
+    public void onServiceUsage(Event event) {
+        updateService(event.getService());
+    }
 }

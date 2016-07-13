@@ -9,12 +9,21 @@ import java.util.Set;
  */
 public class ServiceConfig implements Serializable {
 
-    private final String name;
+    private String name;
     private final Set<String> links = new HashSet<>();
     private final Set<ServiceInstance> instances = new HashSet<>();
 
+    public ServiceConfig() {
+    }
+
     public ServiceConfig(String name) {
         this.name = name;
+    }
+
+    public ServiceConfig(ServiceConfig config) {
+        this.name = config.name;
+        this.links.addAll(config.getLinks());
+        this.getInstances().addAll(config.getInstances());
     }
 
     public String getName() {
@@ -43,6 +52,13 @@ public class ServiceConfig implements Serializable {
     @Override
     public int hashCode() {
         return name != null ? name.hashCode() : 0;
+    }
+
+    @Override
+    public String toString() {
+        return "name='" + name + '\'' +
+                ", instances=" + instances +
+                ", links=" + links;
     }
 }
 
