@@ -4,7 +4,7 @@ Server can also run on web servers (Tomcat) with CDI, JAXRS and Websockets
 not tested though (just use an application server !)
 
 ## Running on Docker
-Build using the Dockerfile provided
+Build using the provided Dockerfile
 
     docker build -t registry .
     docker run -it -d -p 8080:8080 registry reg
@@ -15,21 +15,30 @@ Also contains a simple REST endpoint to provide connected nodes:
 
     http://localhost:8080/api/services
     
-    {
-    	"balance" :
-    	 : {
-    		"address" : "http://192.168.0.7:8082/balance/rest"
-    		"name" : "balance"
-    		"id" : "a"
-    		"since" : "20160623053313+0000"
-    	}
-    
-    	"account" :
-    	 : {
-    		"address" : "http://192.168.0.9:8081/account/rest"
-    		"name" : "account"
-    		"id" : "9"
-    		"since" : "20160623053246+0000"
-    	}
-    }
+    [
+      {
+        "name": "balance",
+        "links": [],
+        "instances": [
+          {
+            "id": "1",
+            "address": "http://localhost:8080/balance/rest",
+            "since": "2016-07-14 12:10:14",
+            "available": true
+          }
+        ]
+      },
+      {
+        "name": "account",
+        "links": [],
+        "instances": [
+          {
+            "id": "0",
+            "address": "http://localhost:8080/account/rest",
+            "since": "2016-07-14 12:10:12",
+            "available": true
+          }
+        ]
+      }
+    ]
     
