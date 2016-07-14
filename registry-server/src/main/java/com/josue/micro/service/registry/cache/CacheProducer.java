@@ -4,7 +4,7 @@
 //import com.hazelcast.core.Hazelcast;
 //import com.hazelcast.core.HazelcastInstance;
 //import com.hazelcast.core.IMap;
-//import com.josue.micro.service.registry.ServiceConfig;
+//import com.josue.micro.service.registry.service.ServiceConfig;
 //
 //import javax.annotation.PreDestroy;
 //import javax.enterprise.context.ApplicationScoped;

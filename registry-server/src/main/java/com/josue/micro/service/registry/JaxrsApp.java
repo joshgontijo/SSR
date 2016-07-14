@@ -1,4 +1,4 @@
-package com.josue.micro.service.registry.rest;
+package com.josue.micro.service.registry;
 
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;

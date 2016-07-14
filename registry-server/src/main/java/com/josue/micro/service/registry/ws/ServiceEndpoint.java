@@ -1,8 +1,8 @@
 package com.josue.micro.service.registry.ws;
 
-import com.josue.micro.service.registry.ServiceConfig;
-import com.josue.micro.service.registry.ServiceControl;
 import com.josue.micro.service.registry.ServiceException;
+import com.josue.micro.service.registry.service.ServiceConfig;
+import com.josue.micro.service.registry.service.ServiceControl;
 
 import javax.inject.Inject;
 import javax.websocket.CloseReason;
@@ -13,6 +13,8 @@ import javax.websocket.OnOpen;
 import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -26,6 +28,8 @@ public class ServiceEndpoint {
 
     private static final Logger logger = Logger.getLogger(ServiceEndpoint.class.getName());
 
+    private static final Set<Session> connectedSessions = ConcurrentHashMap.newKeySet();
+
     @Inject
     private ServiceControl control;
 
@@ -37,23 +41,26 @@ public class ServiceEndpoint {
     @OnMessage
     public void onMessage(Event event, Session session) throws ServiceException {
         logger.log(Level.INFO, ":: Event received {0} ::", event);
-        ServiceConfig registered = control.register(session, event.getService());
-        //send to all other services except current session
-        sendEvent(session, new Event(Event.Type.CONNECTED, registered));
 
-        //send all already connected services to current session
-        control.getServices().stream()
-                .forEach(connected -> session.getAsyncRemote().sendObject(new Event(Event.Type.CONNECTED, connected)));
-
-        logger.log(Level.INFO, ":: New service registered, session {0}, service {1} ::", new Object[]{session.getId(), String.valueOf(event.getService())});
-        logger.log(Level.INFO, ":: Connected services {0} ::", control.getSessions().size());
+        switch (event.getType()) {
+            case CONNECTED:
+                ServiceConfig registered = control.register(session.getId(), event.getService());
+                handleConnectEvent(session, registered);
+                break;
+            case DISCONNECTED:
+                //TODO handle ?
+                break;
+            case SERVICE_USAGE:
+                control.addLink(session.getId(), event.getService());
+                break;
+            default:
+                throw new RuntimeException(":: Event type not recognized : '" + event.getType() + "' ::");
+        }
     }
 
     @OnClose
-    public void onClose(Session session, CloseReason closeReason) {
-        ServiceConfig removed = control.deregister(session);
-        sendEvent(session, new Event(Event.Type.DISCONNECTED, removed));
-        logger.log(Level.INFO, ":: Session {0} closed because of {1} ::", new Object[]{session.getId(), closeReason});
+    public void onClose(Session session, CloseReason closeReason) throws ServiceException {
+        handleDisconnectEvent(session, closeReason);
     }
 
     @OnError
@@ -66,8 +73,29 @@ public class ServiceEndpoint {
         }
     }
 
+    private void handleConnectEvent(Session session, ServiceConfig registered) {
+        //send to all other services except current session
+        sendEvent(session, new Event(EventType.CONNECTED, registered));
+
+
+        Set<ServiceConfig> services = control.getServices();
+        services.stream().forEach(s -> s.getInstances().removeIf(i -> !i.isAvailable()));
+        services.forEach(connected -> session.getAsyncRemote().sendObject(new Event(EventType.CONNECTED, connected)));
+
+        logger.log(Level.INFO, ":: New service registered, session {0}, service {1} ::", new Object[]{session.getId(), String.valueOf(registered)});
+        connectedSessions.add(session);
+        logger.log(Level.INFO, ":: Connected services {0} ::", connectedSessions.size());
+    }
+
+    private void handleDisconnectEvent(Session session, CloseReason closeReason) throws ServiceException {
+        ServiceConfig removed = control.deregister(session.getId());
+        sendEvent(session, new Event(EventType.DISCONNECTED, removed));
+        logger.log(Level.INFO, ":: Session {0} closed because of {1} ::", new Object[]{session.getId(), closeReason});
+        connectedSessions.remove(session);
+    }
+
     private void sendEvent(Session currentSession, Event event) {
-        control.getSessions().stream()
+        connectedSessions.stream()
                 .filter(s -> s.isOpen() && !s.equals(currentSession))
                 .forEach(s -> s.getAsyncRemote().sendObject(event));
     }

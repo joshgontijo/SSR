@@ -13,6 +13,3 @@ module.exports = React.createClass({
         );
     }
 });
-/**
- * Created by Josue on 04/07/2016.
- */

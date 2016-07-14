@@ -60,8 +60,8 @@ To access the service URL simply use:
     ServiceStore serviceStore;
     
     //default
-    ServiceConfig any = serviceStore.get("serviceName");
-    ServiceConfig random = serviceStore.get("serviceName", Strategy.random());
-    ServiceConfig roundRobin = serviceStore.get("serviceName", Strategy.roundRobin());
+    ServiceInstance any = serviceStore.get("serviceName"); //default roundRobin
+    ServiceInstance random = serviceStore.get("serviceName", Strategy.random());
+    ServiceInstance roundRobin = serviceStore.get("serviceName", Strategy.roundRobin());
     
 The `Strategy` class provides a way of customising how the services are accessed. To implement your own simply extends this class.

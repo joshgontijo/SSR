@@ -1,4 +1,4 @@
-package com.josue.micro.registry.client;
+package com.josue.micro.service.registry.service;
 
 import java.io.Serializable;
 import java.util.HashSet;
@@ -18,12 +18,6 @@ public class ServiceConfig implements Serializable {
 
     public ServiceConfig(String name) {
         this.name = name;
-    }
-
-    public ServiceConfig(ServiceConfig config) {
-        this.name = config.name;
-        this.links.addAll(config.getLinks());
-        this.getInstances().addAll(config.getInstances());
     }
 
     public String getName() {
@@ -52,13 +46,6 @@ public class ServiceConfig implements Serializable {
     @Override
     public int hashCode() {
         return name != null ? name.hashCode() : 0;
-    }
-
-    @Override
-    public String toString() {
-        return "name='" + name + '\'' +
-                ", instances=" + instances +
-                ", links=" + links;
     }
 }
 

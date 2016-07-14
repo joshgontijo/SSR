@@ -5,6 +5,8 @@ var Tab = require('./Tab');
 var TabContent = require('./TabContent');
 //var services = require('./services.json');
 
+var AppEvent = require('./AppEvent');
+
 module.exports = React.createClass({
     componentDidMount: function () {
         $.getJSON(root + "/api/services", function (data) {
@@ -17,7 +19,7 @@ module.exports = React.createClass({
     getInitialState: function () {
         return {
             services: [],
-            currentService: {}
+            currentService: null
         };
     },
     tabsClickHandler: function (tab) {
@@ -31,25 +33,24 @@ module.exports = React.createClass({
     },
     render: function () {
         var that = this;
+        console.log('--- ' + JSON.stringify(this.state));
         var services = this.state.services.map(function (tab, i) {
             return <Tab clickHandler={that.tabsClickHandler} key={tab.name} name={tab.name}
                         current={tab === that.state.currentService}/>
         });
         return (
-            <div id="main">
-                <div id="cols" className="box padding">
-                    <div id="content" className="box">
+            <div className="main">
+                <div className="box padding cols">
+                    <div className="box content">
                         <h3 className="tit">Services</h3>
                         <div className="tabs box">
                             <ul className="ui-tabs-nav">
-
                                 {services}
-
                             </ul>
                         </div>
                         <div >
                             <TabContent
-                                instances={that.state.currentService ? [] : that.state.currentService.instances}/>
+                                instances={that.state.currentService ? that.state.currentService.instances : []}/>
                         </div>
                     </div>
                 </div>

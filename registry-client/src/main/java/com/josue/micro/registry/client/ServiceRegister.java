@@ -70,6 +70,7 @@ public class ServiceRegister implements Runnable {
     @PreDestroy
     public void shutdown() {
         synchronized (LOCK) {
+            logger.info(":: Shutting down ::");
             shutdownSignal = true;
         }
         deregister();
@@ -104,14 +105,17 @@ public class ServiceRegister implements Runnable {
 
                 logger.log(Level.INFO, ":: Trying to connect to {0}, attempt {1} of {2} ::", new Object[]{registryUrl, retryCounter.incrementAndGet(), MAX_RETRY});
 
-                ServiceClientEndpoint endpoint = new ServiceClientEndpoint(store, this);
+                ServiceClientEndpoint endpoint = new ServiceClientEndpoint(this);
+                endpoint.addListener(store);
+
                 session = container.connectToServer(endpoint, new URI(registryUrl));
+                store.setSession(session);
 
                 logger.log(Level.INFO, ":: Connected ! ::", session.getId());
 
             } catch (Exception e) {
                 logger.log(Level.WARNING, ":: Could not connect to the registry, retrying in {0}s ::", RETRY_INTERVAL);
-                logger.log(Level.SEVERE, "Connection failure, reason: ", e);
+//                logger.log(Level.SEVERE, "Connection failure, reason: ", e);
                 if (retryCounter.intValue() >= MAX_RETRY) {
                     logger.log(Level.WARNING, ":: Max attempt exceeded ::", RETRY_INTERVAL);
                 } else {
