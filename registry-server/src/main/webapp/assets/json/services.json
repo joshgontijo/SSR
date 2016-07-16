@@ -1,0 +1,56 @@
+[
+  {
+    "name": "balance",
+    "links": [
+      "account2"
+    ],
+    "instances": [
+      {
+        "id": "1",
+        "address": "http://localhost:8080/balance/rest",
+        "since": "2016-07-14 11:33:04",
+        "available": true
+      }
+    ]
+  },
+  {
+    "name": "account",
+    "links": [
+      "balance"
+    ],
+    "instances": [
+      {
+        "id": "0",
+        "address": "http://localhost:8080/account/rest",
+        "since": "2016-07-14 11:33:02",
+        "available": true
+      }
+    ]
+  },
+  {
+    "name": "account2",
+    "links": [],
+    "instances": [
+      {
+        "id": "0",
+        "address": "http://localhost:8080/account/rest2",
+        "since": "2016-07-14 11:33:02",
+        "available": true
+      }
+    ]
+  },
+  {
+    "name": "service2",
+    "links": [
+      "balance"
+    ],
+    "instances": [
+      {
+        "id": "0",
+        "address": "http://localhost:8080/account/rest2",
+        "since": "2016-07-14 11:33:02",
+        "available": true
+      }
+    ]
+  }
+]

@@ -1,7 +1,7 @@
-var React = require('react');
+import React  from 'react';
 
-module.exports = React.createClass({
-    render: function () {
+export default class TabContent extends React.Component {
+    render() {
         return (
             <table className="nostyle">
                 <tbody>
@@ -22,4 +22,4 @@ module.exports = React.createClass({
             </table>
         );
     }
-});
+};

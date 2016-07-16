@@ -1,16 +1,9 @@
-var React = require('react');
-var ReactDOM = require('react-dom');
-var TabPanel = require('./TabPanel');
-var InstancesDiagram = require('./InstancesDiagram');
-
-
+import React from 'react';
+import ReactDOM from 'react-dom';
+import MainPage from './MainPage.jsx';
 
 ReactDOM.render(
-    <TabPanel />,
+    <MainPage />,
     document.getElementById('mainComponent')
-);
-ReactDOM.render(
-    <InstancesDiagram />,
-    document.getElementById('diagram')
 );
 

@@ -1,10 +1,3 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: Josue
-  Date: 02/07/2016
-  Time: 01:25
-  To change this template use File | Settings | File Templates.
---%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
@@ -21,7 +14,6 @@
 </head>
 <body>
     <div id="mainComponent"></div>
-    <div id="diagram"></div>
-    <script src="assets/build/app.js"></script>
+    <script src="assets/build/bundle.js"></script>
 </body>
 </html>
