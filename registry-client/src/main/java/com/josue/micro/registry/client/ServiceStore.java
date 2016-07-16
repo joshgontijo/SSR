@@ -7,7 +7,9 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.websocket.Session;
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedDeque;
 
 /**
  * Created by Josue on 19/06/2016.
@@ -16,6 +18,10 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ServiceStore implements ServiceEventListener {
 
     private static final Map<String, ServiceConfig> store = new ConcurrentHashMap<>();
+
+    private static final Queue<Event> eventBuffer = new ConcurrentLinkedDeque<>();
+    private static final int eventBufferSize = 1; //TODO configurable
+
     private Session session;
 
     public ServiceInstance get(String serviceName) {
@@ -33,9 +39,8 @@ public class ServiceStore implements ServiceEventListener {
 
         ServiceInstance apply = strategy.apply(new ArrayList<>(config.getInstances()));
 
-        if (session != null && session.isOpen()) {
-            session.getAsyncRemote().sendObject(new Event(EventType.SERVICE_USAGE, config));
-        }
+        sentStats(config);
+
         return apply;
     }
 
@@ -55,6 +60,24 @@ public class ServiceStore implements ServiceEventListener {
     protected void updateService(ServiceConfig service) {
         //overwrite old one, since we only use name + address as hascode
         store.put(service.getName(), service);
+    }
+
+    private void sentStats(ServiceConfig config) {
+        if (session != null && session.isOpen()) {
+            eventBuffer.add(new Event(EventType.SERVICE_USAGE, config));
+
+            if (eventBuffer.size() == eventBufferSize) {
+                //for loop, since it will iterate a fixed ammount of times
+                //regardless some other thread adding more elements
+                for (int i = 0; i <= eventBuffer.size(); i++) {
+                    Event poll = eventBuffer.poll();
+                    if (poll != null) {
+                        session.getAsyncRemote().sendObject(poll);
+                    }
+                }
+            }
+
+        }
     }
 
     protected void setSession(Session session) {
