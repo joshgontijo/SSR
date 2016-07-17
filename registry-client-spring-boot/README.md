@@ -15,6 +15,8 @@ Must run on Spring boot, depends on websocket.
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-websocket</artifactId>
         </dependency>
+        
+        
         <dependency>
             <groupId>com.josue.micro</groupId>
             <artifactId>registry-client-spring-boot</artifactId>
