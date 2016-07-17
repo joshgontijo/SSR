@@ -32,18 +32,26 @@ Must run on Spring boot, depends on websocket.
 ### Configuration
 
 - **Setting environment variables**
+
 Setting the following environment variables are necessary, otherwise the application won't start.
+
 - `APP_NAME.url`: The full address of you application, where `APP_NAME` is the name registered on `@EnableDiscovery(name = "myApp")`
 - `registry.url`: The full address of the registry server
+
+#### OR
 
 - **System property**
 
     -DmyApp.url=http://192.168.0.7:1234/myApp -DregistryUrl=http://192.168.0.9:8080
 
-- **Properties file** (`application.properties`)
+#### OR
+
+- **Properties file** (`registry.properties`)
 
     registry.url=http://192.168.0.7:8080
-    sampleSpring.url=http://192.168.0.9:8888/myApp
+    myApp.url=http://192.168.0.9:8888/myApp
+
+#### OR
 
 - **With Docker**
 

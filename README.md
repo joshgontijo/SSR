@@ -1,7 +1,7 @@
-# Simple Java EE service registry
+# Simple Java EE / Spring service registry
 
 ## What's this
-A simplistic Java EE key-value that store that allows service 
+A simplistic key-value that store that allows service 
 to register its services endpoints for discovery.
 
 ## But why ?
