@@ -33286,7 +33286,7 @@
 	                        _react2.default.createElement(
 	                            'div',
 	                            { className: 'tabs box' },
-	                            _react2.default.createElement('div', { id: 'cy', style: { width: '100%', height: '100%', position: 'relative' } })
+	                            _react2.default.createElement('div', { id: 'cy', style: { width: '100%', height: '60%', position: 'relative' } })
 	                        )
 	                    )
 	                )

@@ -119,7 +119,7 @@ export default class InstancesDiagram extends React.Component {
                     <div className="box content">
                         <h3 className="tit">Services diagram</h3>
                         <div className="tabs box">
-                            <div id="cy" style={{width: '100%', height: '100%', position: 'relative'}}></div>
+                            <div id="cy" style={{width: '100%', height: '60%', position: 'relative'}}></div>
                         </div>
                     </div>
                 </div>
