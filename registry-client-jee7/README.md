@@ -37,7 +37,8 @@ Setting the following environment variables are necessary, otherwise the applica
 
 
 **Setting environment variables**
-    Export the configuration as system environment containing the appropriate key=value, it could be as system file, export, etc.
+
+Export the configuration as system environment containing the appropriate key=value, it could be as system file, export, etc.
 
 
 #### OR
@@ -69,7 +70,7 @@ Note that if deployed manually, check the application root context, which is `/r
 ## Acessing services
 To access the service URL simply use:
 
-    @Inject //CDI
+    @Inject
     ServiceStore serviceStore;
       
     ServiceInstance any = serviceStore.get("serviceName"); //default roundRobin

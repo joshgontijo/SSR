@@ -37,7 +37,8 @@ Setting the following environment variables are necessary, otherwise the applica
 
 
 **Setting environment variables**
-    Export the configuration as system environment containing the appropriate key=value, it could be as system file, export, etc.
+
+Export the configuration as system environment containing the appropriate key=value, it could be as system file, export, etc.
 
 
 #### OR
