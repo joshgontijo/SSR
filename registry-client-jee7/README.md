@@ -35,7 +35,8 @@ Setting the following environment variables are necessary, otherwise the applica
 - `APP_NAME.url`: The full address of you application, where `APP_NAME` is the name registered on `@EnableDiscovery(name = "myApp")`
 - `registry.url`: The full address of the registry server
 
-- **Setting environment variables**
+
+**Setting environment variables**
     Export the configuration as system environment containing the appropriate key=value, it could be as system file, export, etc.
 
 
