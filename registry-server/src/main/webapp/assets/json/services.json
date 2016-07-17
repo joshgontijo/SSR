@@ -9,14 +9,15 @@
         "id": "1",
         "address": "http://localhost:8080/balance/rest",
         "since": "2016-07-14 11:33:04",
-        "available": true
+        "available": false
       }
     ]
   },
   {
     "name": "account",
     "links": [
-      "balance"
+      "balance",
+      "service2"
     ],
     "instances": [
       {

@@ -3,7 +3,7 @@ import Cytoscape from 'cytoscape';
 
 export default class InstancesDiagram extends React.Component {
     componentDidMount() {
-        var elements = this.mountElements(this.props);
+        var mounted = this.mountElements(this.props);
 
         var cy = Cytoscape({
             container: document.getElementById('cy'),
@@ -14,7 +14,7 @@ export default class InstancesDiagram extends React.Component {
             layout: {
                 name: 'circle'
             },
-            style: [
+            style: [ //order matters
                 {
                     selector: 'node',
                     style: {
@@ -28,43 +28,90 @@ export default class InstancesDiagram extends React.Component {
                 {
                     selector: 'edge',
                     style: {
-                        'width': 1,
+                        'width': 6,
                         'target-arrow-shape': 'triangle',
                         'line-color': '#9dbaea',
                         'target-arrow-color': '#9dbaea',
                         'curve-style': 'bezier'
                     }
-                }
+                },
+                {
+                    selector: '.disabled',
+                    style: {
+                        'background-color': 'red',
+                        'line-color': '#ddd',
+                        'target-arrow-color': '#ddd',
+                    }
+                },
             ],
 
-            elements: elements
+            elements: mounted.elements
         });
 
         this.setState({cy: cy});
 
     }
+
     componentWillReceiveProps(nextProps) { //on parent update
-        var elements = this.mountElements(nextProps);
-        this.state.cy.json({ elements: elements });
+        var mounted = this.mountElements(nextProps);
+        this.state.cy.json({elements: mounted.elements});
         this.state.cy.center();
         this.state.cy.layout({name: 'circle'});
+
+        var that = this;
+        mounted.disabledNodes.forEach(function(node){
+            var n = that.state.cy.$('#'+node.data.id);
+            var edges = n.connectedEdges();
+            edges.forEach(function(edge){
+               edge.addClass('disabled');
+            });
+        });
+
+
     }
-    mountElements(props){
+
+    mountElements(props) {
+
+        var disabledNodes = [];
+
         var elements = {
             nodes: [],
             edges: []
         };
 
         props.services.forEach(function (service) {
-            elements.nodes.push({data: {id: service.name}});
+            var available = service.instances.map(function (instance) {
+                return instance.available;
+            }).reduce(function (current, acum) {
+                return current && acum;
+            });
+
+            var node = {
+                data: {
+                    id: service.name
+                },
+                classes: available ? '' : 'disabled'
+            };
+
+            if(!available){
+                disabledNodes.push(node);
+            }
+            elements.nodes.push(node);
 
             service.links.forEach(function (link) {
-                elements.edges.push({data: {id: service.name + "_" + link, source: service.name, target: link}});
+                elements.edges.push({
+                    data: {
+                        id: service.name + "_" + link,
+                        source: service.name, target: link
+                    },
+                    classes: available ? '' : 'disabled'
+                });
             });
         });
 
-        return elements;
+        return {elements: elements, disabledNodes: disabledNodes};
     }
+
     render() {
         return (
             <div className="main">
