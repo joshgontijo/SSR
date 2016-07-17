@@ -10,6 +10,7 @@ public class ServiceInstance {
     private String id;
     private String address;
     private Date since;
+    private Date downSince;
     private boolean available = true;
 
     public ServiceInstance() {
@@ -45,6 +46,14 @@ public class ServiceInstance {
 
     public void setAvailable(boolean available) {
         this.available = available;
+    }
+
+    public Date getDownSince() {
+        return downSince;
+    }
+
+    public void setDownSince(Date downSince) {
+        this.downSince = downSince;
     }
 
     @Override

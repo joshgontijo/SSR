@@ -21,4 +21,5 @@ table.nostyle th, dl.nostyle dt {color:#303030 !important;}
 .content .tabs a span {color:#303030;}
 .content .tabs .ui-tabs-selected a {color:#fff;}
 .content .tabs .ui-tabs-selected a span {color:#fff;}
+.disabledRow {background-color: lightcoral}
 

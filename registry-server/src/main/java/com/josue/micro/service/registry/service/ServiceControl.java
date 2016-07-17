@@ -85,7 +85,13 @@ public class ServiceControl {
         }
 
         ServiceConfig serviceConfig = serviceConfigOpt.get();
-        serviceConfig.getInstances().forEach(i -> {if(i.getId().equals(id)) i.setAvailable(false);});
+        serviceConfig.getInstances().forEach(i -> {
+            if (i.getId().equals(id)) {
+                i.setAvailable(false);
+                i.setSince(null);
+                i.setDownSince(new Date());
+            }
+        });
 
         return serviceConfig;
 

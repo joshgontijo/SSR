@@ -33018,7 +33018,7 @@
 /* 177 */
 /***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
+	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
@@ -33048,55 +33048,65 @@
 	    }
 
 	    _createClass(TabContent, [{
-	        key: "render",
+	        key: 'render',
 	        value: function render() {
 	            return _react2.default.createElement(
-	                "table",
-	                { className: "nostyle" },
+	                'table',
+	                { className: 'nostyle' },
 	                _react2.default.createElement(
-	                    "tbody",
+	                    'tbody',
 	                    null,
 	                    _react2.default.createElement(
-	                        "tr",
+	                        'tr',
 	                        null,
 	                        _react2.default.createElement(
-	                            "th",
+	                            'th',
 	                            null,
-	                            "ID"
+	                            'ID'
 	                        ),
 	                        _react2.default.createElement(
-	                            "th",
+	                            'th',
 	                            null,
-	                            "URL"
+	                            'URL'
 	                        ),
 	                        _react2.default.createElement(
-	                            "th",
+	                            'th',
 	                            null,
-	                            "Since"
+	                            'Since'
+	                        ),
+	                        _react2.default.createElement(
+	                            'th',
+	                            null,
+	                            'Down Since'
 	                        )
 	                    ),
 	                    this.props.instances.map(function (instance, i) {
 	                        return _react2.default.createElement(
-	                            "tr",
-	                            { key: instance.id },
+	                            'tr',
+	                            { key: instance.id, className: instance.available ? '' : 'disabledRow' },
 	                            _react2.default.createElement(
-	                                "td",
+	                                'td',
 	                                null,
 	                                instance.id
 	                            ),
 	                            _react2.default.createElement(
-	                                "td",
+	                                'td',
 	                                null,
 	                                _react2.default.createElement(
-	                                    "a",
+	                                    'a',
 	                                    { href: instance.address },
 	                                    instance.address
 	                                )
 	                            ),
 	                            _react2.default.createElement(
-	                                "td",
+	                                'td',
 	                                null,
 	                                instance.since
+	                            ),
+	                            _react2.default.createElement(
+	                                'td',
+	                                null,
+	                                instance.downSince
 	                            )
 	                        );
 	                    })
