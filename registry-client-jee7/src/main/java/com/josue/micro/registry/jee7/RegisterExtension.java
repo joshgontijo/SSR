@@ -1,6 +1,6 @@
-package com.josue.micro.registry.client.discovery;
+package com.josue.micro.registry.jee7;
 
-import com.josue.micro.registry.client.ServiceRegister;
+import com.josue.micro.registry.client.discovery.Configuration;
 
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.spi.AfterDeploymentValidation;
@@ -41,7 +41,7 @@ public class RegisterExtension implements Extension {
     }
 
     public void load(@Observes AfterDeploymentValidation event, BeanManager beanManager) {
-        Bean<?> registerBean = beanManager.getBeans(ServiceRegister.class).iterator().next();
+        Bean<?> registerBean = beanManager.getBeans(CDIBootstrap.class).iterator().next();
         beanManager.getReference(registerBean, registerBean.getBeanClass(), beanManager.createCreationalContext(registerBean)).toString();
     }
 

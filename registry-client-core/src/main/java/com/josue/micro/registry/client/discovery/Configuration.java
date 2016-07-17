@@ -19,9 +19,11 @@ public class Configuration {
 
     private static Properties fileProperties = new Properties();
 
-    private static final String PROPERTIES_FILE_NAME = "registry.properties";
+    private static final String DEFAULT_PROPERTIES_FILE_NAME = "registry.properties";
     private static final String SERVICE_URL_SUFFIX = ".url";
     private static final String REGISTRY_URL = "registry.url";
+
+    private static String propertiesFile = DEFAULT_PROPERTIES_FILE_NAME;
 
     private static String registryUrl;
     private static String serviceUrl;
@@ -31,7 +33,11 @@ public class Configuration {
     private static ServiceConfig config;
 
     private Configuration() {
+    }
 
+    public static synchronized void initServiceConfig(String name, String appRoot, String propertiesFileName){
+        propertiesFile = propertiesFileName;
+        initServiceConfig(name, appRoot);
     }
 
     public static synchronized void initServiceConfig(String name, String appRoot) {
@@ -84,9 +90,9 @@ public class Configuration {
     }
 
     private static void loadProperties() {
-        InputStream is = Configuration.class.getClassLoader().getResourceAsStream(PROPERTIES_FILE_NAME);
+        InputStream is = Configuration.class.getClassLoader().getResourceAsStream(propertiesFile);
         if (is == null) {
-            logger.log(Level.INFO, ":: {0} not found ::", PROPERTIES_FILE_NAME);
+            logger.log(Level.INFO, ":: {0} not found ::", propertiesFile);
         } else {
             try {
                 fileProperties.load(is);
@@ -104,7 +110,7 @@ public class Configuration {
         String property = (fromEnv == null || fromEnv.isEmpty()) ? fromFile : fromEnv;
         if (property == null) {
             logger.log(Level.SEVERE, ":: Value for {0} not found on {1} file or environment variable ::",
-                    new Object[]{key, PROPERTIES_FILE_NAME});
+                    new Object[]{key, propertiesFile});
         }
         return property;
     }

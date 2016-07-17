@@ -1,8 +1,7 @@
-package com.josue.micro.registry.client.discovery;
+package com.micro.registry.spring;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Stereotype;
-import javax.enterprise.util.Nonbinding;
+import org.springframework.context.annotation.Import;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
@@ -13,12 +12,10 @@ import java.lang.annotation.Target;
  * Created by Josue on 16/06/2016.
  */
 @Inherited
-@Stereotype
-@ApplicationScoped
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
+@Import(RegisterExtension.class)
 public @interface EnableDiscovery {
 
-    @Nonbinding
     String name();
 }

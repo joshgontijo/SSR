@@ -11,8 +11,8 @@ not tested though (just use an application server !)
 
         <dependency>
            <groupId>com.josue.micro</groupId>
-           <artifactId>registry-client</artifactId>
-           <version>1.0</version>
+           <artifactId>registry-client-jee7</artifactId>
+           <version>1.3</version>
            </dependency>
         <dependency>
         <dependency>
@@ -29,23 +29,26 @@ not tested though (just use an application server !)
     public class JaxrsApp extends Application {
     }
 
-### Setting environment variables
+### Configuration
+
+- **Setting environment variables**
 Setting the following environment variables are necessary, otherwise the application won't start.
 - `APP_NAME.url`: The full address of you application, where `APP_NAME` is the name registered on `@EnableDiscovery(name = "myApp")`
 - `registry.url`: The full address of the registry server
 
-#### System property
+- **System property**
 
     -DmyApp.url=http://192.168.0.7:1234/myApp -DregistryUrl=http://192.168.0.9:8080
 
-#### Properties file (`registry.properties`)
+- **Properties file** (`registry.properties`)
 
     registry.url=http://192.168.0.7:8080
     myApp.url=http://192.168.0.9:8888/myApp
 
-#### With docker
+- **With Docker**
 
     docker run -it -d -p 1234:8080  -e registry.url=http://192.168.0.7:8080 -e myApp.url=http://192.168.0.9:1234/myApp myApp
+
 
 Note that if deployed manually, check the application root context, which is `/registry`
 
@@ -56,10 +59,9 @@ Note that if deployed manually, check the application root context, which is `/r
 ## Acessing services
 To access the service URL simply use:
 
-    @Inject
+    @Inject //CDI
     ServiceStore serviceStore;
-    
-    //default
+      
     ServiceInstance any = serviceStore.get("serviceName"); //default roundRobin
     ServiceInstance random = serviceStore.get("serviceName", Strategy.random());
     ServiceInstance roundRobin = serviceStore.get("serviceName", Strategy.roundRobin());

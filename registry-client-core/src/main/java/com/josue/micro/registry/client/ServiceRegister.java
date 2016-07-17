@@ -3,18 +3,13 @@ package com.josue.micro.registry.client;
 import com.josue.micro.registry.client.discovery.Configuration;
 import com.josue.micro.registry.client.ws.ServiceClientEndpoint;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.annotation.Resource;
-import javax.enterprise.concurrent.ManagedScheduledExecutorService;
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
 import javax.websocket.CloseReason;
 import javax.websocket.ContainerProvider;
 import javax.websocket.Session;
 import javax.websocket.WebSocketContainer;
 import java.io.IOException;
 import java.net.URI;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
@@ -23,7 +18,6 @@ import java.util.logging.Logger;
 /**
  * Created by Josue on 16/06/2016.
  */
-@ApplicationScoped
 public class ServiceRegister implements Runnable {
 
     private static final Logger logger = Logger.getLogger(ServiceRegister.class.getName());
@@ -38,13 +32,15 @@ public class ServiceRegister implements Runnable {
 
     public static boolean shutdownSignal = false;
 
-    @Inject
     private ServiceStore store;
+    private ScheduledExecutorService executorService;
 
-    @Resource
-    private ManagedScheduledExecutorService mses;
 
-    @PostConstruct
+    public ServiceRegister(ServiceStore store, ScheduledExecutorService executorService) {
+        this.store = store;
+        this.executorService = executorService;
+    }
+
     public void init() {
         synchronized (LOCK) {
             logger.log(Level.INFO, ":: Initialising service register ::");
@@ -62,12 +58,11 @@ public class ServiceRegister implements Runnable {
         synchronized (LOCK) {
             if (!shutdownSignal && (session == null || !session.isOpen())) {
                 retryCounter.set(0);
-                mses.schedule(this, 5, TimeUnit.SECONDS);
+                executorService.schedule(this, 5, TimeUnit.SECONDS);
             }
         }
     }
 
-    @PreDestroy
     public void shutdown() {
         synchronized (LOCK) {
             logger.info(":: Shutting down ::");
@@ -92,6 +87,15 @@ public class ServiceRegister implements Runnable {
     private String getRegistryUrl() {
         String registryUrl = Configuration.getRegistryUrl();
         String urlSeparator = registryUrl.endsWith("/") ? "" : "/";
+        if (registryUrl.startsWith("ws")) {
+            //do nothing
+        } else if (registryUrl.startsWith("http")) {
+            registryUrl = registryUrl.replaceFirst("http", "ws");
+        } else if (registryUrl.startsWith("https")) {
+            registryUrl = registryUrl.replaceFirst("https", "ws");
+        } else {//protocol not provided
+            registryUrl = "ws://" + registryUrl;
+        }
         return registryUrl + urlSeparator + REGISTRY_PATH;
     }
 
@@ -115,11 +119,11 @@ public class ServiceRegister implements Runnable {
 
             } catch (Exception e) {
                 logger.log(Level.WARNING, ":: Could not connect to the registry, retrying in {0}s ::", RETRY_INTERVAL);
-//                logger.log(Level.SEVERE, "Connection failure, reason: ", e);
+                logger.log(Level.SEVERE, "Connection failure, reason: ", e);
                 if (retryCounter.intValue() >= MAX_RETRY) {
                     logger.log(Level.WARNING, ":: Max attempt exceeded ::", RETRY_INTERVAL);
                 } else {
-                    mses.schedule(this, RETRY_INTERVAL, TimeUnit.SECONDS);
+                    executorService.schedule(this, RETRY_INTERVAL, TimeUnit.SECONDS);
                 }
             }
         }

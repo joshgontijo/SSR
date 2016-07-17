@@ -3,7 +3,6 @@ package com.josue.micro.registry.client;
 import com.josue.micro.registry.client.ws.Event;
 import com.josue.micro.registry.client.ws.EventType;
 
-import javax.enterprise.context.ApplicationScoped;
 import javax.websocket.Session;
 import java.util.ArrayList;
 import java.util.Map;
@@ -14,7 +13,6 @@ import java.util.concurrent.ConcurrentLinkedDeque;
 /**
  * Created by Josue on 19/06/2016.
  */
-@ApplicationScoped
 public class ServiceStore implements ServiceEventListener {
 
     private static final Map<String, ServiceConfig> store = new ConcurrentHashMap<>();
