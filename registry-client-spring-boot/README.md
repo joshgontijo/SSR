@@ -1,7 +1,7 @@
 ## Pre requisites
 Must run on Spring boot, depends on websocket.
 
-## Configuration
+## Setup
 
 ### Maven dependency
 - Download the source and build by yourself =).
@@ -51,7 +51,7 @@ Export the configuration as system environment containing the appropriate key=va
 
 #### OR
 
-**Properties file** (`registry.properties`)
+**Properties file** (`application.properties`)
 
     registry.url=http://192.168.0.7:8080
     myApp.url=http://192.168.0.9:8888/myApp
