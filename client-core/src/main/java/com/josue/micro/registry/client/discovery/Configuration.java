@@ -17,6 +17,7 @@ public class Configuration {
 
     private static final Logger logger = Logger.getLogger(Configuration.class.getName());
     private static final String PROPERTIES_FILE_NAME = "registry.properties";
+    private static final String ENVIRONMENT_KEY = "ssr.env";
     private static final String SERVICE_URL_KEY = "service.url";
     private static final String REGISTRY_URL_KEY = "registry.url";
     private static final String DEFAULT_REGISTRY_URL = "http://localhost:9000";

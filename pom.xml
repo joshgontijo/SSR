@@ -10,10 +10,10 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>registry-server</module>
-        <module>registry-client-core</module>
-        <module>registry-client-spring-boot</module>
-        <module>registry-client-jee7</module>
+        <module>client-core</module>
+        <module>ssr-client-boot</module>
+        <module>ssr-client-jee</module>
+        <module>ssr-server</module>
     </modules>
 
 </project>

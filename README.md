@@ -1,4 +1,4 @@
-# Simple Java EE / Spring service registry
+# S.S.R. (Simple Service Registry)
 
 ## What's this
 A simplistic key-value that store that allows service 
