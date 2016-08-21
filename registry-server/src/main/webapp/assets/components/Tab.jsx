@@ -5,6 +5,7 @@ export default class Tab extends React.Component {
         e.preventDefault();
         this.props.clickHandler(this.props.name);
     };
+
     render() {
         return (
             <li className={this.props.current ? 'ui-tabs-selected' : null}>

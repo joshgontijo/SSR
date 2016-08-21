@@ -22,7 +22,7 @@ public class RestExceptionMapper implements ExceptionMapper<Exception> {
     @Override
     public Response toResponse(Exception exception) {
 
-        String code = UUID.randomUUID().toString().substring(0,8);
+        String code = UUID.randomUUID().toString().substring(0, 8);
 
         ExceptionBean bean = new ExceptionBean(code, exception.getMessage());
         int responseStatus = Response.Status.INTERNAL_SERVER_ERROR.getStatusCode();

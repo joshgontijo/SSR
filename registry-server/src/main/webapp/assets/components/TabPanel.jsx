@@ -14,6 +14,7 @@ export default class TabPanel extends React.Component {
             currentService: props.services[0]
         };
     }
+
     tabsClickHandler(tab) {
         var current = null;
         this.state.services.forEach(function (service) {
@@ -23,17 +24,19 @@ export default class TabPanel extends React.Component {
         });
         this.setState({currentService: current});
     }
+
     componentWillReceiveProps(nextProps) { //on parent update
         this.state = {
             services: nextProps.services,
             currentService: nextProps.services[0]
         };
     }
+
     render() {
         var that = this;
         var services = this.props.services.map(function (service, i) {
             return <Tab clickHandler={that.tabsClickHandler.bind(that)} key={service.name} name={service.name}
-                        current={service === that.state.currentService} />
+                        current={service === that.state.currentService}/>
         });
         return (
             <div className="main">

@@ -13,7 +13,7 @@
     <script>var root = "${pageContext.request.contextPath}"</script>
 </head>
 <body>
-    <div id="mainComponent"></div>
-    <script src="assets/build/bundle.js"></script>
+<div id="mainComponent"></div>
+<script src="assets/build/bundle.js"></script>
 </body>
 </html>

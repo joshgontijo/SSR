@@ -59,11 +59,11 @@ export default class InstancesDiagram extends React.Component {
         this.state.cy.layout({name: 'circle'});
 
         var that = this;
-        mounted.disabledNodes.forEach(function(node){
-            var n = that.state.cy.$('#'+node.data.id);
+        mounted.disabledNodes.forEach(function (node) {
+            var n = that.state.cy.$('#' + node.data.id);
             var edges = n.connectedEdges();
-            edges.forEach(function(edge){
-               edge.addClass('disabled');
+            edges.forEach(function (edge) {
+                edge.addClass('disabled');
             });
         });
 
@@ -93,7 +93,7 @@ export default class InstancesDiagram extends React.Component {
                 classes: available ? '' : 'disabled'
             };
 
-            if(!available){
+            if (!available) {
                 disabledNodes.push(node);
             }
             elements.nodes.push(node);

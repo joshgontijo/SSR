@@ -67,7 +67,7 @@ public class ServiceEndpoint {
     public void onError(Session session, Throwable t) {
         if (t instanceof IOException) {
             logger.log(Level.WARNING, "Session {0} interrupted, service may have been shutdown, see below", session.getId());
-            logger.log(Level.WARNING, "Session was closed because: ", t);
+            logger.log(Level.WARNING, "Session was closed because: ", t.getMessage());
         } else {
             logger.log(Level.SEVERE, "Error receiving event", t);
         }

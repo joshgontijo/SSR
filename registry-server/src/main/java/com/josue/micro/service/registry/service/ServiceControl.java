@@ -17,9 +17,8 @@ import java.util.stream.Collectors;
 @ApplicationScoped
 public class ServiceControl {
 
-    private static final Logger logger = Logger.getLogger(ServiceControl.class.getName());
-
     static final Set<ServiceConfig> store = ConcurrentHashMap.newKeySet();
+    private static final Logger logger = Logger.getLogger(ServiceControl.class.getName());
 //    private static final Map<String, ServiceConfig> store = new ConcurrentHashMap<>();
 
     //returns a copy of all the services, including the disabled ones

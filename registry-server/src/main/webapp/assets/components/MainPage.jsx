@@ -12,21 +12,24 @@ export default class MainPage extends React.Component {
             services: []
         };
     }
-    fetchServices(){
+
+    fetchServices() {
         $.getJSON(root + "/api/services", function (data) {
-            if(!_.isEqual(this.state.services, data)){
+            if (!_.isEqual(this.state.services, data)) {
                 this.setState({
                     services: data
                 });
             }
         }.bind(this));
     }
+
     componentDidMount() {
         this.fetchServices();
         setInterval(() => {
             this.fetchServices();
         }, 10000);
     }
+
     render() {
         //console.log(' >>>>>>>> ' + JSON.stringify(this.state.services));
         return (
