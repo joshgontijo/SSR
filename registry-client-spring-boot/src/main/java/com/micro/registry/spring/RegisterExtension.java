@@ -48,7 +48,7 @@ public class RegisterExtension {
                             new Object[]{clazz.getName()});
                     String serviceName = clazz.getAnnotation(EnableDiscovery.class).name();
 
-                    Configuration.initServiceConfig(serviceName, DEFAULT_BOOT_CONTEXT_PATH, BOOT_APPLICATION_PROPERTIES); //TODO get root context path
+                    Configuration.initServiceConfig(serviceName, DEFAULT_BOOT_CONTEXT_PATH); //TODO get root context path
                     init();
                 }
 

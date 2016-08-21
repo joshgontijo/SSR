@@ -16,41 +16,26 @@ import java.util.logging.Logger;
 public class Configuration {
 
     private static final Logger logger = Logger.getLogger(Configuration.class.getName());
-
-    private static Properties fileProperties = new Properties();
-
-    private static final String DEFAULT_PROPERTIES_FILE_NAME = "registry.properties";
-    private static final String SERVICE_URL_SUFFIX = ".url";
-    private static final String REGISTRY_URL = "registry.url";
-
-    private static String propertiesFile = DEFAULT_PROPERTIES_FILE_NAME;
-
-    private static String registryUrl;
-    private static String serviceUrl;
-
+    private static final String PROPERTIES_FILE_NAME = "registry.properties";
+    private static final String SERVICE_URL_KEY = "service.url";
+    private static final String REGISTRY_URL_KEY = "registry.url";
+    private static final String DEFAULT_REGISTRY_URL = "http://localhost:9000";
     private static final String FORWARD_SLASH = "/";
-
+    private static Properties fileProperties = new Properties();
+    private static String registryUrl;
     private static ServiceConfig config;
 
     private Configuration() {
-    }
-
-    public static synchronized void initServiceConfig(String name, String appRoot, String propertiesFileName){
-        propertiesFile = propertiesFileName;
-        initServiceConfig(name, appRoot);
     }
 
     public static synchronized void initServiceConfig(String name, String appRoot) {
         if (config != null) {
             throw new IllegalStateException("Configuration already initialized for this service");
         }
-        if (name == null || name.isEmpty()) {
-            throw new IllegalArgumentException("Service name cannot be null or empty");
-        }
 
         loadProperties();
 
-        serviceUrl = getProperty(name + SERVICE_URL_SUFFIX);
+        String serviceUrl = getProperty(SERVICE_URL_KEY);
 
         if (serviceUrl == null || serviceUrl.isEmpty()) {
             throw new IllegalArgumentException("Service address cannot be null or empty");
@@ -67,7 +52,6 @@ public class Configuration {
         }
 
         String serviceAddress = serviceUrl + FORWARD_SLASH + appRoot;
-
 
         ServiceInstance instance = new ServiceInstance();
         instance.setSince(new Date());
@@ -90,9 +74,9 @@ public class Configuration {
     }
 
     private static void loadProperties() {
-        InputStream is = Configuration.class.getClassLoader().getResourceAsStream(propertiesFile);
+        InputStream is = Configuration.class.getClassLoader().getResourceAsStream(PROPERTIES_FILE_NAME);
         if (is == null) {
-            logger.log(Level.INFO, ":: {0} not found ::", propertiesFile);
+            logger.log(Level.INFO, ":: {0} not found ::", PROPERTIES_FILE_NAME);
         } else {
             try {
                 fileProperties.load(is);
@@ -101,18 +85,17 @@ public class Configuration {
             }
         }
 
-        registryUrl = getProperty(REGISTRY_URL);
+        registryUrl = getProperty(REGISTRY_URL_KEY);
+        if (registryUrl == null) {
+            logger.info(":: +" + REGISTRY_URL_KEY + " not found, using default registry URL: " + DEFAULT_REGISTRY_URL + " ::");
+            registryUrl = DEFAULT_REGISTRY_URL;
+        }
     }
 
     private static String getProperty(String key) {
         String fromFile = fileProperties.getProperty(key);
         String fromEnv = fromSystemProperties(key);
-        String property = (fromEnv == null || fromEnv.isEmpty()) ? fromFile : fromEnv;
-        if (property == null) {
-            logger.log(Level.SEVERE, ":: Value for {0} not found on {1} file or environment variable ::",
-                    new Object[]{key, propertiesFile});
-        }
-        return property;
+        return (fromEnv == null || fromEnv.isEmpty()) ? fromFile : fromEnv;
     }
 
     private static String fromSystemProperties(String key) {
@@ -124,10 +107,6 @@ public class Configuration {
         }
 
         return propertyValue;
-    }
-
-    public static String getServiceUrl() {
-        return serviceUrl;
     }
 
     public static String getRegistryUrl() {

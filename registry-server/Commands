@@ -1,1 +1,0 @@
-scp Dockerfile target/registry-server.war ubuntu@docker1.me:~/registry-server/

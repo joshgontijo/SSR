@@ -28,10 +28,8 @@ public class ServiceRegister implements Runnable {
     private static final AtomicInteger retryCounter = new AtomicInteger();
     private static final int MAX_RETRY = 999; //fix your system bro !
     private static final int RETRY_INTERVAL = 10;//in seconds
-    private Session session;
-
     public static boolean shutdownSignal = false;
-
+    private Session session;
     private ServiceStore store;
     private ScheduledExecutorService executorService;
 
@@ -118,8 +116,8 @@ public class ServiceRegister implements Runnable {
                 logger.log(Level.INFO, ":: Connected ! ::", session.getId());
 
             } catch (Exception e) {
+                logger.log(Level.SEVERE, "Connection failure, reason: ", e.getMessage());
                 logger.log(Level.WARNING, ":: Could not connect to the registry, retrying in {0}s ::", RETRY_INTERVAL);
-                logger.log(Level.SEVERE, "Connection failure, reason: ", e);
                 if (retryCounter.intValue() >= MAX_RETRY) {
                     logger.log(Level.WARNING, ":: Max attempt exceeded ::", RETRY_INTERVAL);
                 } else {

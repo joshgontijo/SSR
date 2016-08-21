@@ -8,7 +8,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author Josue Gontijo.
  */
 public abstract class Strategy {
-    abstract ServiceInstance apply(List<ServiceInstance> configs);
+    AtomicInteger counter = new AtomicInteger();
 
     public static Strategy first() {
         return new Strategy() {
@@ -29,8 +29,6 @@ public abstract class Strategy {
         };
     }
 
-    AtomicInteger counter = new AtomicInteger();
-
     public static Strategy roundRobin() {
         return new Strategy() {
             @Override
@@ -44,5 +42,7 @@ public abstract class Strategy {
             }
         };
     }
+
+    abstract ServiceInstance apply(List<ServiceInstance> configs);
 
 }
