@@ -7,9 +7,9 @@ import java.util.List;
  */
 public class ServiceConfigResponse {
     private final String name;
-    private final List<ServiceConfig> instances;
+    private final List<Service> instances;
 
-    public ServiceConfigResponse(String name, List<ServiceConfig> instances) {
+    public ServiceConfigResponse(String name, List<Service> instances) {
         this.name = name;
         this.instances = instances;
     }
@@ -18,7 +18,7 @@ public class ServiceConfigResponse {
         return name;
     }
 
-    public List<ServiceConfig> getInstances() {
+    public List<Service> getInstances() {
         return instances;
     }
 

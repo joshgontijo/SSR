@@ -29,37 +29,37 @@ public class ServiceControlTest {
 
     @Test(expected = ServiceException.class)
     public void registerInvalidServiceConfig() throws Exception {
-        control.register("id", null);
+        control.register("id", "instanceId", null);
     }
 
     @Test(expected = ServiceException.class)
     public void registerNoName() throws Exception {
-        control.register("id", new ServiceConfig(null));
+        control.register("id", "instanceId", new Service(null));
     }
 
     @Test(expected = ServiceException.class)
     public void registerInstances() throws Exception {
-        ServiceConfig serviceConfig = new ServiceConfig("serviceA");
-        control.register("id", serviceConfig);
+        Service service = new Service("serviceA");
+        control.register("id", "instanceId",  service);
     }
 
     @Test(expected = ServiceException.class)
     public void registerNoAddress() throws Exception {
-        ServiceConfig serviceConfig = new ServiceConfig("serviceA");
-        serviceConfig.getInstances().add(new ServiceInstance());
+        Service service = new Service("serviceA");
+        service.getInstances().add(new ServiceInstance());
 
-        control.register("id", serviceConfig);
+        control.register("id", service);
     }
 
     @Test
     public void register() throws Exception {
         String serviceName = "serviceA";
-        ServiceConfig serviceConfig = registerService("id", serviceName);
-        ServiceInstance instance = firstInstance(serviceConfig);
+        Service service = registerService("id", serviceName);
+        ServiceInstance instance = firstInstance(service);
         assertNotNull(instance.getSince());
 
-        Set<ServiceConfig> services = control.getServices();
-        ServiceConfig byName = getByName(services, serviceName);
+        Set<Service> services = control.getServices();
+        Service byName = getByName(services, serviceName);
         assertEquals(1, services.size());
         assertEquals(instance, firstInstance(byName));
     }
@@ -69,19 +69,19 @@ public class ServiceControlTest {
         String serviceName = "sourceService";
 
         String sourceId = "id-123";
-        ServiceConfig source = registerService(sourceId, serviceName);
-        ServiceConfig target = registerService("id-456", "targetService");
+        Service source = registerService(sourceId, serviceName);
+        Service target = registerService("id-456", "targetService");
 
         control.addLink(sourceId, target);
 
         ServiceInstance newInstance = new ServiceInstance();
         newInstance.setAddress(source.getInstances().iterator().next().getAddress());
-        ServiceConfig config = new ServiceConfig(serviceName);
+        Service config = new Service(serviceName);
         config.getInstances().add(newInstance);
 
         control.register("another-id", config);
 
-        ServiceConfig found = first(control.getServices(serviceName));
+        Service found = first(control.getServices(serviceName));
 
         assertEquals(config, found);//only name is checked
         assertEquals(1, found.getInstances().size());
@@ -95,12 +95,12 @@ public class ServiceControlTest {
     @Test
     public void getAllServices() throws Exception {
         String serviceName = "serviceA";
-        ServiceConfig serviceConfig = registerService("id-123", serviceName);
-        ServiceInstance instance = firstInstance(serviceConfig);
+        Service service = registerService("id-123", serviceName);
+        ServiceInstance instance = firstInstance(service);
 
 
-        Set<ServiceConfig> services = control.getServices(null);
-        ServiceConfig byName = getByName(services, serviceName);
+        Set<Service> services = control.getServices(null);
+        Service byName = getByName(services, serviceName);
         assertEquals(1, services.size());
         assertEquals(1, byName.getInstances().size());
         assertEquals(instance, firstInstance(byName));
@@ -109,12 +109,12 @@ public class ServiceControlTest {
     @Test
     public void getServices() throws Exception {
         String serviceName = "serviceA";
-        ServiceConfig serviceConfig = registerService("id-123", serviceName);
+        Service service = registerService("id-123", serviceName);
 
-        Set<ServiceConfig> services = control.getServices(serviceName);
-        ServiceConfig byName = getByName(services, serviceName);
+        Set<Service> services = control.getServices(serviceName);
+        Service byName = getByName(services, serviceName);
         assertEquals(1, services.size());
-        assertEquals(serviceConfig, byName);
+        assertEquals(service, byName);
         assertEquals(1, byName.getInstances().size());
     }
 
@@ -125,10 +125,10 @@ public class ServiceControlTest {
         String serviceName = "serviceA";
         registerService(id, serviceName);
 
-        ServiceConfig deregistered = control.deregister(id);
+        Service deregistered = control.deregister(id);
         assertFalse(firstInstance(deregistered).isAvailable());
 
-        Set<ServiceConfig> found = control.getServices();
+        Set<Service> found = control.getServices();
         assertEquals(1, found.size());
         assertFalse(firstInstance(first(found)).isAvailable());
     }
@@ -139,9 +139,9 @@ public class ServiceControlTest {
         String sourceService = "sourceService";
         registerService(id, sourceService);
 
-        ServiceConfig serviceConfig = new ServiceConfig("targetService");
+        Service service = new Service("targetService");
 
-        control.addLink("anotherId", serviceConfig);
+        control.addLink("anotherId", service);
     }
 
     @Test
@@ -151,14 +151,14 @@ public class ServiceControlTest {
         registerService(id, sourceService);
 
         String targetService = "targetService";
-        ServiceConfig serviceConfig = registerService("id-123344", targetService);
+        Service service = registerService("id-123344", targetService);
 
-        ServiceConfig updated = control.addLink(id, serviceConfig);
+        Service updated = control.addLink(id, service);
         assertEquals(1, updated.getLinks().size());
         assertEquals(targetService, updated.getLinks().iterator().next());
 
-        Set<ServiceConfig> found = control.getServices(sourceService);
-        ServiceConfig byName = getByName(found, sourceService);
+        Set<Service> found = control.getServices(sourceService);
+        Service byName = getByName(found, sourceService);
 
         assertEquals(targetService, byName.getLinks().iterator().next());
     }
@@ -167,19 +167,19 @@ public class ServiceControlTest {
     public void addLinkDisabledService() throws Exception {
         String id = "id-123";
         String sourceService = "sourceService";
-        ServiceConfig source = registerService(id, sourceService);
+        Service source = registerService(id, sourceService);
         registerService("second-id-123", sourceService);
 
         String targetService = "targetService";
-        ServiceConfig instance = registerService("id-123344", targetService);
+        Service instance = registerService("id-123344", targetService);
 
         control.deregister(id);
 
-        ServiceConfig updated = control.addLink(id, instance);
+        Service updated = control.addLink(id, instance);
         assertEquals(1, updated.getLinks().size());
         assertEquals(targetService, updated.getLinks().iterator().next());
 
-        Set<ServiceConfig> found = control.getServices().stream()
+        Set<Service> found = control.getServices().stream()
                 .filter(sc -> sc.getName().equals(sourceService))
                 .collect(Collectors.toSet());
         assertEquals(targetService, first(found).getLinks().iterator().next());
@@ -192,7 +192,7 @@ public class ServiceControlTest {
         registerService(id, serviceName);
 
         control.deregister(id);
-        Collection<ServiceConfig> found = control.getServices();
+        Collection<Service> found = control.getServices();
         assertEquals(1, found.size());
 
         control.deleteUnavailableNodes(serviceName);
@@ -200,25 +200,25 @@ public class ServiceControlTest {
         assertTrue(found.isEmpty());
     }
 
-    private ServiceConfig registerService(String id, String serviceName) throws ServiceException {
-        ServiceConfig serviceConfig = new ServiceConfig(serviceName);
+    private Service registerService(String id, String serviceName) throws ServiceException {
+        Service service = new Service(serviceName);
         ServiceInstance instance = new ServiceInstance();
         instance.setAddress("http://localhost:8080/" + UUID.randomUUID().toString().substring(0, 4));
 
-        serviceConfig.getInstances().add(instance);
+        service.getInstances().add(instance);
 
-        return control.register(id, serviceConfig);
+        return control.register(id, service);
     }
 
-    private ServiceConfig getByName(Set<ServiceConfig> serviceConfigs, String name) {
-        return serviceConfigs.stream().filter(s -> s.getName().equals(name)).findFirst().get();
+    private Service getByName(Set<Service> services, String name) {
+        return services.stream().filter(s -> s.getName().equals(name)).findFirst().get();
     }
 
-    private ServiceConfig first(Set<ServiceConfig> serviceConfigs) {
-        return serviceConfigs.iterator().next();
+    private Service first(Set<Service> services) {
+        return services.iterator().next();
     }
 
-    private ServiceInstance firstInstance(ServiceConfig serviceConfig) {
-        return serviceConfig.getInstances().iterator().next();
+    private ServiceInstance firstInstance(Service service) {
+        return service.getInstances().iterator().next();
     }
 }

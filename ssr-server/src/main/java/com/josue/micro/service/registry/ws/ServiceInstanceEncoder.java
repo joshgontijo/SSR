@@ -1,7 +1,8 @@
-package com.josue.micro.registry.client.ws;
+package com.josue.micro.service.registry.ws;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.josue.micro.service.registry.service.ServiceInstance;
 
 import javax.websocket.DecodeException;
 import javax.websocket.Decoder;
@@ -15,14 +16,14 @@ import java.util.logging.Logger;
 /**
  * Created by Josue on 18/06/2016.
  */
-public class EventEncoder implements Decoder.Text<Event>, Encoder.Text<Event> {
+public class ServiceInstanceEncoder implements Decoder.Text<ServiceInstance>, Encoder.Text<ServiceInstance> {
 
-    private static final Logger logger = Logger.getLogger(EventEncoder.class.getName());
+    private static final Logger logger = Logger.getLogger(ServiceInstanceEncoder.class.getName());
 
     private static final ObjectMapper mapper = new ObjectMapper();
 
     @Override
-    public String encode(Event event) throws EncodeException {
+    public String encode(ServiceInstance event) throws EncodeException {
         try {
             return mapper.writeValueAsString(event);
         } catch (JsonProcessingException e) {
@@ -32,9 +33,9 @@ public class EventEncoder implements Decoder.Text<Event>, Encoder.Text<Event> {
     }
 
     @Override
-    public Event decode(String s) throws DecodeException {
+    public ServiceInstance decode(String s) throws DecodeException {
         try {
-            return mapper.readValue(s, Event.class);
+            return mapper.readValue(s, ServiceInstance.class);
         } catch (IOException e) {
             logger.log(Level.SEVERE, "Could not decode event", e);
             throw new DecodeException(s, "Could not encode event", e);

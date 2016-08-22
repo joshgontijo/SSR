@@ -5,6 +5,7 @@ import com.josue.micro.service.registry.ServiceException;
 import javax.enterprise.context.ApplicationScoped;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -17,113 +18,76 @@ import java.util.stream.Collectors;
 @ApplicationScoped
 public class ServiceControl {
 
-    static final Set<ServiceConfig> store = ConcurrentHashMap.newKeySet();
+    static final Map<String, Service> store = new ConcurrentHashMap<>();
     private static final Logger logger = Logger.getLogger(ServiceControl.class.getName());
 //    private static final Map<String, ServiceConfig> store = new ConcurrentHashMap<>();
 
     //returns a copy of all the services, including the disabled ones
-    public Set<ServiceConfig> getServices(String filter) {
-        Set<ServiceConfig> collect = store.stream()
+    public Set<Service> getServices(String filter) {
+        Set<Service> collect = store.values().stream()
                 .filter(cfg -> filter == null || cfg.getName().equals(filter))
                 .collect(Collectors.toSet());
 
         return new HashSet<>(collect);
     }
 
-    public Set<ServiceConfig> getServices() {
-        return getServices(null);
+    public ServiceInstance register(String service, String instanceId, ServiceInstance instance) throws ServiceException {
+        if (!store.containsKey(service)) {
+            store.put(service, new Service(service));
+        }
+        Service serviceConfig = store.get(service);
+
+        if (instance.getAddress() == null || instance.getAddress().isEmpty()) {
+            throw new ServiceException(400, "'address' must be provided");
+        }
+        if (instance.getSince() == null) {
+            instance.setSince(new Date());
+        }
+        instance.setId(instanceId);
+        instance.setServiceName(service);
+        instance.setState(ServiceInstance.State.UP);
+
+        serviceConfig.addInstance(instance);
+
+        return instance;
     }
 
-    public ServiceConfig register(String id, ServiceConfig serviceConfig) throws ServiceException {
-        if (serviceConfig == null) {
-            throw new ServiceException(400, "Service must be provided");
-        }
-        if (serviceConfig.getName() == null || serviceConfig.getName().isEmpty()) {
-            throw new ServiceException(400, "Service name not provided");
-        }
-        if (serviceConfig.getInstances() == null || serviceConfig.getInstances().isEmpty()) {
-            throw new ServiceException(400, "Instances not provided");
-        }
-
-        deleteUnavailableNodes(serviceConfig.getName());
-        for (ServiceInstance si : serviceConfig.getInstances()) {
-            if (si.getAddress() == null || si.getAddress().isEmpty()) {
-                throw new ServiceException(400, "'address' must be provided");
-            }
-            if (si.getSince() == null) {
-                si.setSince(new Date());
-            }
-
-            si.setId(id);
-            si.setAvailable(true);
-
-            Set<ServiceConfig> collect = store.stream().filter(s -> s.getName().equals(serviceConfig.getName())).collect(Collectors.toSet());
-            if (!collect.isEmpty()) {
-                collect.iterator().next().getInstances().add(si);
-            } else {
-                ServiceConfig config = new ServiceConfig(serviceConfig.getName());
-                config.getInstances().add(si);
-                store.add(config);
-            }
-        }
-
-        return serviceConfig;
-    }
-
-    public ServiceConfig deregister(String id) throws ServiceException {
-        Optional<ServiceConfig> serviceConfigOpt = store.stream()
-                .filter(s -> s.getInstances().stream()
-                        .filter(i -> i.getId().equals(id))
-                        .findFirst()
-                        .isPresent())
+    public ServiceInstance updateInstanceState(String instanceId, ServiceInstance.State newState) throws ServiceException {
+        Optional<ServiceInstance> first = store.values().stream()
+                .flatMap(l -> l.getInstances().stream())
+                .filter(i -> i.getId().equals(instanceId))
                 .findFirst();
 
-
-        if (!serviceConfigOpt.isPresent()) {
-            throw new ServiceException(400, "Service not foundSource for session '" + id + "'");
+        if (!first.isPresent()) {
+            throw new ServiceException(400, "Service not foundSource for session '" + instanceId + "'");
         }
 
-        ServiceConfig serviceConfig = serviceConfigOpt.get();
-        serviceConfig.getInstances().forEach(i -> {
-            if (i.getId().equals(id)) {
-                i.setAvailable(false);
-                i.setSince(null);
-                i.setDownSince(new Date());
-            }
-        });
-
-        return serviceConfig;
-
+        ServiceInstance instance = first.get();
+        instance.updateInstanceState(newState);
+        return instance;
     }
 
-    public ServiceConfig addLink(String id, ServiceConfig target) throws ServiceException {
-        Optional<ServiceConfig> foundSourceOpt = store.stream()
-                .filter(s -> s.getInstances().stream().map(ServiceInstance::getId).filter(id::equals).findFirst().isPresent())
-                .findFirst();
-
-        if (!foundSourceOpt.isPresent()) {
-            throw new ServiceException(400, "Service not foundSource for session '" + id + "'");
-        }
-
-        ServiceConfig foundSource = foundSourceOpt.get();
-
-        Optional<ServiceConfig> foundTarget = store.stream()
-                .filter(target::equals).findFirst();
-
-        if (!foundTarget.isPresent()) {
-            throw new ServiceException(400, ":: Target service not foundSource: '" + target.getName() + "' ::");
-        }
-
-        foundSource.getLinks().add(target.getName());
-        return foundSource;
-    }
-
-    public void deleteUnavailableNodes(String serviceName) {
-        store.stream()
-                .filter(s -> s.getName().equals(serviceName))
-                .collect(Collectors.toSet())
-                .forEach(s -> s.getInstances().removeIf(e -> !e.isAvailable()));
-        store.removeIf(s -> s.getInstances().isEmpty());
-    }
+    //TODO implement
+//    public ServiceConfig addLink(String id, ServiceConfig target) throws ServiceException {
+//        Optional<ServiceConfig> foundSourceOpt = store.stream()
+//                .filter(s -> s.getInstances().stream().map(ServiceInstance::getId).filter(id::equals).findFirst().isPresent())
+//                .findFirst();
+//
+//        if (!foundSourceOpt.isPresent()) {
+//            throw new ServiceException(400, "Service not foundSource for session '" + id + "'");
+//        }
+//
+//        ServiceConfig foundSource = foundSourceOpt.get();
+//
+//        Optional<ServiceConfig> foundTarget = store.stream()
+//                .filter(target::equals).findFirst();
+//
+//        if (!foundTarget.isPresent()) {
+//            throw new ServiceException(400, ":: Target service not foundSource: '" + target.getName() + "' ::");
+//        }
+//
+//        foundSource.getLinks().add(target.getName());
+//        return foundSource;
+//    }
 
 }

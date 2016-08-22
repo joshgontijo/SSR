@@ -5,11 +5,9 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.Serializable;
@@ -28,17 +26,25 @@ public class ServiceResource implements Serializable {
     private ServiceControl control;
 
     @GET
-    public Response getServices(@QueryParam("name") String serviceName) throws Exception {
-        Set<ServiceConfig> services = control.getServices(serviceName);
+    public Response getServices() throws Exception {
+        Set<Service> services = control.getServices(null);
         return Response.ok(services).build();
     }
 
-    @PUT
+    @GET
     @Path("{name}")
-    public Response deleteUnavailableNodes(@PathParam("name") String name) throws Exception {
-        control.deleteUnavailableNodes(name);
-        return Response.ok().build();
+    public Response getServices(@PathParam("name") String serviceName) throws Exception {
+        Set<Service> services = control.getServices(serviceName);
+        return Response.ok(services).build();
     }
+
+
+//    @PUT
+//    @Path("{name}")
+//    public Response deleteUnavailableNodes(@PathParam("name") String name) throws Exception {
+//        control.deleteUnavailableNodes(name);
+//        return Response.ok().build();
+//    }
 
 
 }

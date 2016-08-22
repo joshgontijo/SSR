@@ -1,6 +1,7 @@
 package com.josue.micro.registry.client.ws;
 
 import com.josue.micro.registry.client.ServiceEventListener;
+import com.josue.micro.registry.client.ServiceInstance;
 import com.josue.micro.registry.client.ServiceRegister;
 import com.josue.micro.registry.client.discovery.Configuration;
 
@@ -20,7 +21,7 @@ import java.util.logging.Logger;
 /**
  * Created by Josue on 16/06/2016.
  */
-@ClientEndpoint(encoders = EventEncoder.class, decoders = EventEncoder.class)
+@ClientEndpoint(encoders = ServiceInstanceEncoder.class, decoders = ServiceInstanceEncoder.class)
 public class ServiceClientEndpoint {
 
     private static final Logger logger = Logger.getLogger(ServiceClientEndpoint.class.getName());
@@ -36,31 +37,28 @@ public class ServiceClientEndpoint {
     @OnOpen
     public void onOpen(Session session) {
         logger.log(Level.INFO, ":: Sending connection event ::");
-        session.getAsyncRemote().sendObject(new Event(EventType.CONNECTED, Configuration.getServiceConfig()));
+        session.getAsyncRemote().sendObject(Configuration.getServiceConfig());
     }
 
     @OnMessage
-    public void onMessage(Event event, Session session) {
+    public void onMessage(ServiceInstance event, Session session) {
         logger.log(Level.INFO, ":: New Event: {0} ::", event);
 
-        switch (event.getType()) {
-            case CONNECTED:
-                for (ServiceEventListener listener : listeners) {
-                    listener.onConnect(event);
-                }
-                break;
-            case DISCONNECTED:
-                for (ServiceEventListener listener : listeners) {
-                    listener.onDisconnect(event);
-                }
-                break;
-            case SERVICE_USAGE:
-                for (ServiceEventListener listener : listeners) {
-                    listener.onServiceUsage(event);
-                }
-                break;
-            default:
-                logger.log(Level.WARNING, ":: Event {0} not implemented ::", event.getType());
+        if (event == null || event.getState() == null) {
+            logger.warning(":: Invalid event state ::");
+            return;
+        }
+
+        if (ServiceInstance.State.UP.equals(event.getState())) {
+            for (ServiceEventListener listener : listeners) {
+                listener.onConnect(event);
+            }
+        }
+        if (ServiceInstance.State.DOWN.equals(event.getState())
+                || ServiceInstance.State.OUT_OF_SERVICE.equals(event.getState())) {
+            for (ServiceEventListener listener : listeners) {
+                listener.onDisconnect(event);
+            }
         }
     }
 

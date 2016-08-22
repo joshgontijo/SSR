@@ -1,5 +1,6 @@
 package com.josue.micro.registry.client;
 
+
 import java.util.Date;
 
 /**
@@ -7,11 +8,16 @@ import java.util.Date;
  */
 public class ServiceInstance {
 
+    public enum State {
+        UP, DOWN, OUT_OF_SERVICE
+    }
+
     private String id;
     private String address;
     private Date since;
     private Date downSince;
-    private boolean available = true;
+    private String serviceName;
+    private State state = State.DOWN;
 
     public ServiceInstance() {
     }
@@ -40,12 +46,12 @@ public class ServiceInstance {
         this.since = since;
     }
 
-    public boolean isAvailable() {
-        return available;
+    public State getState() {
+        return state;
     }
 
-    public void setAvailable(boolean available) {
-        this.available = available;
+    public void setState(State state) {
+        this.state = state;
     }
 
     public Date getDownSince() {
@@ -56,6 +62,21 @@ public class ServiceInstance {
         this.downSince = downSince;
     }
 
+    public String getServiceName() {
+        return serviceName;
+    }
+
+    public void setServiceName(String serviceName) {
+        this.serviceName = serviceName;
+    }
+
+    public void updateInstanceState(ServiceInstance.State newState) {
+        state = newState;
+        if (ServiceInstance.State.DOWN.equals(newState)) {
+            downSince = new Date();
+        }
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -64,7 +85,6 @@ public class ServiceInstance {
         ServiceInstance that = (ServiceInstance) o;
 
         return address != null ? address.equals(that.address) : that.address == null;
-
     }
 
     @Override
@@ -74,9 +94,12 @@ public class ServiceInstance {
 
     @Override
     public String toString() {
-        return "id='" + id + '\'' +
+        return "ServiceInstance{" +
+                "id='" + id + '\'' +
                 ", address='" + address + '\'' +
                 ", since=" + since +
-                ", available=" + available;
+                ", downSince=" + downSince +
+                ", state=" + state +
+                '}';
     }
 }
