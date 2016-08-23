@@ -16,7 +16,6 @@ public class Configuration {
 
     private static final Logger logger = Logger.getLogger(Configuration.class.getName());
     private static final String PROPERTIES_FILE_NAME = "registry.properties";
-    private static final String ENVIRONMENT_KEY = "ssr.env";
     private static final String SERVICE_URL_KEY = "service.url";
     private static final String REGISTRY_URL_KEY = "registry.url";
     private static final String DEFAULT_REGISTRY_URL = "http://localhost:9000";
@@ -53,13 +52,10 @@ public class Configuration {
 
         String serviceAddress = serviceUrl + FORWARD_SLASH + appRoot;
 
-        ServiceInstance instance = new ServiceInstance();
-        instance.setSince(new Date());
-        instance.setAddress(serviceAddress);
-
         service = new ServiceInstance();
+        service.setSince(new Date());
+        service.setAddress(serviceAddress);
         service.setServiceName(name);
-
     }
 
     public static synchronized ServiceInstance getServiceConfig() {
@@ -105,7 +101,6 @@ public class Configuration {
         if (propertyValue == null || propertyValue.isEmpty()) {
             propertyValue = System.getenv(key);
         }
-
         return propertyValue;
     }
 
