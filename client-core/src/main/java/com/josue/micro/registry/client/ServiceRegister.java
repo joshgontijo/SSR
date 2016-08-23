@@ -22,7 +22,7 @@ public class ServiceRegister implements Runnable {
 
     private static final Logger logger = Logger.getLogger(ServiceRegister.class.getName());
 
-    private static final String REGISTRY_PATH = "registry";
+    private static final String REGISTRY_PATH = "services";
 
     private static final Object LOCK = new Object();
     private static final AtomicInteger retryCounter = new AtomicInteger();
@@ -94,7 +94,7 @@ public class ServiceRegister implements Runnable {
         } else {//protocol not provided
             registryUrl = "ws://" + registryUrl;
         }
-        return registryUrl + urlSeparator + REGISTRY_PATH;
+        return registryUrl + urlSeparator + REGISTRY_PATH + "/" + Configuration.getServiceConfig().getServiceName();
     }
 
     @Override
