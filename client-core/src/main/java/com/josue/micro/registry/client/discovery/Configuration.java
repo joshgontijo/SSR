@@ -1,6 +1,6 @@
 package com.josue.micro.registry.client.discovery;
 
-import com.josue.micro.registry.client.ServiceInstance;
+import com.josue.ssr.common.Instance;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -22,13 +22,13 @@ public class Configuration {
     private static final String FORWARD_SLASH = "/";
     private static Properties fileProperties = new Properties();
     private static String registryUrl;
-    private static ServiceInstance service;
+    private static Instance instance;
 
     private Configuration() {
     }
 
     public static synchronized void initServiceConfig(String name, String appRoot) {
-        if (service != null) {
+        if (instance != null) {
             throw new IllegalStateException("Configuration already initialized for this service");
         }
 
@@ -52,21 +52,21 @@ public class Configuration {
 
         String serviceAddress = serviceUrl + FORWARD_SLASH + appRoot;
 
-        service = new ServiceInstance();
-        service.setSince(new Date());
-        service.setAddress(serviceAddress);
-        service.setServiceName(name);
+        instance = new Instance();
+        instance.setSince(new Date());
+        instance.setAddress(serviceAddress);
+        instance.setName(name);
     }
 
-    public static synchronized ServiceInstance getServiceConfig() {
-        if (service == null) {
-            throw new IllegalStateException("Service service not initialised yet");
+    public static synchronized Instance getServiceConfig() {
+        if (instance == null) {
+            throw new IllegalStateException("Configuration not initialised yet");
         }
-        return service;
+        return instance;
     }
 
     public static synchronized boolean isInitialised() {
-        return service != null;
+        return instance != null;
     }
 
     private static void loadProperties() {

@@ -1,5 +1,7 @@
 package com.josue.micro.service.registry.service;
 
+import com.josue.ssr.common.Service;
+
 import java.util.List;
 
 /**

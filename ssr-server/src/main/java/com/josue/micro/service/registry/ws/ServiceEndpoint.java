@@ -2,7 +2,8 @@ package com.josue.micro.service.registry.ws;
 
 import com.josue.micro.service.registry.ServiceException;
 import com.josue.micro.service.registry.service.ServiceControl;
-import com.josue.micro.service.registry.service.Instance;
+import com.josue.ssr.common.Instance;
+import com.josue.ssr.common.InstanceEncoder;
 
 import javax.inject.Inject;
 import javax.websocket.CloseReason;
@@ -21,8 +22,8 @@ import java.util.logging.Logger;
  * Created by Josue on 17/06/2016.
  */
 @ServerEndpoint(value = "/services/{serviceName}",
-        decoders = ServiceInstanceEncoder.class,
-        encoders = ServiceInstanceEncoder.class)
+        decoders = InstanceEncoder.class,
+        encoders = InstanceEncoder.class)
 public class ServiceEndpoint {
 
     private static final Logger logger = Logger.getLogger(ServiceEndpoint.class.getName());

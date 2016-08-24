@@ -1,9 +1,10 @@
 package com.josue.micro.registry.client.ws;
 
 import com.josue.micro.registry.client.ServiceEventListener;
-import com.josue.micro.registry.client.ServiceInstance;
 import com.josue.micro.registry.client.ServiceRegister;
 import com.josue.micro.registry.client.discovery.Configuration;
+import com.josue.ssr.common.Instance;
+import com.josue.ssr.common.InstanceEncoder;
 
 import javax.websocket.ClientEndpoint;
 import javax.websocket.CloseReason;
@@ -21,7 +22,7 @@ import java.util.logging.Logger;
 /**
  * Created by Josue on 16/06/2016.
  */
-@ClientEndpoint(encoders = ServiceInstanceEncoder.class, decoders = ServiceInstanceEncoder.class)
+@ClientEndpoint(encoders = InstanceEncoder.class, decoders = InstanceEncoder.class)
 public class ServiceClientEndpoint {
 
     private static final Logger logger = Logger.getLogger(ServiceClientEndpoint.class.getName());
@@ -41,23 +42,23 @@ public class ServiceClientEndpoint {
     }
 
     @OnMessage
-    public void onMessage(ServiceInstance event, Session session) {
-        logger.log(Level.INFO, ":: New Event: {0} ::", event);
+    public void onMessage(Instance instance, Session session) {
+        logger.log(Level.INFO, ":: New Event: {0} ::", instance);
 
-        if (event == null || event.getState() == null) {
-            logger.warning(":: Invalid event state ::");
+        if (instance == null || instance.getState() == null) {
+            logger.warning(":: Invalid instance state ::");
             return;
         }
 
-        if (ServiceInstance.State.UP.equals(event.getState())) {
+        if (Instance.State.UP.equals(instance.getState())) {
             for (ServiceEventListener listener : listeners) {
-                listener.onConnect(event);
+                listener.onConnect(instance);
             }
         }
-        if (ServiceInstance.State.DOWN.equals(event.getState())
-                || ServiceInstance.State.OUT_OF_SERVICE.equals(event.getState())) {
+        if (Instance.State.DOWN.equals(instance.getState())
+                || Instance.State.OUT_OF_SERVICE.equals(instance.getState())) {
             for (ServiceEventListener listener : listeners) {
-                listener.onDisconnect(event);
+                listener.onDisconnect(instance);
             }
         }
     }

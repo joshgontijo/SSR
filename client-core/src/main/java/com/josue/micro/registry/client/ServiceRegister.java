@@ -94,7 +94,7 @@ public class ServiceRegister implements Runnable {
         } else {//protocol not provided
             registryUrl = "ws://" + registryUrl;
         }
-        return registryUrl + urlSeparator + REGISTRY_PATH + "/" + Configuration.getServiceConfig().getServiceName();
+        return registryUrl + urlSeparator + REGISTRY_PATH + "/" + Configuration.getServiceConfig().getName();
     }
 
     @Override

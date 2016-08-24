@@ -1,5 +1,7 @@
 package com.josue.micro.registry.client;
 
+import com.josue.ssr.common.Instance;
+
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -13,7 +15,7 @@ public abstract class Strategy {
     public static Strategy first() {
         return new Strategy() {
             @Override
-            ServiceInstance apply(List<ServiceInstance> configs) {
+            public Instance apply(List<Instance> configs) {
                 return configs.get(0);
             }
         };
@@ -22,7 +24,7 @@ public abstract class Strategy {
     public static Strategy random() {
         return new Strategy() {
             @Override
-            ServiceInstance apply(List<ServiceInstance> configs) {
+            public Instance apply(List<Instance> configs) {
                 int idx = ThreadLocalRandom.current().nextInt(0, configs.size() - 1);
                 return configs.get(idx);
             }
@@ -32,7 +34,7 @@ public abstract class Strategy {
     public static Strategy roundRobin() {
         return new Strategy() {
             @Override
-            ServiceInstance apply(List<ServiceInstance> configs) {
+            public Instance apply(List<Instance> configs) {
                 int current = counter.getAndIncrement();
                 if (current >= configs.size()) {
                     current = 0;
@@ -43,6 +45,6 @@ public abstract class Strategy {
         };
     }
 
-    abstract ServiceInstance apply(List<ServiceInstance> configs);
+    abstract Instance apply(List<Instance> configs);
 
 }

@@ -1,6 +1,7 @@
 package com.josue.micro.service.registry.ws;
 
-import com.josue.micro.service.registry.service.Instance;
+
+import com.josue.ssr.common.Instance;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.websocket.Session;

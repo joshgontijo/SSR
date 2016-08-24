@@ -1,5 +1,7 @@
 package com.josue.micro.registry.client;
 
+import com.josue.ssr.common.Instance;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Map;
@@ -11,45 +13,45 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class ServiceStore implements ServiceEventListener {
 
-    private static final Map<String, Set<ServiceInstance>> store = new ConcurrentHashMap<>();
+    private static final Map<String, Set<Instance>> store = new ConcurrentHashMap<>();
 
     //TODO implement
 //    private static final Queue<Event> eventBuffer = new ConcurrentLinkedDeque<>();
 //    private static final int eventBufferSize = 1; //TODO configurable
 
-    public ServiceInstance get(String serviceName) {
+    public Instance get(String serviceName) {
         return get(serviceName, Strategy.roundRobin());
     }
 
-    public ServiceInstance get(String serviceName, Strategy strategy) {
+    public Instance get(String serviceName, Strategy strategy) {
         if (!store.containsKey(serviceName)) {
             return null;
         }
-        Set<ServiceInstance> instances = store.get(serviceName);
+        Set<Instance> instances = store.get(serviceName);
         if (instances == null) {
             return null;
         }
 
-        ServiceInstance apply = strategy.apply(new ArrayList<>(instances));
+        Instance apply = strategy.apply(new ArrayList<>(instances));
 
 //        sentStats(instances);
 
         return apply;
     }
 
-    public void addService(ServiceInstance instance) {
-        if (!store.containsKey(instance.getServiceName())) {
-            store.put(instance.getServiceName(), new HashSet<>());
+    public void addService(Instance instance) {
+        if (!store.containsKey(instance.getName())) {
+            store.put(instance.getName(), new HashSet<>());
         }
-        store.get(instance.getServiceName()).add(instance);
+        store.get(instance.getName()).add(instance);
     }
 
-    public void removeService(ServiceInstance instance) {
-        if (store.containsKey(instance.getServiceName())) {
-            store.get(instance.getServiceName()).remove(instance);
+    public void removeService(Instance instance) {
+        if (store.containsKey(instance.getName())) {
+            store.get(instance.getName()).remove(instance);
         }
-        if (store.get(instance.getServiceName()).isEmpty()) {
-            store.remove(instance.getServiceName());
+        if (store.get(instance.getName()).isEmpty()) {
+            store.remove(instance.getName());
         }
     }
 
@@ -72,12 +74,12 @@ public class ServiceStore implements ServiceEventListener {
 //    }
 
     @Override
-    public void onConnect(ServiceInstance instance) {
+    public void onConnect(Instance instance) {
         addService(instance);
     }
 
     @Override
-    public void onDisconnect(ServiceInstance instance) {
+    public void onDisconnect(Instance instance) {
         removeService(instance);
     }
 

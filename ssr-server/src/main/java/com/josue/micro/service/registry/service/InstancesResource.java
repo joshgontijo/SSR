@@ -2,6 +2,7 @@ package com.josue.micro.service.registry.service;
 
 import com.josue.micro.service.registry.ServiceException;
 import com.josue.micro.service.registry.ws.SessionStore;
+import com.josue.ssr.common.Instance;
 
 import javax.inject.Inject;
 import javax.ws.rs.PUT;

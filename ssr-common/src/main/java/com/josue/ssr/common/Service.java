@@ -1,4 +1,4 @@
-package com.josue.micro.service.registry.service;
+package com.josue.ssr.common;
 
 import java.io.Serializable;
 import java.util.HashSet;

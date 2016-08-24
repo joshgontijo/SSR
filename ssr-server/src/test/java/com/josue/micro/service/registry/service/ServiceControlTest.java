@@ -1,6 +1,8 @@
 package com.josue.micro.service.registry.service;
 
 import com.josue.micro.service.registry.ServiceException;
+import com.josue.ssr.common.Instance;
+import com.josue.ssr.common.Service;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -131,7 +133,6 @@ public class ServiceControlTest {
         assertEquals(source, updatedTarget.getLinks().iterator().next());
 
     }
-
 
     private Instance registerService(String id, String serviceName) throws ServiceException {
         Instance instance = new Instance();

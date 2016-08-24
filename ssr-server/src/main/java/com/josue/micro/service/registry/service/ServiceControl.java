@@ -1,6 +1,8 @@
 package com.josue.micro.service.registry.service;
 
 import com.josue.micro.service.registry.ServiceException;
+import com.josue.ssr.common.Instance;
+import com.josue.ssr.common.Service;
 
 import javax.enterprise.context.ApplicationScoped;
 import java.util.Date;

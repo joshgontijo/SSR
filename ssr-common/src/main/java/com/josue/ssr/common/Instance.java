@@ -1,4 +1,4 @@
-package com.josue.micro.registry.client;
+package com.josue.ssr.common;
 
 
 import java.util.Date;
@@ -6,7 +6,7 @@ import java.util.Date;
 /**
  * Created by Josue on 12/07/2016.
  */
-public class ServiceInstance {
+public class Instance {
 
     public enum State {
         UP, DOWN, OUT_OF_SERVICE
@@ -16,10 +16,10 @@ public class ServiceInstance {
     private String address;
     private Date since;
     private Date downSince;
-    private String serviceName;
+    private String name;
     private State state = State.DOWN;
 
-    public ServiceInstance() {
+    public Instance() {
     }
 
     public String getId() {
@@ -62,17 +62,17 @@ public class ServiceInstance {
         this.downSince = downSince;
     }
 
-    public String getServiceName() {
-        return serviceName;
+    public String getName() {
+        return name;
     }
 
-    public void setServiceName(String serviceName) {
-        this.serviceName = serviceName;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public void updateInstanceState(ServiceInstance.State newState) {
+    public void updateInstanceState(Instance.State newState) {
         state = newState;
-        if (ServiceInstance.State.DOWN.equals(newState)) {
+        if (Instance.State.DOWN.equals(newState)) {
             downSince = new Date();
         }
     }
@@ -80,9 +80,9 @@ public class ServiceInstance {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof ServiceInstance)) return false;
+        if (!(o instanceof Instance)) return false;
 
-        ServiceInstance that = (ServiceInstance) o;
+        Instance that = (Instance) o;
 
         return address != null ? address.equals(that.address) : that.address == null;
     }
