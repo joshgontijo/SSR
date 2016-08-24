@@ -1,6 +1,6 @@
 package com.josue.micro.service.registry.ws;
 
-import com.josue.micro.service.registry.service.ServiceInstance;
+import com.josue.micro.service.registry.service.Instance;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.websocket.Session;
@@ -31,7 +31,7 @@ public class SessionStore {
         sessions.get(service).remove(session);
     }
 
-    public void pushInstanceState(ServiceInstance registered) {
+    public void pushInstanceState(Instance registered) {
         //send to all other services except current session
         sessions.entrySet().stream()
                 .flatMap(l -> l.getValue().stream())

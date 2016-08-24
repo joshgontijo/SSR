@@ -2,18 +2,17 @@ package com.josue.micro.service.registry.service;
 
 import java.io.Serializable;
 import java.util.HashSet;
-import java.util.Map;
+import java.util.Iterator;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by Josue on 09/06/2016.
  */
 public class Service implements Serializable {
 
-    private final Set<String> links = new HashSet<>();
-    private final Map<String, ServiceInstance> instances = new ConcurrentHashMap<>();
     private String name;
+    private final Set<Instance> instances = new HashSet<>();
+    private final Set<String> links = new HashSet<>();
 
     public Service() {
     }
@@ -26,34 +25,42 @@ public class Service implements Serializable {
         return links;
     }
 
-    public Set<ServiceInstance> getInstances() {
-        return new HashSet<>(instances.size());
+    public Set<Instance> getInstances() {
+        return new HashSet<>(instances);
     }
 
     public boolean containsInstance(String instanceId) {
-        return instances.containsKey(instanceId);
+        for (Instance instance : instances) {
+            if (instance.getId().equals(instanceId)) {
+                return true;
+            }
+        }
+        return false;
     }
 
-    public ServiceInstance addInstance(ServiceInstance instance) {
-        ServiceInstance existent = null;
-        for (Map.Entry<String, ServiceInstance> entry : instances.entrySet()) {
-            if (entry.getValue().equals(instance)) {
-                existent = entry.getValue();
+    public Instance addInstance(Instance newInstance) {
+        Instance existent = null;
+        for (Instance instance : instances) {
+            if (instance.equals(instance)) {
+                existent = instance;
             }
         }
 
         //already exists and is not UP, remove it
-        if (existent != null && !ServiceInstance.State.UP.equals(existent.getState())) {
+        if (existent != null && !Instance.State.UP.equals(existent.getState())) {
             instances.remove(existent.getId());
         }
-        return instances.put(instance.getId(), instance);
+        instances.add(newInstance);
+        return newInstance;
     }
 
-    public synchronized ServiceInstance removeInstance(String instanceId) {
-        if (!containsInstance(instanceId)) {
-            return null;
+    public synchronized void removeInstance(String instanceId) {
+        Iterator<Instance> it = instances.iterator();
+        while (it.hasNext()) {
+            if (it.next().getId().equals(instanceId)) {
+                it.remove();
+            }
         }
-        return instances.remove(instanceId);
     }
 
     public String getName() {

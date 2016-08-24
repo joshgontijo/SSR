@@ -23,12 +23,12 @@ public class InstancesResource {
 
     @PUT
     @Path("{instanceId}")
-    public Response updateServiceState(@PathParam("instanceId") String instanceId, ServiceInstance instance) throws Exception {
+    public Response updateServiceState(@PathParam("instanceId") String instanceId, Instance instance) throws Exception {
         if (instance == null || instance.getState() == null) { //it only supports state update as for now
             throw new ServiceException(400, "Invalid instance");
         }
 
-        ServiceInstance updated = control.updateInstanceState(instanceId, instance.getState());
+        Instance updated = control.updateInstanceState(instanceId, instance.getState());
         sessionStore.pushInstanceState(updated);
 
         return Response.noContent().build();

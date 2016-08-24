@@ -27,15 +27,15 @@ public class ServiceResource implements Serializable {
 
     @GET
     public Response getServices() throws Exception {
-        Set<Service> services = control.getServices(null);
+        Set<Service> services = control.getServices();
         return Response.ok(services).build();
     }
 
     @GET
     @Path("{name}")
     public Response getServices(@PathParam("name") String serviceName) throws Exception {
-        Set<Service> services = control.getServices(serviceName);
-        return Response.ok(services).build();
+        Service service = control.getService(serviceName);
+        return Response.ok(service).build();
     }
 
 

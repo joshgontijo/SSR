@@ -10,7 +10,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 /**
  * Created by Josue on 15/06/2016.
@@ -23,37 +22,46 @@ public class ServiceControl {
 //    private static final Map<String, ServiceConfig> store = new ConcurrentHashMap<>();
 
     //returns a copy of all the services, including the disabled ones
-    public Set<Service> getServices(String filter) {
-        Set<Service> collect = store.values().stream()
-                .filter(cfg -> filter == null || cfg.getName().equals(filter))
-                .collect(Collectors.toSet());
-
-        return new HashSet<>(collect);
+    public Service getService(String name) throws ServiceException {
+        Service service = store.get(name);
+        if (service == null) {
+            throw new ServiceException(404, "Service not found for name '" + name + "'");
+        }
+        return service;
     }
 
-    public ServiceInstance register(String service, String instanceId, ServiceInstance instance) throws ServiceException {
-        if (!store.containsKey(service)) {
-            store.put(service, new Service(service));
-        }
-        Service serviceConfig = store.get(service);
+    public Set<Service> getServices() {
+        return new HashSet<>(store.values());
+    }
 
-        if (instance.getAddress() == null || instance.getAddress().isEmpty()) {
+    public Instance register(String service, Instance instance) throws ServiceException {
+        if (instance == null) {
+            throw new ServiceException(400, "Invalid instance");
+        }
+        if (instance.getAddress() == null || instance.getAddress().trim().isEmpty()) {
             throw new ServiceException(400, "'address' must be provided");
+        }
+        if (instance.getId() == null || instance.getId().trim().isEmpty()) {
+            throw new ServiceException(400, "'id' must be provided");
         }
         if (instance.getSince() == null) {
             instance.setSince(new Date());
         }
-        instance.setId(instanceId);
-        instance.setServiceName(service);
-        instance.setState(ServiceInstance.State.UP);
+        instance.setName(service);
+        instance.setState(Instance.State.UP);
+
+        if (!store.containsKey(service)) {
+            store.put(service, new Service(service));
+        }
+        Service serviceConfig = store.get(service);
 
         serviceConfig.addInstance(instance);
 
         return instance;
     }
 
-    public ServiceInstance updateInstanceState(String instanceId, ServiceInstance.State newState) throws ServiceException {
-        Optional<ServiceInstance> first = store.values().stream()
+    public Instance updateInstanceState(String instanceId, Instance.State newState) throws ServiceException {
+        Optional<Instance> first = store.values().stream()
                 .flatMap(l -> l.getInstances().stream())
                 .filter(i -> i.getId().equals(instanceId))
                 .findFirst();
@@ -62,32 +70,24 @@ public class ServiceControl {
             throw new ServiceException(400, "Service not foundSource for session '" + instanceId + "'");
         }
 
-        ServiceInstance instance = first.get();
+        Instance instance = first.get();
         instance.updateInstanceState(newState);
         return instance;
     }
 
-    //TODO implement
-//    public ServiceConfig addLink(String id, ServiceConfig target) throws ServiceException {
-//        Optional<ServiceConfig> foundSourceOpt = store.stream()
-//                .filter(s -> s.getInstances().stream().map(ServiceInstance::getId).filter(id::equals).findFirst().isPresent())
-//                .findFirst();
-//
-//        if (!foundSourceOpt.isPresent()) {
-//            throw new ServiceException(400, "Service not foundSource for session '" + id + "'");
-//        }
-//
-//        ServiceConfig foundSource = foundSourceOpt.get();
-//
-//        Optional<ServiceConfig> foundTarget = store.stream()
-//                .filter(target::equals).findFirst();
-//
-//        if (!foundTarget.isPresent()) {
-//            throw new ServiceException(400, ":: Target service not foundSource: '" + target.getName() + "' ::");
-//        }
-//
-//        foundSource.getLinks().add(target.getName());
-//        return foundSource;
-//    }
+    public Service addLink(String client, String target) throws ServiceException {
+        Service targetService = store.get(target);
+        Service sourceService = store.get(client);
+
+        if (targetService == null) {
+            throw new ServiceException(400, "Service " + target + " not found");
+        }
+        if (sourceService == null) {
+            throw new ServiceException(400, "Service " + client + " not found");
+        }
+
+        targetService.getLinks().add(client);
+        return targetService;
+    }
 
 }

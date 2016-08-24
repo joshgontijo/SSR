@@ -81,7 +81,7 @@ export default class InstancesDiagram extends React.Component {
 
         props.services.forEach(function (service) {
             var available = service.instances.map(function (instance) {
-                return instance.available;
+                return instance.state == 'UP';
             }).reduce(function (current, acum) {
                 return current && acum;
             });

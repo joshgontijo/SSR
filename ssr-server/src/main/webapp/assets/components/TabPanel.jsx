@@ -1,5 +1,6 @@
 import React from 'react';
 import $ from 'jquery';
+import _ from 'underscore';
 
 import Tab from './Tab.jsx';
 import TabContent from './TabContent.jsx';

@@ -2,7 +2,7 @@ package com.josue.micro.service.registry.ws;
 
 import com.josue.micro.service.registry.ServiceException;
 import com.josue.micro.service.registry.service.ServiceControl;
-import com.josue.micro.service.registry.service.ServiceInstance;
+import com.josue.micro.service.registry.service.Instance;
 
 import javax.inject.Inject;
 import javax.websocket.CloseReason;
@@ -39,15 +39,15 @@ public class ServiceEndpoint {
     }
 
     @OnMessage
-    public void onMessage(@PathParam("serviceName") String serviceName, ServiceInstance serviceInstance, Session session) throws ServiceException {
-        logger.log(Level.INFO, ":: Connection event received {0} ::", serviceInstance);
-        if (serviceInstance == null) {
+    public void onMessage(@PathParam("serviceName") String serviceName, Instance instance, Session session) throws ServiceException {
+        logger.log(Level.INFO, ":: Connection event received {0} ::", instance);
+        if (instance == null) {
             throw new ServiceException(400, "Invalid ServiceInstance, null state");
         }
 
         sessionStore.addSession(serviceName, session);
-        serviceInstance.setId(extractSessionId(session));
-        ServiceInstance registered = control.register(serviceName, serviceInstance.getId(), serviceInstance);
+        instance.setId(extractSessionId(session));
+        Instance registered = control.register(serviceName, instance);
         sessionStore.pushInstanceState(registered);
     }
 
@@ -55,7 +55,7 @@ public class ServiceEndpoint {
     public void onClose(@PathParam("serviceName") String serviceName, Session session, CloseReason closeReason) throws ServiceException {
         logger.log(Level.INFO, ":: Service disconnected, service {0}, id {1}, reason {2} ::", new Object[]{serviceName, session, closeReason.getReasonPhrase()});
         sessionStore.removeSession(serviceName, session);
-        ServiceInstance updated = control.updateInstanceState(extractSessionId(session), ServiceInstance.State.DOWN);
+        Instance updated = control.updateInstanceState(extractSessionId(session), Instance.State.DOWN);
         sessionStore.pushInstanceState(updated);
     }
 

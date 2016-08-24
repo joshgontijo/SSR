@@ -1,58 +1,35 @@
 [
   {
-    "name": "balance",
-    "links": [
-      "account2"
-    ],
-    "instances": [
-      {
-        "id": "1",
-        "address": "http://localhost:8080/balance/rest",
-        "since": null,
-        "downSince": "2016-07-14 11:33:04",
-        "available": false
-      }
-    ]
-  },
-  {
-    "name": "account",
-    "links": [
-      "balance",
-      "service2"
-    ],
-    "instances": [
-      {
-        "id": "0",
-        "address": "http://localhost:8080/account/rest",
-        "since": "2016-07-14 11:33:02",
-        "available": true
-      }
-    ]
-  },
-  {
-    "name": "account2",
     "links": [],
     "instances": [
       {
-        "id": "0",
-        "address": "http://localhost:8080/account/rest2",
-        "since": "2016-07-14 11:33:02",
-        "available": true
+        "id": "jr9h10ay",
+        "address": "http://localhost:8082/rest",
+        "since": "2016-08-23 08:50:45",
+        "serviceName": "balance",
+        "state": "UP"
+      },
+      {
+        "id": "4qfqiqvw",
+        "address": "http://localhost:8083/rest",
+        "since": "2016-08-23 08:50:46",
+        "serviceName": "balance",
+        "state": "UP"
       }
-    ]
+    ],
+    "name": "balance"
   },
   {
-    "name": "service2",
-    "links": [
-      "balance"
-    ],
+    "links": [],
     "instances": [
       {
-        "id": "0",
-        "address": "http://localhost:8080/account/rest2",
-        "since": "2016-07-14 11:33:02",
-        "available": true
+        "id": "rlrzse-y",
+        "address": "http://localhost:8080/rest",
+        "since": "2016-08-23 08:50:41",
+        "serviceName": "account",
+        "state": "UP"
       }
-    ]
+    ],
+    "name": "account"
   }
 ]
