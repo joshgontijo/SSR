@@ -26,9 +26,7 @@ import java.util.logging.Logger;
 public class ServiceClientEndpoint {
 
     private static final Logger logger = Logger.getLogger(ServiceClientEndpoint.class.getName());
-
     private static final List<ServiceEventListener> listeners = Collections.synchronizedList(new ArrayList<>());
-
     private final ServiceRegister register;
 
     public ServiceClientEndpoint(ServiceRegister register) {
