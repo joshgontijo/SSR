@@ -2,7 +2,7 @@ package com.micro.registry.spring;
 
 import com.josue.micro.registry.client.ServiceRegister;
 import com.josue.micro.registry.client.ServiceStore;
-import com.josue.micro.registry.client.discovery.Configuration;
+import com.josue.micro.registry.client.config.Configurator;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanPostProcessor;
@@ -48,7 +48,7 @@ public class RegisterExtension {
                             new Object[]{clazz.getName()});
                     String serviceName = clazz.getAnnotation(EnableDiscovery.class).name();
 
-                    Configuration.initServiceConfig(serviceName, DEFAULT_BOOT_CONTEXT_PATH); //TODO get root context path
+                    Configurator.initServiceConfig(serviceName, DEFAULT_BOOT_CONTEXT_PATH); //TODO get root context path
                     init();
                 }
 

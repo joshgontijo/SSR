@@ -2,7 +2,7 @@ package com.josue.micro.registry.client.ws;
 
 import com.josue.micro.registry.client.ServiceEventListener;
 import com.josue.micro.registry.client.ServiceRegister;
-import com.josue.micro.registry.client.discovery.Configuration;
+import com.josue.micro.registry.client.config.Configurator;
 import com.josue.ssr.common.Instance;
 import com.josue.ssr.common.InstanceEncoder;
 
@@ -38,7 +38,7 @@ public class ServiceClientEndpoint {
     @OnOpen
     public void onOpen(Session session) {
         logger.log(Level.INFO, ":: Sending connection event ::");
-        session.getAsyncRemote().sendObject(Configuration.getServiceConfig());
+        session.getAsyncRemote().sendObject(Configurator.getServiceConfig());
     }
 
     @OnMessage

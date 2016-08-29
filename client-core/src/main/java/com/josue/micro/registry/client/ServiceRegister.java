@@ -1,6 +1,6 @@
 package com.josue.micro.registry.client;
 
-import com.josue.micro.registry.client.discovery.Configuration;
+import com.josue.micro.registry.client.config.Configurator;
 import com.josue.micro.registry.client.ws.ServiceClientEndpoint;
 
 import javax.websocket.CloseReason;
@@ -22,8 +22,6 @@ public class ServiceRegister implements Runnable {
 
     private static final Logger logger = Logger.getLogger(ServiceRegister.class.getName());
 
-    private static final String REGISTRY_PATH = "services";
-
     private static final Object LOCK = new Object();
     private static final AtomicInteger retryCounter = new AtomicInteger();
     private static final int MAX_RETRY = 999; //fix your system bro !
@@ -42,7 +40,7 @@ public class ServiceRegister implements Runnable {
     public void init() {
         synchronized (LOCK) {
             logger.log(Level.INFO, ":: Initialising service register ::");
-            if (Configuration.isInitialised()) {
+            if (Configurator.isInitialised()) {
                 register();
             } else {
                 logger.log(Level.INFO, ":: No services found ::");
@@ -82,27 +80,11 @@ public class ServiceRegister implements Runnable {
         }
     }
 
-    private String getRegistryUrl() {
-        String registryUrl = Configuration.getRegistryUrl();
-        String urlSeparator = registryUrl.endsWith("/") ? "" : "/";
-        if (registryUrl.startsWith("ws")) {
-            //do nothing
-        } else if (registryUrl.startsWith("http")) {
-            registryUrl = registryUrl.replaceFirst("http", "ws");
-        } else if (registryUrl.startsWith("https")) {
-            registryUrl = registryUrl.replaceFirst("https", "ws");
-        } else {//protocol not provided
-            registryUrl = "ws://" + registryUrl;
-        }
-        return registryUrl + urlSeparator + REGISTRY_PATH + "/" + Configuration.getServiceConfig().getName();
-    }
-
     @Override
     public void run() {
         synchronized (LOCK) {
             try {
-                String registryUrl = getRegistryUrl();
-
+                String registryUrl = Configurator.getRegistryUrl();
                 WebSocketContainer container = ContainerProvider.getWebSocketContainer();
 
                 logger.log(Level.INFO, ":: Trying to connect to {0}, attempt {1} of {2} ::", new Object[]{registryUrl, retryCounter.incrementAndGet(), MAX_RETRY});

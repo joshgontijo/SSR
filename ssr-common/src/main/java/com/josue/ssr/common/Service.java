@@ -41,14 +41,14 @@ public class Service implements Serializable {
     public Instance addInstance(Instance newInstance) {
         Instance existent = null;
         for (Instance instance : instances) {
-            if (instance.equals(instance)) {
+            if (instance.equals(newInstance)) {
                 existent = instance;
             }
         }
 
         //already exists and is not UP, remove it
         if (existent != null && !Instance.State.UP.equals(existent.getState())) {
-            instances.remove(existent.getId());
+            instances.remove(existent);
         }
         instances.add(newInstance);
         return newInstance;

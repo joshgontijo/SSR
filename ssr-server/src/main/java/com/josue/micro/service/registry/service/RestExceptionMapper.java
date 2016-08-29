@@ -1,4 +1,6 @@
-package com.josue.micro.service.registry;
+package com.josue.micro.service.registry.service;
+
+import com.josue.micro.service.registry.ServiceException;
 
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;

@@ -1,6 +1,6 @@
 package com.josue.micro.registry.jee7;
 
-import com.josue.micro.registry.client.discovery.Configuration;
+import com.josue.micro.registry.client.config.Configurator;
 
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.spi.AfterDeploymentValidation;
@@ -37,7 +37,7 @@ public class RegisterExtension implements Extension {
         logger.log(Level.INFO, " :: Found registry aware service: {0} with name {1} on path {2} ::",
                 new Object[]{className, serviceName, rootPath});
 
-        Configuration.initServiceConfig(serviceName, rootPath);
+        Configurator.initServiceConfig(serviceName, rootPath);
     }
 
     public void load(@Observes AfterDeploymentValidation event, BeanManager beanManager) {

@@ -54,7 +54,7 @@ public class ServiceEndpoint {
 
     @OnClose
     public void onClose(@PathParam("serviceName") String serviceName, Session session, CloseReason closeReason) throws ServiceException {
-        logger.log(Level.INFO, ":: Service disconnected, service {0}, id {1}, reason {2} ::", new Object[]{serviceName, session, closeReason.getReasonPhrase()});
+        logger.log(Level.INFO, ":: Service disconnected, service {0}, id {1}, reason {2} ::", new Object[]{serviceName, extractSessionId(session), closeReason.getReasonPhrase()});
         sessionStore.removeSession(serviceName, session);
         Instance updated = control.updateInstanceState(extractSessionId(session), Instance.State.DOWN);
         sessionStore.pushInstanceState(updated);
@@ -63,8 +63,7 @@ public class ServiceEndpoint {
     @OnError
     public void onError(@PathParam("serviceName") String serviceName, Session session, Throwable t) {
         if (t instanceof IOException) {
-            logger.log(Level.WARNING, "Session {0} interrupted, service {1} may have been shutdown, see below", new Object[]{session.getId(), serviceName});
-            logger.log(Level.WARNING, "Session was closed because: ", t.getMessage());
+            logger.log(Level.WARNING, "Session {0} interrupted, service '{1}' may have been shutdown", new Object[]{extractSessionId(session), serviceName});
         } else {
             logger.log(Level.SEVERE, "Error receiving event", t);
         }
