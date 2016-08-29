@@ -16,6 +16,8 @@ public class PropertiesManagerTest {
 
     PropertiesManager propertiesManager;
 
+    private static final int DEFAULT_SERVER_PORT = 9090;
+
     @After
     public void cleanUp(){
         Properties properties = System.getProperties();
@@ -40,7 +42,7 @@ public class PropertiesManagerTest {
         assertEquals(hostAddress, propertiesManager.getServiceHost());
         assertEquals(8080, propertiesManager.getServicePort());
         assertEquals(hostAddress, propertiesManager.getRegistryHost());
-        assertEquals(8181, propertiesManager.getRegistryPort());
+        assertEquals(DEFAULT_SERVER_PORT, propertiesManager.getRegistryPort());
         assertEquals(dummy, propertiesManager.getEnvironment());
     }
 
@@ -58,7 +60,7 @@ public class PropertiesManagerTest {
         assertEquals(hostOverride, propertiesManager.getServiceHost());
         assertEquals(8080, propertiesManager.getServicePort());
         assertEquals(hostAddress, propertiesManager.getRegistryHost());
-        assertEquals(8181, propertiesManager.getRegistryPort());
+        assertEquals(DEFAULT_SERVER_PORT, propertiesManager.getRegistryPort());
         assertEquals(dummy, propertiesManager.getEnvironment());
     }
 
