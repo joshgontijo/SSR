@@ -6,8 +6,11 @@ import com.josue.micro.registry.client.config.Configurator;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanPostProcessor;
+import org.springframework.context.ApplicationEvent;
+import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.event.ContextStartedEvent;
 
 import javax.annotation.PreDestroy;
 import java.util.concurrent.Executors;
@@ -20,7 +23,7 @@ import java.util.logging.Logger;
  */
 @ComponentScan(basePackages = "com.josue.micro.registry")
 @org.springframework.context.annotation.Configuration
-public class RegisterExtension {
+public class RegisterExtension implements ApplicationListener {
 
     private static final Logger logger = Logger.getLogger(RegisterExtension.class.getName());
 
@@ -32,7 +35,26 @@ public class RegisterExtension {
     private ScheduledExecutorService mses;
 
     private static final String DEFAULT_BOOT_CONTEXT_PATH = "/";
-    private static final String BOOT_APPLICATION_PROPERTIES = "application.properties";
+
+    private boolean enableClient;
+    private String clientName;
+
+    private boolean enableDiscovery;
+    private String serviceName;
+
+    @Override
+    public void onApplicationEvent(ApplicationEvent applicationEvent) {
+        if (applicationEvent instanceof ContextStartedEvent) {
+            String name = serviceName;
+            if (enableDiscovery && enableClient) {
+                logger.log(Level.INFO, " :: Ignoring '{0}' since '{1}' has already been provided ::", new Object[]{clientName, serviceName});
+            } else if (!enableDiscovery) {
+                name = clientName;
+            }
+
+            Configurator.initService(name, DEFAULT_BOOT_CONTEXT_PATH, enableClient, enableDiscovery);
+        }
+    }
 
     @Bean
     public BeanPostProcessor beanPostProcessor() {
@@ -46,10 +68,15 @@ public class RegisterExtension {
                 if (clazz.isAnnotationPresent(EnableDiscovery.class)) {
                     logger.log(Level.INFO, " :: Found registry aware service: {0} ::",
                             new Object[]{clazz.getName()});
-                    String serviceName = clazz.getAnnotation(EnableDiscovery.class).name();
+                    serviceName = clazz.getAnnotation(EnableDiscovery.class).name();
+                    enableDiscovery = true;
+                }
 
-                    Configurator.initServiceConfig(serviceName, DEFAULT_BOOT_CONTEXT_PATH); //TODO get root context path
-                    init();
+                if (clazz.isAnnotationPresent(EnableClient.class)) {
+                    logger.log(Level.INFO, " :: Found SSR client: {0} ::",
+                            new Object[]{clazz.getName()});
+                    clientName = clazz.getAnnotation(EnableClient.class).name();
+                    enableClient = true;
                 }
 
                 return bean;
@@ -58,7 +85,6 @@ public class RegisterExtension {
     }
 
     public void init() {
-        //TODO managed ?
         this.mses = Executors.newScheduledThreadPool(2);
 
         serviceRegister = new ServiceRegister(store, mses);
@@ -76,7 +102,8 @@ public class RegisterExtension {
     }
 
     @Bean
-    public ServiceStore store(){
+    public ServiceStore store() {
         return new ServiceStore();
     }
+
 }

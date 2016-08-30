@@ -36,7 +36,6 @@ public class PropertiesManager {
 
         logger.log(Level.INFO, ":: SSR project stage ***** {0} ***** ::", env == null ? "default" : env);
         fileProperties = loadProperties(env);
-
     }
 
     public int getRegistryPort() {

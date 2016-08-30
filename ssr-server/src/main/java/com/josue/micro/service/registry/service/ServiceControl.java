@@ -1,8 +1,8 @@
 package com.josue.micro.service.registry.service;
 
+import com.josue.micro.service.registry.Service;
 import com.josue.micro.service.registry.ServiceException;
 import com.josue.ssr.common.Instance;
-import com.josue.ssr.common.Service;
 
 import javax.enterprise.context.ApplicationScoped;
 import java.util.Date;
@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -58,6 +59,7 @@ public class ServiceControl {
         Service serviceConfig = store.get(service);
 
         serviceConfig.addInstance(instance);
+        logger.log(Level.INFO, ":: New service registered {0} ::", instance);
 
         return instance;
     }

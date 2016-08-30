@@ -3,7 +3,7 @@ package com.josue.micro.service.registry.ws;
 
 import com.josue.ssr.common.Instance;
 
-import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Singleton;
 import javax.websocket.Session;
 import java.util.HashSet;
 import java.util.Map;
@@ -13,28 +13,31 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Created by Josue on 22/08/2016.
  */
-@ApplicationScoped
+@Singleton
 public class SessionStore {
 
-    private static final Map<String, Set<Session>> sessions = new ConcurrentHashMap<>();
+    private static final Map<String, Set<Session>> clients = new ConcurrentHashMap<>();
 
     public synchronized void addSession(String service, Session session) {
-        if (!sessions.containsKey(service)) {
-            sessions.put(service, new HashSet<>());
+        if (!clients.containsKey(service)) {
+            clients.put(service, new HashSet<>());
         }
-        sessions.get(service).add(session);
+        clients.get(service).add(session);
     }
 
     public synchronized void removeSession(String service, Session session) {
-        if (!sessions.containsKey(service)) {
+        if (!clients.containsKey(service)) {
             return;
         }
-        sessions.get(service).remove(session);
+        clients.get(service).remove(session);
     }
 
     public void pushInstanceState(Instance registered) {
+        if (!registered.isDiscoverable()) {//do not send non discoverable service to the clients
+            return;
+        }
         //send to all other services except current session
-        sessions.entrySet().stream()
+        clients.entrySet().stream()
                 .flatMap(l -> l.getValue().stream())
                 .forEach(s -> {
                     if (s.isOpen()) {

@@ -24,7 +24,6 @@ public class ServiceRegister implements Runnable {
 
     private static final Object LOCK = new Object();
     private static final AtomicInteger retryCounter = new AtomicInteger();
-    private static final int MAX_RETRY = 999; //fix your system bro !
     private static final int RETRY_INTERVAL = 10;//in seconds
     public static boolean shutdownSignal = false;
     private Session session;
@@ -87,7 +86,7 @@ public class ServiceRegister implements Runnable {
                 String registryUrl = Configurator.getRegistryUrl();
                 WebSocketContainer container = ContainerProvider.getWebSocketContainer();
 
-                logger.log(Level.INFO, ":: Trying to connect to {0}, attempt {1} of {2} ::", new Object[]{registryUrl, retryCounter.incrementAndGet(), MAX_RETRY});
+                logger.log(Level.INFO, ":: Trying to connect to {0} ::", new Object[]{registryUrl, retryCounter.incrementAndGet()});
 
                 ServiceClientEndpoint endpoint = new ServiceClientEndpoint(this);
                 endpoint.addListener(store);
@@ -97,13 +96,8 @@ public class ServiceRegister implements Runnable {
                 logger.log(Level.INFO, ":: Connected ! ::", session.getId());
 
             } catch (Exception e) {
-                logger.log(Level.SEVERE, "Connection failure, reason: ", e.getMessage());
                 logger.log(Level.WARNING, ":: Could not connect to the registry, retrying in {0}s ::", RETRY_INTERVAL);
-                if (retryCounter.intValue() >= MAX_RETRY) {
-                    logger.log(Level.WARNING, ":: Max attempt exceeded ::", RETRY_INTERVAL);
-                } else {
-                    executorService.schedule(this, RETRY_INTERVAL, TimeUnit.SECONDS);
-                }
+                executorService.schedule(this, RETRY_INTERVAL, TimeUnit.SECONDS);
             }
         }
     }

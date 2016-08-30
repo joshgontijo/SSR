@@ -13,6 +13,7 @@ import javax.websocket.OnError;
 import javax.websocket.OnMessage;
 import javax.websocket.OnOpen;
 import javax.websocket.Session;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -64,7 +65,7 @@ public class ServiceClientEndpoint {
     @OnClose
     public void onClose(Session session, CloseReason closeReason) {
         if (!ServiceRegister.shutdownSignal) {
-            logger.log(Level.SEVERE, ":: Connection closed, reason: {0} ::", closeReason);
+            logger.log(Level.SEVERE, ":: Connection closed, reason: {0} ::", closeReason.getCloseCode());
             register.register();
         } else {
             logger.log(Level.INFO, ":: Client initiated shutdown proccess, not reconnecting ::", closeReason);
@@ -74,7 +75,14 @@ public class ServiceClientEndpoint {
 
     @OnError
     public void onError(Session session, Throwable thr) {
-        logger.log(Level.SEVERE, "Error handling event", thr);
+        String message;
+        if (thr instanceof IOException) {
+            message = ":: The server may have shutdown unexpectedly, error message: {0} ::";
+        } else {
+            message = ":: Error handling event, error message {0}::";
+        }
+        logger.log(Level.SEVERE, message, thr.getMessage());
+
     }
 
     public void addListener(ServiceEventListener listener) {

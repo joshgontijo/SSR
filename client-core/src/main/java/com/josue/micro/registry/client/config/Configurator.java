@@ -19,15 +19,23 @@ public class Configurator {
     private Configurator() {
     }
 
-    public static synchronized void initServiceConfig(String name, String appRoot) {
+    public static synchronized void initService(String name, String appRoot, boolean clientEnabled, boolean enableDiscovery) {
+        logger.info("##############################################");
+        logger.info("##### BOOTSTRAPING SSR SERVICE DISCOVERY #####");
+        logger.info("##############################################");
+
+
         String serviceAddress = getServiceUrl(appRoot);
 
         instance = new Instance();
+        instance.setClient(clientEnabled);
+        instance.setDiscoverable(enableDiscovery);
         instance.setSince(new Date());
         instance.setAddress(serviceAddress);
         instance.setName(name);
         instance.setState(Instance.State.UP);
     }
+
 
     public static synchronized Instance getServiceConfig() {
         if (instance == null) {

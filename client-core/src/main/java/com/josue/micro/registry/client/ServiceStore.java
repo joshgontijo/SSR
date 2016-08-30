@@ -23,6 +23,10 @@ public class ServiceStore implements ServiceEventListener {
         return get(serviceName, Strategy.roundRobin());
     }
 
+    public Set<String> getServices() {
+        return store.keySet();
+    }
+
     public Instance get(String serviceName, Strategy strategy) {
         if (!store.containsKey(serviceName)) {
             return null;

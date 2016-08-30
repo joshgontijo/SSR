@@ -2,7 +2,7 @@ package com.josue.micro.service.registry.service;
 
 import com.josue.micro.service.registry.ServiceException;
 import com.josue.ssr.common.Instance;
-import com.josue.ssr.common.Service;
+import com.josue.micro.service.registry.Service;
 import org.junit.Before;
 import org.junit.Test;
 

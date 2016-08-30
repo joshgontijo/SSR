@@ -18,6 +18,8 @@ public class Instance {
     private Date downSince;
     private String name;
     private State state = State.DOWN;
+    private boolean discoverable;
+    private boolean client;
 
     public Instance() {
     }
@@ -70,6 +72,22 @@ public class Instance {
         this.name = name;
     }
 
+    public boolean isDiscoverable() {
+        return discoverable;
+    }
+
+    public void setDiscoverable(boolean discoverable) {
+        this.discoverable = discoverable;
+    }
+
+    public boolean isClient() {
+        return client;
+    }
+
+    public void setClient(boolean client) {
+        this.client = client;
+    }
+
     public void updateInstanceState(Instance.State newState) {
         state = newState;
         if (Instance.State.DOWN.equals(newState)) {
@@ -94,12 +112,15 @@ public class Instance {
 
     @Override
     public String toString() {
-        return "ServiceInstance{" +
+        return "Instance{" +
                 "id='" + id + '\'' +
                 ", address='" + address + '\'' +
                 ", since=" + since +
                 ", downSince=" + downSince +
+                ", name='" + name + '\'' +
                 ", state=" + state +
+                ", discoverable=" + discoverable +
+                ", client=" + client +
                 '}';
     }
 }

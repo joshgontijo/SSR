@@ -41,12 +41,14 @@ public class ServiceEndpoint {
 
     @OnMessage
     public void onMessage(@PathParam("serviceName") String serviceName, Instance instance, Session session) throws ServiceException {
-        logger.log(Level.INFO, ":: Connection event received {0} ::", instance);
         if (instance == null) {
-            throw new ServiceException(400, "Invalid ServiceInstance, null state");
+            throw new ServiceException(400, "Invalid ServiceInstance");
         }
 
-        sessionStore.addSession(serviceName, session);
+        if (instance.isClient()) {
+            sessionStore.addSession(serviceName, session);
+        }
+
         instance.setId(extractSessionId(session));
         Instance registered = control.register(serviceName, instance);
         sessionStore.pushInstanceState(registered);
