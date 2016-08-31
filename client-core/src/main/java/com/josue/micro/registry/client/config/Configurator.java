@@ -26,6 +26,7 @@ public class Configurator {
 
 
         String serviceAddress = getServiceUrl(appRoot);
+        serviceAddress = verifyProtocol(serviceAddress);
 
         instance = new Instance();
         instance.setClient(clientEnabled);
@@ -89,5 +90,15 @@ public class Configurator {
             appRoot = appRoot.endsWith("/") ? appRoot.substring(0, appRoot.length() - 1) : appRoot;
         }
         return appRoot;
+    }
+
+    private static String verifyProtocol(String address) {
+        if (!address.startsWith("http://")
+                && !address.startsWith("https://")
+                && !address.startsWith("ws://")) {
+
+            return "http://" + address;
+        }
+        return address;
     }
 }
