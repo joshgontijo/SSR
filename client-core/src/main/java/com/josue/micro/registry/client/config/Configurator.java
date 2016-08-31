@@ -53,15 +53,14 @@ public class Configurator {
         String registryUrl = propertyManager.getRegistryHost() +
                 ":" + propertyManager.getRegistryPort();
         String urlSeparator = registryUrl.endsWith("/") ? "" : "/";
-        if (registryUrl.startsWith("ws")) {
-            //do nothing
-        } else if (registryUrl.startsWith("http")) {
-            registryUrl = registryUrl.replaceFirst("http", "ws");
-        } else if (registryUrl.startsWith("https")) {
-            registryUrl = registryUrl.replaceFirst("https", "ws");
-        } else {//protocol not provided
-            registryUrl = "ws://" + registryUrl;
+
+        if (registryUrl.startsWith("http://")) {
+            registryUrl = registryUrl.replaceFirst("http://", "ws://");
         }
+        if (registryUrl.startsWith("https://")) {
+            registryUrl = registryUrl.replaceFirst("https://", "ws://");
+        }
+
         return registryUrl + urlSeparator + REGISTRY_PATH + "/" + Configurator.getServiceConfig().getName();
     }
 
