@@ -41,7 +41,7 @@ public class SessionStore {
                 .flatMap(l -> l.getValue().stream())
                 .forEach(s -> {
                     if (s.isOpen()) {
-                        s.getAsyncRemote().sendObject(registered); //TODO filter by dependency
+                        s.getAsyncRemote().sendObject(registered); //TODO filter by dependency ?
                     }
                 });
     }

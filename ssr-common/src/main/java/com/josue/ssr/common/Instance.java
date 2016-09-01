@@ -14,6 +14,7 @@ public class Instance {
 
     private String id;
     private String address;
+    private long lastUpdate;
     private Date since;
     private Date downSince;
     private String name;
@@ -88,6 +89,14 @@ public class Instance {
         this.client = client;
     }
 
+    public long getLastUpdate() {
+        return lastUpdate;
+    }
+
+    public void setLastUpdate(long lastUpdate) {
+        this.lastUpdate = lastUpdate;
+    }
+
     public void updateInstanceState(Instance.State newState) {
         state = newState;
         if (Instance.State.DOWN.equals(newState)) {
@@ -115,6 +124,7 @@ public class Instance {
         return "Instance{" +
                 "id='" + id + '\'' +
                 ", address='" + address + '\'' +
+                ", lastUpdate=" + lastUpdate +
                 ", since=" + since +
                 ", downSince=" + downSince +
                 ", name='" + name + '\'' +

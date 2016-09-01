@@ -37,7 +37,10 @@ public class ServiceClientEndpoint {
     @OnOpen
     public void onOpen(Session session) {
         logger.log(Level.INFO, ":: Sending connection event ::");
-        session.getAsyncRemote().sendObject(Configurator.getServiceConfig());
+        for (ServiceEventListener listener : listeners) {
+            listener.newSession();//mainly used to clear store stale data, call before sending data
+        }
+        session.getAsyncRemote().sendObject(Configurator.getCurrentInstance());
     }
 
     @OnMessage

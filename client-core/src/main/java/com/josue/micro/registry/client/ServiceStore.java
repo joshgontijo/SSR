@@ -13,7 +13,10 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class ServiceStore implements ServiceEventListener {
 
+    private static final Object LOCK = new Object();
+
     private static final Map<String, Set<Instance>> store = new ConcurrentHashMap<>();
+    private Set<String> links = new HashSet<>();
 
     //TODO implement
 //    private static final Queue<Event> eventBuffer = new ConcurrentLinkedDeque<>();
@@ -38,24 +41,43 @@ public class ServiceStore implements ServiceEventListener {
 
         Instance apply = strategy.apply(new ArrayList<>(instances));
 
+        sendLink(apply.getName());
+
 //        sentStats(instances);
 
         return apply;
     }
 
     public void addService(Instance instance) {
-        if (!store.containsKey(instance.getName())) {
-            store.put(instance.getName(), new HashSet<>());
+        synchronized (LOCK) {
+            if (!store.containsKey(instance.getName())) {
+                store.put(instance.getName(), new HashSet<>());
+            }
+            store.get(instance.getName()).add(instance);
         }
-        store.get(instance.getName()).add(instance);
     }
 
     public void removeService(Instance instance) {
-        if (store.containsKey(instance.getName())) {
-            store.get(instance.getName()).remove(instance);
+        synchronized (LOCK) {
+            if (store.containsKey(instance.getName())) {
+                store.get(instance.getName()).remove(instance);
+            }
+            if (store.get(instance.getName()).isEmpty()) {
+                store.remove(instance.getName());
+            }
         }
-        if (store.get(instance.getName()).isEmpty()) {
-            store.remove(instance.getName());
+    }
+
+    private void sendLink(String target) {
+        if (!links.contains(target)) {
+            //send link
+        }
+    }
+
+    private void clear() {
+        synchronized (LOCK) {
+            store.clear();
+            links.clear();
         }
     }
 
@@ -85,6 +107,11 @@ public class ServiceStore implements ServiceEventListener {
     @Override
     public void onDisconnect(Instance instance) {
         removeService(instance);
+    }
+
+    @Override
+    public void newSession() {
+        clear();
     }
 
 }

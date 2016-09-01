@@ -38,7 +38,7 @@ public class Configurator {
     }
 
 
-    public static synchronized Instance getServiceConfig() {
+    public static synchronized Instance getCurrentInstance() {
         if (instance == null) {
             throw new IllegalStateException("Configuration not initialised yet");
         }
@@ -61,7 +61,7 @@ public class Configurator {
             registryUrl = registryUrl.replaceFirst("https://", "ws://");
         }
 
-        return registryUrl + urlSeparator + REGISTRY_PATH + "/" + Configurator.getServiceConfig().getName();
+        return registryUrl + urlSeparator + REGISTRY_PATH + "/" + Configurator.getCurrentInstance().getName();
     }
 
 
