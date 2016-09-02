@@ -22,6 +22,8 @@ public class ServiceRegister implements Runnable {
 
     private static final Logger logger = Logger.getLogger(ServiceRegister.class.getName());
 
+    private static final String REGISTRY_PATH = "services";
+
     private static final Object LOCK = new Object();
     private static final AtomicInteger retryCounter = new AtomicInteger();
     private static final int RETRY_INTERVAL = 10;//in seconds
@@ -83,7 +85,12 @@ public class ServiceRegister implements Runnable {
     public void run() {
         synchronized (LOCK) {
             try {
-                String registryUrl = Configurator.getRegistryUrl();
+                String registryUrl =
+                        "ws://" +
+                                Configurator.getRegistryUrl() +
+                                "/" + REGISTRY_PATH +
+                                "/" + Configurator.getCurrentInstance().getName();
+
                 WebSocketContainer container = ContainerProvider.getWebSocketContainer();
 
                 logger.log(Level.INFO, ":: Trying to connect to {0} ::", new Object[]{registryUrl, retryCounter.incrementAndGet()});

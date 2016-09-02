@@ -1,8 +1,13 @@
 package com.josue.micro.registry.client;
 
+import com.josue.micro.registry.client.config.Configurator;
 import com.josue.ssr.common.Instance;
 
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -70,7 +75,20 @@ public class ServiceStore implements ServiceEventListener {
 
     private void sendLink(String target) {
         if (!links.contains(target)) {
-            //send link
+            Client client = ClientBuilder.newBuilder().build();
+
+            Map<String, String> targetMap = new HashMap<>();
+            targetMap.put("target", target);
+
+            String path = "http://" + Configurator.getRegistryUrl();
+            client.target(path)
+                    .path("api")
+                    .path("services")
+                    .path(Configurator.getCurrentInstance().getName())
+                    .request()
+                    .async()
+                    .put(Entity.json(targetMap));
+
         }
     }
 

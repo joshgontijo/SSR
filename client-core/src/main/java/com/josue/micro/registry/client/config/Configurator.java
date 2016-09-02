@@ -12,7 +12,6 @@ public class Configurator {
 
     private static final Logger logger = Logger.getLogger(Configurator.class.getName());
 
-    private static final String REGISTRY_PATH = "services";
     private static final PropertiesManager propertyManager = new PropertiesManager();
     private static Instance instance;
 
@@ -50,18 +49,17 @@ public class Configurator {
     }
 
     public static String getRegistryUrl() {
-        String registryUrl = propertyManager.getRegistryHost() +
-                ":" + propertyManager.getRegistryPort();
-        String urlSeparator = registryUrl.endsWith("/") ? "" : "/";
+        String host = propertyManager.getRegistryHost();
+        int port = propertyManager.getRegistryPort();
 
-        if (registryUrl.startsWith("http://")) {
-            registryUrl = registryUrl.replaceFirst("http://", "ws://");
-        }
-        if (registryUrl.startsWith("https://")) {
-            registryUrl = registryUrl.replaceFirst("https://", "ws://");
-        }
+        host = host.substring(host.length() - 1).equals("/") ?
+                host.substring(0, host.length() - 1)
+                : host;
+        host = host.replaceFirst("http://", "");
+        host = host.replaceFirst("https://", "");
 
-        return registryUrl + urlSeparator + REGISTRY_PATH + "/" + Configurator.getCurrentInstance().getName();
+
+        return host + ":" + port;
     }
 
 

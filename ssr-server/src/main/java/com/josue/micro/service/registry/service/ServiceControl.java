@@ -79,7 +79,7 @@ public class ServiceControl {
         return instance;
     }
 
-    public Service addLink(String client, String target) throws ServiceException {
+    public void addLink(String client, String target) throws ServiceException {
         Service targetService = store.get(target);
         Service sourceService = store.get(client);
 
@@ -90,8 +90,7 @@ public class ServiceControl {
             throw new ServiceException(400, "Service " + client + " not found");
         }
 
-        targetService.getLinks().add(client);
-        return targetService;
+        sourceService.getLinks().add(target);
     }
 
 }

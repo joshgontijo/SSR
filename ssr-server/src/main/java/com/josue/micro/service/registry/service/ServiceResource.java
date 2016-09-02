@@ -7,12 +7,14 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.Serializable;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -38,6 +40,14 @@ public class ServiceResource implements Serializable {
     public Response getServices(@PathParam("name") String serviceName) throws Exception {
         Service service = control.getService(serviceName);
         return Response.ok(service).build();
+    }
+
+    @PUT
+    @Path("{name}")
+    public Response addLink(@PathParam("name") String source, Map<String, String> targetMap) throws Exception {
+        String target = targetMap.get("target");
+        control.addLink(source, target);
+        return Response.noContent().build();
     }
 
 

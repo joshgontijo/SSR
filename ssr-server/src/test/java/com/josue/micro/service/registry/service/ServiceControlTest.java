@@ -115,22 +115,24 @@ public class ServiceControlTest {
         String source = "source-service";
         registerService("source-id-123", source);
 
-        control.addLink(source, "invlaid-target-service");
+        control.addLink(source, "invalid-target-service");
     }
 
     @Test
     public void addLink() throws Exception {
-        String source = "source-service";
-        registerService("source-id-123", source);
+        String clientService = "client-service";
+        registerService("clientService-id-123", clientService);
 
-        String target = "target-service";
-        registerService("target-id-123344", target);
+        String targetService = "target-service";
+        registerService("target-id-123344", targetService);
 
-        Service updatedTarget = control.addLink(source, target);
+        control.addLink(clientService, targetService);
 
-        assertEquals(1, updatedTarget.getLinks().size());
-        assertEquals(target, updatedTarget.getName());
-        assertEquals(source, updatedTarget.getLinks().iterator().next());
+        Service foundSource = control.getService(clientService);
+
+        assertEquals(1, foundSource.getLinks().size());
+        assertEquals(clientService, foundSource.getName());
+        assertEquals(targetService, foundSource.getLinks().iterator().next());
 
     }
 
