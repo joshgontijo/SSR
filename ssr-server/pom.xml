@@ -50,9 +50,9 @@
         </dependency>
 
         <dependency>
-            <groupId>${parent.groupId}</groupId>
+            <groupId>com.josue.micro</groupId>
             <artifactId>ssr-common</artifactId>
-            <version>${parent.version}</version>
+            <version>0.4</version>
         </dependency>
 
         <dependency>

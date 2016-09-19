@@ -32,6 +32,11 @@ public class SessionStore {
         clients.get(service).remove(session);
     }
 
+    /**
+     * Sends the newly registered service to all already available instances
+     * If the new instance is not discoverable, nothing will happen
+     * @param registered
+     */
     public void pushInstanceState(Instance registered) {
         if (!registered.isDiscoverable()) {//do not send non discoverable service to the clients
             return;

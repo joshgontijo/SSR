@@ -1,5 +1,6 @@
 package com.josue.micro.service.registry.ws;
 
+import com.josue.micro.service.registry.Service;
 import com.josue.micro.service.registry.ServiceException;
 import com.josue.micro.service.registry.service.ServiceControl;
 import com.josue.ssr.common.Instance;
@@ -15,6 +16,7 @@ import javax.websocket.Session;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -51,7 +53,9 @@ public class ServiceEndpoint {
 
         instance.setId(extractSessionId(session));
         Instance registered = control.register(serviceName, instance);
+
         sessionStore.pushInstanceState(registered);
+        this.sendAllInstances(session, registered);
     }
 
     @OnClose
@@ -74,6 +78,20 @@ public class ServiceEndpoint {
     private String extractSessionId(Session session) {
         String id = session.getId().length() >= 8 ? session.getId().substring(0, 8) : session.getId();
         return id.toLowerCase();
+    }
+
+    private void sendAllInstances(Session newSession, Instance registered) {
+        if (!registered.isClient()) {
+            return; //no reason to send all instances to a service that wont use them
+        }
+        Set<Service> services = control.getServices();
+        services.stream()
+                .flatMap(s -> s.getInstances().stream())
+                .forEach(i -> {
+                    if (newSession.isOpen() && i.isDiscoverable() && !i.equals(registered)) {
+                        newSession.getAsyncRemote().sendObject(i);
+                    }
+                });
     }
 
 }

@@ -3,11 +3,11 @@ package com.josue.micro.registry.client.config;
 import org.junit.After;
 import org.junit.Test;
 
-import java.net.Inet4Address;
 import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * Created by Josue on 27/08/2016.
@@ -36,12 +36,11 @@ public class PropertiesManagerTest {
         System.setProperty(PropertiesManager.ENVIRONMENT_SELECTOR, dummy);
         propertiesManager = new PropertiesManager();
 
-        String hostAddress = Inet4Address.getLocalHost().getHostAddress();
 
         assertFalse(propertiesManager.isAws());
-        assertEquals(hostAddress, propertiesManager.getServiceHost());
+        assertNotNull(propertiesManager.getServiceHost());
         assertEquals(8080, propertiesManager.getServicePort());
-        assertEquals(hostAddress, propertiesManager.getRegistryHost());
+        assertNotNull(propertiesManager.getRegistryHost());
         assertEquals(DEFAULT_SERVER_PORT, propertiesManager.getRegistryPort());
         assertEquals(dummy, propertiesManager.getEnvironment());
     }
@@ -54,12 +53,11 @@ public class PropertiesManagerTest {
         System.setProperty(PropertiesManager.SERVICE_HOST, hostOverride);
         propertiesManager = new PropertiesManager();
 
-        String hostAddress = Inet4Address.getLocalHost().getHostAddress();
 
         assertFalse(propertiesManager.isAws());
         assertEquals(hostOverride, propertiesManager.getServiceHost());
         assertEquals(8080, propertiesManager.getServicePort());
-        assertEquals(hostAddress, propertiesManager.getRegistryHost());
+        assertNotNull(propertiesManager.getRegistryHost());
         assertEquals(DEFAULT_SERVER_PORT, propertiesManager.getRegistryPort());
         assertEquals(dummy, propertiesManager.getEnvironment());
     }

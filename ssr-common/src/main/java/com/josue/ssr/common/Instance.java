@@ -22,9 +22,6 @@ public class Instance {
     private boolean discoverable;
     private boolean client;
 
-    public Instance() {
-    }
-
     public String getId() {
         return id;
     }
