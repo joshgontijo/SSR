@@ -12,5 +12,4 @@ public interface ServiceEventListener {
     void onDisconnect(Instance instance);
 
     void newSession();
-
 }

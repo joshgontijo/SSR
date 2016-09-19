@@ -45,7 +45,6 @@ public class ServiceStore implements ServiceEventListener {
         }
 
         Instance apply = strategy.apply(new ArrayList<>(instances));
-
         sendLink(apply.getName());
 
 //        sentStats(instances);
