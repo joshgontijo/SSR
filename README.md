@@ -8,9 +8,6 @@ to register its endpoints for discovery.
 It's based on websockets server and client that connects to each other
 in order to stabilish who's connected.
 
-## More details
-Check inside each project for more details on how to run.
-
 ## Basic diagram
  - Service A connects to the registry and stabilish a websocket connection
  - Service B connects to the registry and stabilish a websocket connection
@@ -19,3 +16,6 @@ Check inside each project for more details on how to run.
  - Services communicates with each other
 
 ![Overview](overview.png)
+
+## More details
+Check inside each project for more details on how to run.
