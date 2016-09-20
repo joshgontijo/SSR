@@ -16,7 +16,7 @@
     </properties>
 
     <modules>
-        <module>client-core</module>
+        <module>ssr-client-core</module>
         <module>ssr-client-boot</module>
         <module>ssr-client-jee</module>
         <module>ssr-server</module>
