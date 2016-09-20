@@ -12,4 +12,10 @@ in order to stabilish who's connected.
 Check inside each project for more details on how to run.
 
 ## Basic diagram
+ - Service A connects to the registry and stabilish a websocket connection
+ - Service B connects to the registry and stabilish a websocket connection
+ - Registry server push Service B metadata to Service A
+ - Registry server push Service A metadata to Service B
+ - Services communicates with each other
+
 ![Overview](overview.png)
