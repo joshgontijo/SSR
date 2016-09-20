@@ -110,7 +110,11 @@ public class PropertiesManager {
         String value = System.getProperty(key);
 
         if (value == null || value.isEmpty()) {
-            value = System.getenv(key);
+            //replaces dot by underscore and to uppercase
+            //ex: service.port -> SERVICE_PORT
+            //so it can be used as System env
+            String convertedKeyFormat = key.replace(".", "_").toUpperCase();
+            value = System.getenv(convertedKeyFormat);
         }
         return value;
     }
