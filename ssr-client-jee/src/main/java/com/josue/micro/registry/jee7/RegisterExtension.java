@@ -33,12 +33,13 @@ public class RegisterExtension implements Extension {
 
         clientName = type.getAnnotatedType().getAnnotation(EnableClient.class).name();
         enableClient = true;
-        logger.log(Level.INFO, ":: Found SSR client: {0} with name '{1}' ::",
-                new Object[]{className, clientName});
 
         if (clientName == null || clientName.isEmpty()) {
             logger.warning(":: Name not found for client, default will be used ::");
         }
+
+        logger.log(Level.INFO, ":: Found SSR client: {0} with name {1} ::",
+                new Object[]{className, clientName});
     }
 
     <T> void processServiceAnnotatedType(@Observes @WithAnnotations(EnableDiscovery.class) ProcessAnnotatedType<T> type) {

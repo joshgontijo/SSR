@@ -1,7 +1,6 @@
 package com.josue.micro.registry.client;
 
 import com.josue.micro.registry.client.config.Configurator;
-import com.josue.micro.registry.client.ws.ServiceClientEndpoint;
 
 import javax.websocket.CloseReason;
 import javax.websocket.ContainerProvider;
@@ -95,8 +94,7 @@ public class ServiceRegister implements Runnable {
 
                 logger.log(Level.INFO, ":: Trying to connect to {0} ::", new Object[]{registryUrl, retryCounter.incrementAndGet()});
 
-                ServiceClientEndpoint endpoint = new ServiceClientEndpoint(this);
-                endpoint.addListener(store);
+                ServiceClientEndpoint endpoint = new ServiceClientEndpoint(this, store);
 
                 session = container.connectToServer(endpoint, new URI(registryUrl));
 

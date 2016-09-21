@@ -7,8 +7,10 @@ import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -16,12 +18,15 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Created by Josue on 19/06/2016.
  */
-public class ServiceStore implements ServiceEventListener {
+public class ServiceStore {
 
     private static final Object LOCK = new Object();
 
     private static final Map<String, Set<Instance>> store = new ConcurrentHashMap<>();
     private Set<String> links = new HashSet<>();
+
+    private static final List<ServiceEventListener> listeners = Collections.synchronizedList(new ArrayList<>());
+
 
     //TODO implement
 //    private static final Queue<Event> eventBuffer = new ConcurrentLinkedDeque<>();
@@ -52,7 +57,11 @@ public class ServiceStore implements ServiceEventListener {
         return apply;
     }
 
-    public void addService(Instance instance) {
+    public void addListener(ServiceEventListener listener) {
+        listeners.add(listener);
+    }
+
+    private void addService(Instance instance) {
         synchronized (LOCK) {
             if (!store.containsKey(instance.getName())) {
                 store.put(instance.getName(), new HashSet<>());
@@ -61,7 +70,7 @@ public class ServiceStore implements ServiceEventListener {
         }
     }
 
-    public void removeService(Instance instance) {
+    private void removeService(Instance instance) {
         synchronized (LOCK) {
             if (store.containsKey(instance.getName())) {
                 store.get(instance.getName()).remove(instance);
@@ -91,13 +100,6 @@ public class ServiceStore implements ServiceEventListener {
         }
     }
 
-    private void clear() {
-        synchronized (LOCK) {
-            store.clear();
-            links.clear();
-        }
-    }
-
 //    private void sentStats(ServiceConfig config) {
 //        if (session != null && session.isOpen()) {
 //            eventBuffer.add(new Event(EventType.SERVICE_USAGE, config));
@@ -116,19 +118,24 @@ public class ServiceStore implements ServiceEventListener {
 //        }
 //    }
 
-    @Override
-    public void onConnect(Instance instance) {
+    void onConnect(Instance instance) {
         addService(instance);
+        listeners.forEach(l -> l.onConnect(instance));
     }
 
-    @Override
-    public void onDisconnect(Instance instance) {
+    void onDisconnect(Instance instance) {
         removeService(instance);
+        listeners.forEach(l -> l.onDisconnect(instance));
     }
 
-    @Override
-    public void newSession() {
-        clear();
+    void newSession() {
+        synchronized (LOCK) {
+            store.clear();
+            links.clear();
+        }
+
+        //mainly used to clear store stale data, call before sending data
+        listeners.forEach(ServiceEventListener::newSession);
     }
 
 }

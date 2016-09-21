@@ -1,7 +1,5 @@
-package com.josue.micro.registry.client.ws;
+package com.josue.micro.registry.client;
 
-import com.josue.micro.registry.client.ServiceEventListener;
-import com.josue.micro.registry.client.ServiceRegister;
 import com.josue.micro.registry.client.config.Configurator;
 import com.josue.ssr.common.Instance;
 import com.josue.ssr.common.InstanceEncoder;
@@ -14,9 +12,6 @@ import javax.websocket.OnMessage;
 import javax.websocket.OnOpen;
 import javax.websocket.Session;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -27,19 +22,19 @@ import java.util.logging.Logger;
 public class ServiceClientEndpoint {
 
     private static final Logger logger = Logger.getLogger(ServiceClientEndpoint.class.getName());
-    private static final List<ServiceEventListener> listeners = Collections.synchronizedList(new ArrayList<>());
     private final ServiceRegister register;
+    private final ServiceStore store;
 
-    public ServiceClientEndpoint(ServiceRegister register) {
+    public ServiceClientEndpoint(ServiceRegister register, ServiceStore store) {
         this.register = register;
+        this.store = store;
     }
 
     @OnOpen
     public void onOpen(Session session) {
         logger.log(Level.INFO, ":: Sending connection event ::");
-        for (ServiceEventListener listener : listeners) {
-            listener.newSession();//mainly used to clear store stale data, call before sending data
-        }
+        store.newSession();
+
         session.getAsyncRemote().sendObject(Configurator.getCurrentInstance());
     }
 
@@ -53,15 +48,11 @@ public class ServiceClientEndpoint {
         }
 
         if (Instance.State.UP.equals(instance.getState())) {
-            for (ServiceEventListener listener : listeners) {
-                listener.onConnect(instance);
-            }
+           store.onConnect(instance);
         }
         if (Instance.State.DOWN.equals(instance.getState())
                 || Instance.State.OUT_OF_SERVICE.equals(instance.getState())) {
-            for (ServiceEventListener listener : listeners) {
-                listener.onDisconnect(instance);
-            }
+            store.onDisconnect(instance);
         }
     }
 
@@ -88,8 +79,5 @@ public class ServiceClientEndpoint {
 
     }
 
-    public void addListener(ServiceEventListener listener) {
-        listeners.add(listener);
-    }
 }
 
