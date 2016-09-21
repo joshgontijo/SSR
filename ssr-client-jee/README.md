@@ -116,10 +116,11 @@ The very first time a service store is requested a service it will send the info
 keep have the dependency graph of the service communication.
 
 ## Future implementations
+ - Server replication
  - Dashboard with decent UI
  - Service diagram views (per service, per instance)
  - Always bug fixing
  - Service usage dashboard
  - Instance health data (memory, threads, etc)
  - Circuit breaker based on instances health data
- - simple log tracer, if possible
+ - Simple log tracer, if possible
