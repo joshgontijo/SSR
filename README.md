@@ -1,12 +1,16 @@
-# S.S.R. (Simple Service Registry)
+#S.S.R. (Simple Service Registry)
 
-## What's this
+##What's this
 A simplistic key-value that store that allows services
 to register its endpoints for discovery.
 
-## How it works ?
+##How it works ?
 It's based on websockets server and client that connects to each other
 in order to stabilish who's connected.
+
+##Note
+This is just a sample project to test some concepts, it's not replicated at the moment,
+which means that it would be a single point of failure on your system. Use for testing only.
 
 ## Basic diagram
  - Service A connects to the registry and stabilish a websocket connection
