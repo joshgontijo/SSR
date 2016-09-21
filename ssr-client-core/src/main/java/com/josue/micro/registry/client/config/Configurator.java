@@ -23,6 +23,10 @@ public class Configurator {
         logger.info("##### BOOTSTRAPING SSR SERVICE DISCOVERY #####");
         logger.info("##############################################");
 
+        if (name == null || name.isEmpty()) {
+            name = "UNKNOWN";
+            logger.warning(":: Service name not specified, please verify @EnableClient or @EnableDiscovery ::");
+        }
 
         String serviceAddress = getServiceUrl(appRoot);
         serviceAddress = verifyProtocol(serviceAddress);
