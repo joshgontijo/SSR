@@ -38,7 +38,7 @@ The server is simply a websocket server backed by a map, that stores the state o
 It also contains REST endpoints to provide information about the connected nodes.
 
 ## Dashboard (under development)
-![Dashboard](dashboard.png)
+![Dashboard](../dashboard.png)
 
 ##Rest endpoints
 
@@ -102,5 +102,7 @@ It also contains REST endpoints to provide information about the connected nodes
     
 ##Further information
 Please check [ssr-client-jee](../ssr-client-jee/README.md) for more information about the registry client for Java EE 7 system
+
 And
-[ssr-client-jee](../ssr-client-boot/README.md) for more information about the registry client for Spring services
+
+[ssr-client-boot(../ssr-client-boot/README.md) for more information about the registry client for Spring services
