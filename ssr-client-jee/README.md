@@ -24,8 +24,8 @@ not tested though (just use an application server !)
     }
 
 On this code:
- - `@EnableClient` flag that the client will listen to other services state changes. The server will push data to this app.
- - `@EnableDiscovery` make the app available for discovery under name spcified on `name` parameter.
+ - `@EnableClient` flags that the client will listen to other services state changes. The server will push data to this app.
+ - `@EnableDiscovery` makes the app available for discovery under name spcified on `name` parameter.
 
 Which one to choose ?
 Given three services, which rest invocation is the following `A -> B -> C`.
