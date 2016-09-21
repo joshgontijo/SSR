@@ -34,7 +34,7 @@ public class RegisterExtension implements Extension {
         clientName = type.getAnnotatedType().getAnnotation(EnableClient.class).name();
         enableClient = true;
 
-        if (clientName == null || clientName.isEmpty()) {
+        if (clientName.trim().isEmpty()) {
             logger.warning(":: Name not found for client, default will be used ::");
         }
 
