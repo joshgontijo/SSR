@@ -13,8 +13,8 @@ This is just a sample project to test some concepts, it's not replicated at the 
 which means that it would be a single point of failure on your system. Use for testing only.
 
 ## Basic diagram
- - Service A connects to the registry and stabilish a websocket connection
- - Service B connects to the registry and stabilish a websocket connection
+ - Service A connects to the registry and stablish a websocket connection
+ - Service B connects to the registry and stablish a websocket connection
  - Registry server push Service B metadata to Service A
  - Registry server push Service A metadata to Service B
  - Services communicates with each other
