@@ -1,11 +1,11 @@
-## Pre requisites
+##Pre requisites
 Must run on any Java EE 7 application server, and JDK 7.
 Server can also run on web servers (Tomcat) with CDI, JAXRS and JSR-356 Websockets client
 not tested though (just use an application server !)
 
-## Setup
+##Setup
 
-#### Maven dependency
+####Maven dependency
 - Download the source and build by yourself =).
 - Add as maven dependency
 
@@ -15,7 +15,7 @@ not tested though (just use an application server !)
            <version>0.4</version>
         </dependency>
 
-#### JAXRS application
+####JAXRS application
 
     @EnableClient
     @EnableDiscovery(name = "myApp")
@@ -34,7 +34,7 @@ Given three services, which rest invocation is the following `A -> B -> C`.
  - `Service C` doesn't require to call any other service, but needs to be discovered by `Service B`, so it should have `@EnableDiscovery`.
 
 
-## Configuration
+##Configuration
 In order to connect to the registry server, the client needs to specify on which host and port it's running, also,
 where the registry server is. The three basic methods of passing these informations are:
  - Properties file
@@ -46,7 +46,7 @@ These options follow order of preference by overring each other.
 Clients will use the `localhost` address and port `8080` as default values for discovery.
 To change the configuration you will have multiple option
 
-#### Properties file (registry.properties)
+####Properties file (registry.properties)
 `registry.host` and `registry.port` is where the service registry is.
 
 `service.host` and `service.port` is where your application is
@@ -58,11 +58,11 @@ For example:
     service.host=SERVICE-HOST
     service.port=SERVICE-PORT
 
-#### System properties
+####System properties
 
     java -jar myapp.jar -Dregistry.host=HOST -Dregistry.port=PORT ...
 
-#### Environment variables
+####Environment variables
 When your application starts it will pick these keys from the environment and override any other value set on system properties or properties file.
 In order to be easier to run with bash scripts, the properties keys in this approach change a little bit, as follows.
 
@@ -72,7 +72,7 @@ In order to be easier to run with bash scripts, the properties keys in this appr
     SERVICE_PORT
 
 
-## Running with Docker
+##Running with Docker
  - The best way to run with docker is setting environment variables to pass these values to the application.
  - Because docker uses a bridge adaptor by default, application running inside a container will not be able to see the registry server
  nor other clients if you don't set a `link` or add a `network` or run the container in host mode.
@@ -99,7 +99,7 @@ default will be used. For example
 Environment variables can also be used, by simply setting `SSR_ENVIRONMENT`
 
 
-## Acessing services
+##Acessing services
 To access the service URL simply use:
 
     @Inject
@@ -110,3 +110,16 @@ To access the service URL simply use:
     ServiceInstance roundRobin = serviceStore.get("serviceName", Strategy.roundRobin());
     
 The `Strategy` class provides a way of customising the load balancing of the requests.
+
+##More details
+The very first time a service store is requested a service it will send the information to the server, so the server can
+keep have the dependency graph of the service communication.
+
+## Future implementations
+ - Dashboard with decent UI
+ - Service diagram views (per service, per instance)
+ - Always bug fixing
+ - Service usage dashboard
+ - Instance health data (memory, threads, etc)
+ - Circuit breaker based on instances health data
+ - simple log tracer, if possible
