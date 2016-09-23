@@ -1,4 +1,4 @@
-package com.josue.micro.service.registry;
+package com.josue.micro.registry;
 
 /**
  * Created by Josue on 15/06/2016.

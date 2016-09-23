@@ -1,6 +1,6 @@
-package com.josue.micro.service.registry.service;
+package com.josue.micro.registry.service;
 
-import com.josue.micro.service.registry.Service;
+import com.josue.micro.registry.Service;
 
 import java.util.List;
 

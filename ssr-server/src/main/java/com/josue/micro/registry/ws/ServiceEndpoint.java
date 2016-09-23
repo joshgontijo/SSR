@@ -1,8 +1,8 @@
-package com.josue.micro.service.registry.ws;
+package com.josue.micro.registry.ws;
 
-import com.josue.micro.service.registry.Service;
-import com.josue.micro.service.registry.ServiceException;
-import com.josue.micro.service.registry.service.ServiceControl;
+import com.josue.micro.registry.Service;
+import com.josue.micro.registry.ServiceException;
+import com.josue.micro.registry.service.ServiceControl;
 import com.josue.ssr.common.Instance;
 import com.josue.ssr.common.InstanceEncoder;
 

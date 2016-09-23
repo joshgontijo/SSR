@@ -1,4 +1,4 @@
-package com.josue.micro.service.registry.ws;
+package com.josue.micro.registry.ws;
 
 
 import com.josue.ssr.common.Instance;

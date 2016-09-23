@@ -72,7 +72,7 @@
                 <artifactId>wildfly-swarm-plugin</artifactId>
                 <version>${wildfly.swarm.version}</version>
                 <configuration>
-                    <mainClass>com.josue.micro.service.registry.Main</mainClass>
+                    <mainClass>com.josue.micro.registry.Main</mainClass>
                     <jvmArguments>-Xms128m -Xmx512m</jvmArguments>
                 </configuration>
                 <executions>
