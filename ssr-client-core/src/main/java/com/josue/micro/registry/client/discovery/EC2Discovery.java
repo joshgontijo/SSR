@@ -2,6 +2,7 @@ package com.josue.micro.registry.client.discovery;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.net.InetAddress;
 import java.net.URL;
 import java.net.URLConnection;
 
@@ -10,17 +11,22 @@ import java.net.URLConnection;
  */
 public class EC2Discovery implements Discovery {
 
-    private static final String AWS_META_URL = "http://169.254.169.254/latest/meta-data/instance-id";
+    private static final String AWS_META_URL = "http://169.254.169.254/latest/meta-data/";
+    private static final String PUBLIC_HOSTNAME = "public-hostname";
+    private static final String INSTANCE_ID = "instance-id";
 
     @Override
-    public String resolveHost() {
+    public String resolveHost(boolean useHostname) {
+        //TODO check instance-id or public-ipv4
+        //TODO check public or local IP
+        String awsUrl = AWS_META_URL + (useHostname ? PUBLIC_HOSTNAME : INSTANCE_ID);
         try {
-            URL url = new URL(AWS_META_URL);
+            URL url = new URL(awsUrl);
             URLConnection conn = url.openConnection();
             BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
             return reader.readLine();
         } catch (Exception e) {
-            throw new RuntimeException("Could not resolce EC2 host address", e);
+            throw new RuntimeException("Could not resolve EC2 host address", e);
         }
     }
 }

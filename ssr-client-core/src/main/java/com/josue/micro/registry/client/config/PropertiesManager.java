@@ -19,8 +19,10 @@ public class PropertiesManager {
     public static final String IS_AWS = "server.aws";
     public static final String REGISTRY_HOST = "registry.host";
     public static final String REGISTRY_PORT = "registry.port";
+
     public static final String SERVICE_HOST = "service.host";
     public static final String SERVICE_PORT = "service.port";
+    public static final String USE_HOST = "service.useHostname";
 
     public static final String ENVIRONMENT_SELECTOR = "ssr.environment";
     public static final String PROPERTIES_FILE_NAME = "registry";
@@ -28,6 +30,7 @@ public class PropertiesManager {
     private static final String DEFAULT_REGISTRY_PORT = "9090";
     private static final String DEFAULT_SERVICE_PORT = "8080";
     private static final String DEFAULT_ENVIRONMENT = "default";
+    private static final String DEFAULT_USE_HOST = "true";
 
     private static final Logger logger = Logger.getLogger(PropertiesManager.class.getName());
 
@@ -50,6 +53,12 @@ public class PropertiesManager {
         return Integer.parseInt(port);
     }
 
+    public boolean useHostname() {
+        String useHost = getProperty(USE_HOST);
+        useHost = isEmpty(useHost) ? DEFAULT_USE_HOST : useHost;
+        return Boolean.parseBoolean(useHost);
+    }
+
     public String getRegistryHost() {
         return getHost(REGISTRY_HOST);
     }
@@ -67,7 +76,9 @@ public class PropertiesManager {
         String host = getProperty(key);
         if (isEmpty(host)) {
             Discovery discovery = isAws() ? new EC2Discovery() : new LocalDiscovery();
-            String defaultHost = discovery.resolveHost();
+
+            boolean useHost = useHostname();
+            String defaultHost = discovery.resolveHost(useHost);
             fileProperties.put(key, defaultHost);
         }
         return getProperty(key);

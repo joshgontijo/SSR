@@ -5,7 +5,7 @@ package com.josue.micro.registry.client.discovery;
  */
 public interface Discovery {
 
-    String resolveHost();
+    String resolveHost(boolean useHostname);
 
 
 }
