@@ -33,12 +33,14 @@ public class PropertiesManager {
     private static final String DEFAULT_USE_HOST = "true";
 
     private static final Logger logger = Logger.getLogger(PropertiesManager.class.getName());
+    private final Discovery discovery;
 
     public PropertiesManager() {
         String env = getEnvironment();
 
         logger.log(Level.INFO, ":: SSR project stage ***** {0} ***** ::", env == null ? "default" : env);
         fileProperties = loadProperties(env);
+        discovery = isAws() ? new EC2Discovery() : new LocalDiscovery();
     }
 
     public int getRegistryPort() {
@@ -75,8 +77,6 @@ public class PropertiesManager {
     private String getHost(String key) {
         String host = getProperty(key);
         if (isEmpty(host)) {
-            Discovery discovery = isAws() ? new EC2Discovery() : new LocalDiscovery();
-
             boolean useHost = useHostname();
             String defaultHost = discovery.resolveHost(useHost);
             fileProperties.put(key, defaultHost);
