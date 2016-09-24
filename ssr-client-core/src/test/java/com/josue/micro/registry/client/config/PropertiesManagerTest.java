@@ -8,6 +8,7 @@ import java.util.Properties;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by Josue on 27/08/2016.
@@ -28,6 +29,7 @@ public class PropertiesManagerTest {
         properties.remove(PropertiesManager.PROPERTIES_FILE_NAME);
         properties.remove(PropertiesManager.SERVICE_HOST);
         properties.remove(PropertiesManager.SERVICE_PORT);
+        properties.remove(PropertiesManager.USE_HOST);
     }
 
     @Test
@@ -36,23 +38,22 @@ public class PropertiesManagerTest {
         System.setProperty(PropertiesManager.ENVIRONMENT_SELECTOR, dummy);
         propertiesManager = new PropertiesManager();
 
-
         assertFalse(propertiesManager.isAws());
         assertNotNull(propertiesManager.getServiceHost());
         assertEquals(8080, propertiesManager.getServicePort());
         assertNotNull(propertiesManager.getRegistryHost());
         assertEquals(DEFAULT_SERVER_PORT, propertiesManager.getRegistryPort());
         assertEquals(dummy, propertiesManager.getEnvironment());
+        assertTrue(propertiesManager.useHostname());
     }
 
     @Test
-    public void defaultsWithoutFileOverride() throws Exception {
+    public void propertyOverride() throws Exception {
         String dummy = "dummy-env";
         String hostOverride = "my-host-override";
         System.setProperty(PropertiesManager.ENVIRONMENT_SELECTOR, dummy);
         System.setProperty(PropertiesManager.SERVICE_HOST, hostOverride);
         propertiesManager = new PropertiesManager();
-
 
         assertFalse(propertiesManager.isAws());
         assertEquals(hostOverride, propertiesManager.getServiceHost());
@@ -63,7 +64,7 @@ public class PropertiesManagerTest {
     }
 
     @Test
-    public void fromFileDefault() throws Exception {
+    public void fromFile_default_env() throws Exception {
         System.setProperty(PropertiesManager.ENVIRONMENT_SELECTOR, "");
         propertiesManager = new PropertiesManager();//do not extract to init, it needs to load after System.setProperty
 
@@ -76,7 +77,7 @@ public class PropertiesManagerTest {
     }
 
     @Test
-    public void fromFileWithEnv() throws Exception {
+    public void fromFile_with_env() throws Exception {
         String env = "dev";
         System.setProperty(PropertiesManager.ENVIRONMENT_SELECTOR, env);
         propertiesManager = new PropertiesManager();//do not remove, it needs to load after System.setProperty
@@ -87,14 +88,16 @@ public class PropertiesManagerTest {
         assertEquals("MY-REGISTRY-HOST-DEV", propertiesManager.getRegistryHost());
         assertEquals(1111, propertiesManager.getRegistryPort());
         assertEquals(env, propertiesManager.getEnvironment());
+        assertFalse(propertiesManager.useHostname());
     }
 
     @Test
-    public void fromFileWithEnvAndOverride() throws Exception {
+    public void fromFileWithEnv_propertyOverride() throws Exception {
         String env = "dev";
         String hostOverride = "my-host-override";
         System.setProperty(PropertiesManager.ENVIRONMENT_SELECTOR, env);
         System.setProperty(PropertiesManager.REGISTRY_HOST, hostOverride);
+        System.setProperty(PropertiesManager.USE_HOST, hostOverride);
         propertiesManager = new PropertiesManager();//do not remove, it needs to load after System.setProperty
 
         assertFalse(propertiesManager.isAws());
@@ -103,5 +106,8 @@ public class PropertiesManagerTest {
         assertEquals(hostOverride, propertiesManager.getRegistryHost());
         assertEquals(1111, propertiesManager.getRegistryPort());
         assertEquals(env, propertiesManager.getEnvironment());
+        assertFalse(propertiesManager.useHostname());
     }
+
+
 }
