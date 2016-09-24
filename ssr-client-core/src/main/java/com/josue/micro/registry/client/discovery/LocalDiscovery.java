@@ -28,7 +28,7 @@ public class LocalDiscovery implements Discovery {
                     InetAddress inetAddress = inetAddresses.nextElement();
                     String nicName = nic.getName();
 
-                    logger.info("NIC: " + nicName + " -> Address: " + inetAddress + " -> IPV4: " + " -> Hostname: " + inetAddress.getHostName() + " -> IPV4: " + (inetAddress instanceof Inet4Address));
+                    logger.info("NIC: " + nicName + " -> Address: " + inetAddress + " -> Hostname: " + inetAddress.getHostName() + " -> IPV4: " + (inetAddress instanceof Inet4Address));
 
                     if (nicName.startsWith("eth0") || nicName.startsWith("en0")) {
                         return inetAddress;
