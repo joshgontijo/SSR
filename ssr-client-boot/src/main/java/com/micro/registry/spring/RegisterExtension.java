@@ -34,8 +34,6 @@ public class RegisterExtension implements ApplicationListener {
 
     private ScheduledExecutorService mses;
 
-    private static final String DEFAULT_BOOT_CONTEXT_PATH = "/";
-
     private boolean enableClient;
     private String clientName;
 
@@ -52,7 +50,7 @@ public class RegisterExtension implements ApplicationListener {
                 name = clientName;
             }
 
-            Configurator.initService(name, DEFAULT_BOOT_CONTEXT_PATH, enableClient, enableDiscovery);
+            Configurator.initService(name, enableClient, enableDiscovery);
         }
     }
 

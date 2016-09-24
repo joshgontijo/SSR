@@ -74,7 +74,7 @@ public class RegisterExtension implements Extension {
             name = clientName;
         }
 
-        Configurator.initService(name, appRoot, enableClient, enableDiscovery);
+        Configurator.initService(name, enableClient, enableDiscovery);
 
         Bean<?> registerBean = beanManager.getBeans(CDIBootstrap.class).iterator().next();
         beanManager.getReference(registerBean, registerBean.getBeanClass(), beanManager.createCreationalContext(registerBean)).toString();

@@ -18,7 +18,7 @@ public class Configurator {
     private Configurator() {
     }
 
-    public static synchronized void initService(String name, String appRoot, boolean clientEnabled, boolean enableDiscovery) {
+    public static synchronized void initService(String name, boolean clientEnabled, boolean enableDiscovery) {
         logger.info("##############################################");
         logger.info("##### BOOTSTRAPING SSR SERVICE DISCOVERY #####");
         logger.info("##############################################");
@@ -28,8 +28,7 @@ public class Configurator {
             logger.warning(":: Service name not specified, please verify @EnableClient or @EnableDiscovery ::");
         }
 
-        String serviceAddress = getServiceUrl(appRoot);
-        serviceAddress = verifyProtocol(serviceAddress);
+        String serviceAddress = getServiceUrl();
 
         instance = new Instance();
         instance.setClient(clientEnabled);
@@ -67,7 +66,7 @@ public class Configurator {
     }
 
 
-    private static String getServiceUrl(String appRoot) {
+    private static String getServiceUrl() {
         String serviceHost = propertyManager.getServiceHost();
         int servicePort = propertyManager.getServicePort();
 
@@ -81,16 +80,7 @@ public class Configurator {
                 serviceUrl.substring(0, serviceUrl.length() - 1) :
                 serviceUrl;
 
-        return serviceUrl + "/" + getRootPath(appRoot);
-    }
-
-    private static String getRootPath(String appRoot) {
-        appRoot = appRoot == null ? "" : appRoot;
-        if (!appRoot.isEmpty()) {
-            appRoot = appRoot.startsWith("/") ? appRoot.substring(1, appRoot.length()) : appRoot;
-            appRoot = appRoot.endsWith("/") ? appRoot.substring(0, appRoot.length() - 1) : appRoot;
-        }
-        return appRoot;
+        return verifyProtocol(serviceUrl);
     }
 
     private static String verifyProtocol(String address) {
