@@ -19,10 +19,6 @@ public class Configurator {
     }
 
     public static synchronized void initService(String name, boolean clientEnabled, boolean enableDiscovery) {
-        logger.info("##############################################");
-        logger.info("##### BOOTSTRAPING SSR SERVICE DISCOVERY #####");
-        logger.info("##############################################");
-
         if (name == null || name.isEmpty()) {
             name = "UNKNOWN";
             logger.warning(":: Service name not specified, please verify @EnableClient or @EnableDiscovery ::");

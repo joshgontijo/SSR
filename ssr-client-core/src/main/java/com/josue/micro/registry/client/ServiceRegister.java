@@ -39,7 +39,9 @@ public class ServiceRegister implements Runnable {
 
     public void init() {
         synchronized (LOCK) {
-            logger.log(Level.INFO, ":: Initialising service register ::");
+            logger.info("##############################################");
+            logger.info("##### BOOTSTRAPING SSR SERVICE DISCOVERY #####");
+            logger.info("##############################################");
             if (Configurator.isInitialised()) {
                 register();
             } else {
