@@ -2,7 +2,7 @@
   "name": "test123",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "index.html",
   "scripts": {
     "express": "node server.js",
     "dev": "webpack-dev-server --progress --colors --hot --port 8000"

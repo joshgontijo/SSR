@@ -14,7 +14,7 @@ export default class MainPage extends React.Component {
     }
 
     fetchServices() {
-        $.getJSON(root + "/api/services", function (data) {
+        $.getJSON("/api/services", function (data) {
             if (!_.isEqual(this.state.services, data)) {
                 this.setState({
                     services: data

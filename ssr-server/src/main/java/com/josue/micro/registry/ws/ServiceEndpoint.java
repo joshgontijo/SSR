@@ -3,6 +3,7 @@ package com.josue.micro.registry.ws;
 import com.josue.micro.registry.Service;
 import com.josue.micro.registry.ServiceException;
 import com.josue.micro.registry.service.ServiceControl;
+import com.josue.ssr.common.EndpointPath;
 import com.josue.ssr.common.Instance;
 import com.josue.ssr.common.InstanceEncoder;
 
@@ -23,7 +24,7 @@ import java.util.logging.Logger;
 /**
  * Created by Josue on 17/06/2016.
  */
-@ServerEndpoint(value = "/services/{serviceName}",
+@ServerEndpoint(value = EndpointPath.SERVICES_PATH + "/{serviceName}",
         decoders = InstanceEncoder.class,
         encoders = InstanceEncoder.class)
 public class ServiceEndpoint {

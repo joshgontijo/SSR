@@ -25,7 +25,6 @@ public class RegisterExtension implements Extension {
 
     private boolean enableDiscovery;
     private String serviceName;
-    private String appRoot;
 
     <T> void processClientAnnotatedType(@Observes @WithAnnotations(EnableClient.class) ProcessAnnotatedType<T> type) {
 
@@ -52,12 +51,10 @@ public class RegisterExtension implements Extension {
             return;
         }
 
-        appRoot = jaxrsApp.value();
-
         serviceName = type.getAnnotatedType().getAnnotation(EnableDiscovery.class).name();
         enableDiscovery = true;
         logger.log(Level.INFO, " :: Found SSR registry aware service: {0} with name '{1}' on path '{2}' ::",
-                new Object[]{className, serviceName, appRoot});
+                new Object[]{className, serviceName, jaxrsApp.value()});
 
     }
 

@@ -10,7 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>ssr-server</artifactId>
-    <packaging>war</packaging>
+    <packaging>jar</packaging>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -20,33 +20,23 @@
         <wildfly.swarm.version>1.0.0.Final</wildfly.swarm.version>
     </properties>
 
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.wildfly.swarm</groupId>
-                <artifactId>bom</artifactId>
-                <version>${wildfly.swarm.version}</version>
-                <scope>import</scope>
-                <type>pom</type>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
+    <!--<dependencyManagement>-->
+        <!--<dependencies>-->
+            <!--<dependency>-->
+                <!--<groupId>org.wildfly.swarm</groupId>-->
+                <!--<artifactId>bom</artifactId>-->
+                <!--<version>${wildfly.swarm.version}</version>-->
+                <!--<scope>import</scope>-->
+                <!--<type>pom</type>-->
+            <!--</dependency>-->
+        <!--</dependencies>-->
+    <!--</dependencyManagement>-->
 
     <dependencies>
         <dependency>
-            <groupId>javax</groupId>
-            <artifactId>javaee-api</artifactId>
-            <version>7.0</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.wildfly.swarm</groupId>
-            <artifactId>jaxrs-cdi</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.wildfly.swarm</groupId>
-            <artifactId>undertow</artifactId>
+            <groupId>org.josue.microserver</groupId>
+            <artifactId>microserver-core</artifactId>
+            <version>0.1</version>
         </dependency>
 
         <dependency>
@@ -66,19 +56,23 @@
 
     <build>
         <finalName>${project.artifactId}</finalName>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <excludes>
+                    <exclude>static/assets/node_modules/**</exclude>
+                </excludes>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
-                <groupId>org.wildfly.swarm</groupId>
-                <artifactId>wildfly-swarm-plugin</artifactId>
-                <version>${wildfly.swarm.version}</version>
-                <configuration>
-                    <mainClass>com.josue.micro.registry.Main</mainClass>
-                    <jvmArguments>-Xms128m -Xmx512m</jvmArguments>
-                </configuration>
+                <groupId>org.josue.microserver</groupId>
+                <artifactId>microserver-maven-plugin</artifactId>
+                <version>1.3.14.RELEASE</version>
                 <executions>
                     <execution>
                         <goals>
-                            <goal>package</goal>
+                            <goal>repackage</goal>
                         </goals>
                     </execution>
                 </executions>

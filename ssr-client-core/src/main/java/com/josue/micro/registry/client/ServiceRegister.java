@@ -1,6 +1,7 @@
 package com.josue.micro.registry.client;
 
 import com.josue.micro.registry.client.config.Configurator;
+import com.josue.ssr.common.EndpointPath;
 
 import javax.websocket.CloseReason;
 import javax.websocket.ContainerProvider;
@@ -20,8 +21,6 @@ import java.util.logging.Logger;
 public class ServiceRegister implements Runnable {
 
     private static final Logger logger = Logger.getLogger(ServiceRegister.class.getName());
-
-    private static final String REGISTRY_PATH = "services";
 
     private static final Object LOCK = new Object();
     private static final AtomicInteger retryCounter = new AtomicInteger();
@@ -88,8 +87,7 @@ public class ServiceRegister implements Runnable {
             try {
                 String registryUrl =
                         "ws://" +
-                                Configurator.getRegistryUrl() +
-                                "/" + REGISTRY_PATH +
+                                Configurator.getRegistryUrl() + EndpointPath.REGISTRY_PATH +
                                 "/" + Configurator.getCurrentInstance().getName();
 
                 WebSocketContainer container = ContainerProvider.getWebSocketContainer();

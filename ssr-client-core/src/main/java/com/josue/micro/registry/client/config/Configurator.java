@@ -12,17 +12,19 @@ public class Configurator {
 
     private static final Logger logger = Logger.getLogger(Configurator.class.getName());
 
-    private static final PropertiesManager propertyManager = new PropertiesManager();
+    private static PropertiesManager propertyManager;
     private static Instance instance;
 
     private Configurator() {
     }
 
     public static synchronized void initService(String name, boolean clientEnabled, boolean enableDiscovery) {
+        propertyManager = new PropertiesManager(); //lazy load, so clients can do System.setProperty
         if (name == null || name.isEmpty()) {
             name = "UNKNOWN";
             logger.warning(":: Service name not specified, please verify @EnableClient or @EnableDiscovery ::");
         }
+        name = name.replaceAll(" ", "-");
 
         String serviceAddress = getServiceUrl();
 
